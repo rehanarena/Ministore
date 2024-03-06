@@ -1,0 +1,102 @@
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    .login_box_area {
+        background-color: #f8f9fa; /* Light grey background */
+        padding:   20px   0;
+    }
+
+    .login_form_inner {
+        background-color: #ffffff; /* White background for the form */
+        border-radius:   5px; /* Rounded corners for the form */
+        padding:   30px;
+    }
+
+    .login_form_inner h3 {
+        color: #28a745; /* Green text for the heading */
+    }
+
+    .form-control {
+        border-radius:   0; /* Flat borders for input fields */
+        border-color: #ced4da; /* Light grey border */
+    }
+
+    .btn-outline-primary {
+        border-color: #28a745; /* Green border for the button */
+        color: #28a745; /* Green text for the button */
+    }
+
+    .btn-outline-primary:hover {
+        background-color: #28a745; /* Green background on hover */
+        color: #ffffff; /* White text on hover */
+    }
+
+    .text-primary {
+        color: #28a745; /* Green text for the forgot password link */
+    }
+
+    .text-primary:hover {
+        text-decoration: underline; /* Underline on hover */
+    }
+
+    .forgot-password-link {
+        color: #000000; /* Black color for the forgot password link */
+    }
+
+    /* Style for the sign-up link */
+    .signup-link {
+        display: block;
+        margin-top:   10px;
+        color: #28a745; /* Green color for the sign-up link */
+        text-align: center; /* Center the link */
+    }
+
+    .signup-link:hover {
+        text-decoration: underline; /* Underline on hover */
+    }
+</style>
+
+<section class="login_box_area section-margin my-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 border p-4">
+                <div class="login_form_inner bg-body-secondary">
+                    <h3 class="text-center">Login</h3>
+                    <form class="row login_form" action="/login" method="POST" id="login-form">
+                        <div class="col-md-12 form-group">
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email'">
+                            <small class="h-3"></small>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <div class="d-flex align-items-center">
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'">
+                                <i class="bi bi-eye-slash" id="togglePassword" style="position: relative;z-index:   8; left: -30px; width:   0%; cursor: pointer;"></i>
+                            </div>
+                            <small class="h-3"></small>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <button type="submit" value="submit" class="btn btn-outline-primary w-100">Log In</button>
+                            <a class="text-success forgot-password-link" href="/forgotPassword">Forgot Password?</a>
+                        </div>
+                        <!-- Social Login Buttons -->
+                        <div class="col-md-6 form-group">
+                            <button type="button" class="btn btn-danger btn-block" onclick="location.href='/auth/google'">
+                                <i class="fab fa-google"></i> Login with Google
+                            </button>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <button type="button" class="btn btn-primary btn-block" onclick="location.href='/auth/facebook'">
+                                <i class="fab fa-facebook-f"></i> Login with Facebook
+                            </button>
+                        </div>
+                    </form>
+                    <!-- Sign Up Link -->
+                    <a href="/register" class="signup-link">Don't have an account? Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="/javascripts/loginValidation.js"></script>

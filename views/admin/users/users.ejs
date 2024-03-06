@@ -1,0 +1,131 @@
+<section class="breadcrumb-option">
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb breadcrumb-chevron p-3 bg-body-tertiary rounded-2">
+        <li class="breadcrumb-item">
+          <a class="link-body-emphasis" href="/admin">
+            <svg class="bi" width="16" height="16">
+              <use xlink:href="#house-door-fill"></use>
+            </svg>
+            <span class="visually-hidden">Dashboard</span>
+          </a>
+        </li>
+
+        <li class="breadcrumb-item active" aria-current="page">
+          Customers
+        </li>
+      </ol>
+    </nav>
+  </div>
+</section>
+
+<div class="container d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2"><%= locals.title ? locals.title : 'Dashboard' %></h1>
+</div>
+
+
+<section class="container">
+  <div class="container table-responsive">
+    <table class="table table-striped table-sm table-hover">
+      <thead>
+        <th scope="col">#</th>
+        <th scope="col">Username</th>
+        <th scope="col">Full Name</th>
+        <th scope="col">Email</th>
+        <!-- <th scope="col">Joined Date</th> -->
+        <th scope="col" class="text-center">isVerified</th>
+        <th scope="col" class="text-center">isAdmin</th>
+        <th scope="col" class="text-center">Block/Unblock</th>
+        <!-- <th scope="col" class="text-center">Action</th> -->
+      </thead>
+      <tbody>
+        <% users.forEach((user,index) => { %>
+          <tr class="align-middle">
+            <td><%= index+1 %></td>
+            <td><%= user.username %> </td>
+            <td><%= user.firstName + ' ' + user.lastName %> </td>
+            <td><%= user.email %> </td>
+            <td class="text-center">
+              <% if (user.isVerified) { %>
+              <span class="text-success"><%= user.isVerified %></span>
+              <% } else { %>
+              <span class="text-danger"><%= user.isVerified %></span>
+              <% } %>
+            </td>
+            <td class="text-center">
+              <% if (user.isAdmin) { %>
+              <span class="badge rounded-pill bg-success">Admin</span>
+              <% } else { %>
+              <span class="badge rounded-pill bg-info">User</span>
+              <% } %>
+            </td>
+            <td class="text-center">
+              <% if (!user.isAdmin) { %>
+                <% if (!user.isBlocked) { %>
+                <button onclick="blockOrUnblock('<%- user._id %>','<%- user.isBlocked %>','<%- user.username %>')" class="btn btn-danger btn-sm" id="block_unblock">
+                  <i class="bi bi-person"></i> Block
+                </button>
+                <!-- <form action="/admin/users/block-user/<%= user._id%>?_method=PATCH" method="POST">
+                  </form> -->
+                <% } else { %>
+                <button onclick="blockOrUnblock('<%- user._id %>','<%- user.isBlocked %>','<%- user.username %>')" class="btn btn-success btn-sm" id="block_unblock">
+                  <i class="bi bi-person"></i> Unblock
+                </button>
+  
+                <% } %>
+              <% } %>
+  
+            </td>
+  
+          </tr>
+          <% }) %>
+  
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <script defer>
+    const blockOrUnblock = async (userId, isBlocked, username) => {
+  
+      console.log(userId, isBlocked, username);
+  
+  
+      const confirmed = await Swal.fire({
+        title: 'Are you sure?',
+        text: isBlocked == 'true' ? `You want to unblock the user ${username}` : `You want to block the user ${username}`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: isBlocked ? 'Yes, block!' : 'Yes, unblock!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+      })
+  
+      if (confirmed.isConfirmed) {
+        const response = await fetch(`/admin/users/toggle-block/${userId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+  
+        if (response.ok) {
+          Swal.fire({
+            title: 'Success!',
+            text: isBlocked == 'true' ? 'User has been unblocked.' : 'User has been blocked.',
+            icon: 'success',
+            timer: 1500
+          }).then((result) => {
+            location.assign('/admin/users')
+          });
+        } else {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Something went wrong.',
+            icon: 'error',
+            timer: 1500
+          });
+        }
+      }
+    }
+  </script>

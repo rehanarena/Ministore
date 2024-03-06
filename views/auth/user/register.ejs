@@ -1,0 +1,106 @@
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    .login_box_area {
+        background-color: #f8f9fa; /* Light grey background */
+        padding:  20px  0;
+    }
+
+    .login_form_inner {
+        background-color: #ffffff; /* White background for the form */
+        border-radius:  5px; /* Rounded corners for the form */
+        padding:  30px;
+    }
+
+    .login_form_inner h3 {
+        color: #28a745; /* Blue text for the heading */
+        text-align: center; /* Center the heading */
+    }
+
+    .form-control {
+        border-radius:  0; /* Flat borders for input fields */
+        border-color: #ced4da; /* Light grey border */
+    }
+
+    .btn-outline-primary {
+        border-color: #28a745; /* Blue border for the button */
+        color: #28a745; /* Blue text for the button */
+        width:  100%; /* Full width button */
+        transition: background-color  0.3s ease; /* Smooth transition for hover */
+    }
+
+    .btn-outline-primary:hover {
+        background-color: #28a745; /* Blue background on hover */
+        color: #ffffff; /* White text on hover */
+    }
+
+    /* Styling for the input fields */
+    .form-group {
+        margin-bottom:  15px; /* Add some space between form groups */
+    }
+
+    /* Styling for the eye icon */
+    .bi-eye-slash {
+        position: relative;
+        z-index:  8;
+        left: -30px;
+        width:  0%;
+        cursor: pointer;
+        color: #28a745; /* Blue color for the eye icon */
+    }
+
+    /* Styling for the form fields */
+    .form-control:focus {
+        border-color: #28a745; /* Blue border on focus */
+        box-shadow:  0  0  0  0.2rem rgba(0,  123,  255,  0.25); /* Blue shadow on focus */
+    }
+</style>
+<section class="login_box_area section-margin my-5">
+    <div class="container">
+        <div class="row justify-content-center"> <!-- Center the row -->
+            <div class="col-lg-6 border p-4"> <!-- Add border and padding -->
+                <div class="login_form_inner register_form_inner bg-body-secondary">
+                    <h3 class="text-center">Create an account</h3> <!-- Center the heading -->
+                    <form class="row login_form" action="/register" method="POST" id="register_form">
+                        <div class="col-md-12 form-group">
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Username" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Username'">
+                            <small></small>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <input type="text" class="form-control" id="firstName" name="firstName" placeholder="First Name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'First Name'">
+                            <small></small>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Last Name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Last Name'">
+                            <small></small>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <input type="text" class="form-control" id="email" name="email" placeholder="Email Address" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email Address'">
+                            <small></small>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <div class="d-flex align-items-center">
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'">
+                                <i class="bi bi-eye-slash" id="togglePassword" style="position: relative;z-index: 8; left: -30px; width: 0%; cursor: pointer;"></i>
+                            </div>
+                            <small></small>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <div class="d-flex align-items-center">
+                                <input type="password" class="form-control password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Confirm Password'">
+                                <i class="bi bi-eye-slash" id="togglePasswordConfirm" style="position: relative;z-index: 8; left: -30px; width: 0%; cursor: pointer;"></i>
+                            </div>
+                            <small></small>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <button type="submit" value="submit" class="btn btn-outline-primary w-100">Register</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="/javascripts/registerValidation.js"></script>

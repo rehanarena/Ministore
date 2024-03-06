@@ -1,0 +1,29 @@
+ <div class="wrapper">
+    <%-include("../partials/admin/sidebar.ejs")%>
+        <main class="main my-5">
+            <h1>Dashboard</h1>
+            <div class="d-column d-lg-flex justify-content-center m-0">
+                <div class="col-lg-6 d-flex flex-column flex-sm-row justify-content-around mt-3">
+                    <div id="usersList" class="col-sm-5 card" style="background-color: rgba(62, 15, 180, 0.377);">
+                        <div style="font-size: 2rem; color: rgb(0, 0, 0)"></div>
+                        <div class="text-center mt-3 font-weight-bold h4">Total Users</div>
+                    </div>
+                    <div id="productsList" class="col-sm-5 card" style="background-color: rgba(251, 144, 5, 0.377);">
+                        <div style="font-size: 2rem; color: rgb(0, 0, 0)"></div>
+                        <div class="text-center mt-3 font-weight-bold h4">Total Products</div>
+                    </div>
+                </div>
+                <div class="col-lg-6 d-flex flex-column flex-sm-row justify-content-around mt-3">
+                    <div id="ordersList" class="col-sm-5 card" style="background-color: rgba(15, 180, 89, 0.377);">
+                        <div style="font-size: 2rem; color: rgb(0, 0, 0)"></div>
+                        <div class="text-center mt-3 font-weight-bold h4">Total Orders</div>
+                    </div>
+                    <div id="salesList" class="col-sm-5 card" style="background-color: rgba(14, 125, 244, 0.377);">
+                        <div style="font-size: 2rem"></div>
+                        <div class="text-center mt-3 font-weight-bold h4">Total Revenue (rs)</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
