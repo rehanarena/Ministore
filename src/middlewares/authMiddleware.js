@@ -20,16 +20,6 @@ module.exports = {
     }
   },
 
-  isVerified: (req, res, next) => {
-    // console.log(req.body)
-    next();
-    // if(req.isAuthenticated() && !req.user.isVerified) {
-    //     res.redirect('/user/verify')
-    // } else {
-    //     next()
-    // }
-  },
-
   isAdmin: (req, res, next) => {
     if (req.isAuthenticated() && req.user.isAdmin) {
       next();

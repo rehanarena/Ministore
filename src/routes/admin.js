@@ -9,7 +9,12 @@ const productController = require("../controller/productController");
 const { isAdmin } = require("../middlewares/authMiddleware");
 
 // const { productUpload } = require("../middlewares/multer");
-
+router.use (isAdmin,(req,res,next)=>{
+  if(req.isAuthenticated()&& req.user.isAdmin){
+    res.locals.admin=req.user
+  }
+  next();
+})
 router.get("/", adminController.getDashboard);
 
 

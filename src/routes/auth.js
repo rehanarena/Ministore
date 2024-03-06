@@ -2,17 +2,17 @@ const express = require("express");
 const router = express.Router();
 const authController = require("../controller/authController");
 
-
+const { isLoggedOut,isAdminLoggedOut }= require('../middlewares/authMiddleware')
 
 router
   .route("/login")
-  .get( authController.getLogin)
+  .get(isLoggedOut, authController.getLogin)
   .post(authController.userLogin);
 
 
 router
   .route("/register")
-  .get(authController.getRegister)
+  .get(isLoggedOut,authController.getRegister)
   .post( authController.userRegister);
 
 
@@ -20,14 +20,14 @@ router
 
   router
   .route("/verify-otp")
-  .get(  authController.getVerifyOtp )
+  .get(isLoggedOut, authController.getVerifyOtp )
   .post(authController.verifyOtp);
 
 
 
   router
   .route("/forgotPassword/verify-otp")
-  .get(authController.getForgotPassOtp );
+  .get(isLoggedOut,authController.getForgotPassOtp );
 
 
   router
@@ -37,7 +37,7 @@ router
 
   router
   .route("/forgotPassword")
-  .get(authController.getForgotPass)
+  .get(isLoggedOut,authController.getForgotPass)
   .post(authController.forgotPass);
 
 
@@ -46,7 +46,7 @@ router
   
   router
   .route("/reset-password")
-  .get(authController.getResetPass)
+  .get(isLoggedOut,authController.getResetPass)
   .post(authController.resetPass);
 
 
@@ -57,7 +57,7 @@ router
   //admin login
   router
   .route("/admin/login")
-  .get(authController.getAdminLogin)
+  .get(isAdminLoggedOut,authController.getAdminLogin)
   .post(authController.adminLogin);
 
 // router
