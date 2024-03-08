@@ -1,5 +1,3 @@
-
-
 const layout = "./layouts/adminLayout.ejs";
 const Category = require("../model/categorySchema");
 
@@ -16,7 +14,7 @@ module.exports = {
     });
   },
   getAddCategory: async (req, res) => {
-    res.render("admin/categories/addCategory", {
+    res.render("./admin/categories/addCategory", {
       layout,
     });
   },
@@ -28,15 +26,23 @@ module.exports = {
     });
   },
   addCategory: async (req, res) => {
-    console.log(req.body);
-    const name = String(req.body.category_name).toLowerCase()
+    // console.log(req.body,"reqbody");
+    const name = String(req.body.category).toLowerCase()
     const category = await Category.findOne({ name: name });
     if (category) {
-      req.flash("error", "Category already exists!!!")
-      return res.redirect("admin/category");
+      return res.json({'error': "Category Already Exist!!"})
     } else {
-      req.flash("success", "Category Successfully Recorded");
-      return res.redirect("admin/category");
+
+      // console.log(req.body);
+      const newCategory = new Category({
+        name: name,
+      });
+      const addCategory = newCategory.save();
+      if (addCategory) {
+        res.json({
+          success: true,
+        });
+      }
     }
   },
   editCategory: async (req, res) => {
@@ -44,13 +50,13 @@ module.exports = {
       const { status } = req.body;
 
       console.log(req.body);
-    let name = req.body.name.toLowerCase()
+   
     let editCategory = {
-      name: name,
+    
       isActive: status === "true" ? true : false,
     };
     
-    // update banner details
+    // update banner deatails
     const id = req.params.id;
     const update_category = await Category.findByIdAndUpdate(
       { _id: id },
@@ -69,6 +75,8 @@ module.exports = {
   },
   deleteCategory: async (req, res) => {
     const id = req.query.id;
+    
+    // deleteing banner image from db
     const deleteCategory = await Category.findByIdAndDelete({ _id: id });
     if (deleteCategory) {
       res.json({

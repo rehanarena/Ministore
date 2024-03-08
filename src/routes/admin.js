@@ -40,7 +40,16 @@ router.route("/category").get(categoryController.getAllCategory);
 router
   .route("/category/add-category")
   .get(categoryController.getAddCategory)
-  .post( categoryController.addCategory);
+  .post(categoryController.addCategory);
+
+  router
+  .route("/category/edit-category/:id")
+  .get(categoryController.getEditCategory)
+  .post(categoryController.editCategory);
+
+router
+  .route("/category/delete-category")
+  .get(categoryController.deleteCategory);
 
 
 

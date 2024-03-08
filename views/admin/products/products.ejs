@@ -42,7 +42,7 @@
         <th scope="col">Name</th>
         <th scope="col">Image</th>
         <th scope="col">Stock</th>
-        <th scope="col">Size</th>
+        <!-- <th scope="col">Size</th> -->
         <th scope="col">Status</th>
         <th scope="col" class="text-center">List/Unlist</th>
         <th scope="col" class="text-center">Actions</th>
@@ -64,9 +64,7 @@
         <td>
           <%- product.stock %>
         </td>
-        <td>
-          <%- product.size %>
-        </td>
+        
         <td>
           <% if (product.isActive) { %>
           listed

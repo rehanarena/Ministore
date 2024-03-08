@@ -22,7 +22,7 @@ module.exports = {
       const hasNextPage = nextPage <= Math.ceil(count / perPage);
   
   
-      res.render("./admin/products/products", {
+      res.render("admin/products/products", {
         layout,
         products,
         current: page,
@@ -32,10 +32,10 @@ module.exports = {
       });
     },
     getAddProduct: async (req, res) => {
-      const categories = await Category.find({ isActive: true });
-      res.render("./admin/products/addProduct", {
+      // const categories = await Category.find({ isActive: true });
+      res.render("admin/products/addProduct", {
         layout,
-        categories,
+        // categories,
       });
     },
     getEditProduct: async (req, res) => {

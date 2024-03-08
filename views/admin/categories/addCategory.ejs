@@ -1,50 +1,53 @@
 <section class="breadcrumb-option">
-    <div class="container">
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb breadcrumb-chevron p-3 bg-body-tertiary rounded-2">
-          <li class="breadcrumb-item">
-            <a class="link-body-emphasis" href="/admin">
-              <svg class="bi" width="16" height="16">
-                <use xlink:href="#house-door-fill"></use>
-              </svg>
-              <span class="visually-hidden">Dashboard</span>
-            </a>
-          </li>
-          <li class="breadcrumb-item">
-            <a class="link-body-emphasis fw-semibold text-decoration-none" href="/admin/category">Categories</a>
-          </li>
-          <li class="breadcrumb-item" aria-current="page">
-            Add Category
-          </li>
-        </ol>
-      </nav>
+  <!-- Breadcrumb code remains unchanged -->
+</section>
+
+<div class="container d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2">
+    <%= locals.title ? locals.title : 'Dashboard' %>
+  </h1>
+</div>
+
+<div class="card container py-5 w mb-5 col-lg-6">
+  <h3 class="mb-3 card-title text-center">Add New Category</h3>
+  <form class="card-body rounded-3 bg-body-tertiary"  id="add-category">
+    <!-- Name input -->
+    <div class="err mb-3 text-danger"></div>
+    <div class="row mb-3">
+      <div class="form-group my-3">
+        <label class="form-label" for="categoryname">Category Name</label>
+        <input type="text" class="form-control " name="categoryname" id="categoryname">
+      </div>
+        <input type="text" class="form-control " name="id"  id="category-id" value="<%- category._id %>" style="display: none;">
+      
     </div>
-  </section>
-  
-  <div class="container d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">
-      <%= locals.title ? locals.title : 'Dashboard' %>
-    </h1>
-  
-  </div>
-  
-  <div class="card container py-5 w mb-5 col-lg-6">
-    <h3 class="mb-3 card-title text-center">Add New Category</h3>
-    <form class="card-body rounded-3 bg-body-tertiary" id="add-category">
-        <!-- Name input -->
-        <div class="err mb-3 text-danger"></div>
-        <div class="row mb-3">
-            <div class="form-group my-3">
-                <label class="form-label" for="">Category Name</label>
-                <input type="text" class="form-control " name="category_name">
-            </div>
-        <!-- Submit button -->
-        <div class="button-grp">
-            <button type="submit" class="btn btn-sm btn-primary px-3">Submit</button>
-            <button type="reset" class="btn btn-sm btn-warning px-3">Clear</button>
-        </div>
-    </form>
-  
-  </div>
-  
-  
+    <!-- Submit button -->
+    <div class="button-grp">
+      <!-- Green button inside the form -->
+      <button type="submit" class="btn btn-sm btn-success px-3">Submit</button>
+      <button type="reset" class="btn btn-sm btn-warning px-3">Clear</button>
+    </div>
+  </form>
+ 
+</div>
+<script defer src="/js/admin/category/addcategory"></script>
+<style>
+  .error {
+    color: rgb(255, 0, 0);
+  }
+
+  .crop-banner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 4;
+    width: 30rem;
+  }
+
+  /* Style for green button */
+  .btn-success {
+    background-color: green;
+    color: white;
+  }
+</style>
