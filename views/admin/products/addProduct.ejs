@@ -51,13 +51,16 @@
               <div class="col-md-6">
                 <div class="form-group row">
                   <div class="col-sm-12">
-                    <label for="category" class="text-dark">Category</label> <!-- Add text-dark class here -->
-                    <select name="category" class="form-control text-dark" id="category" >
-                      <option value="" disabled selected>Select Category</option>
-                      <% for (let i in categories) { %>
-                        <option <% if (categories[i].is_listed == false) { %>disabled<% } %>> <%= categories[i].category_name %></option>
-                      <% } %>
-                    </select>
+                    <div class="form-group">  
+                      <label for="tags">Categories:</label>
+                      <select class="form-select text-capitalize" name="category" required>
+                        <% categories.forEach(function(category) { %>
+                        <option class="text-capitalize" value="<%= category._id %>">
+                          <%= category.name %>
+                        </option>
+                        <% }); %>
+                      </select>
+                    </div>
                     <div id="categoryError" class="text-danger"></div>
                   </div>
                 </div>
