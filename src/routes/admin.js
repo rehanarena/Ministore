@@ -62,7 +62,7 @@ router.route("/products")
 .get(productController.getAllProducts)
 
 
-router.route("/products/add-product")
+router.route("/products/add-Product")
 .get(productController.getAddProduct)
 
 router.route("/products/edit-product/:id")

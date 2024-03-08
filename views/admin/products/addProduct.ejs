@@ -11,7 +11,7 @@
           </a>
         </li>
         <li class="breadcrumb-item">
-          <a class="link-body-emphasis fw-semibold text-decoration-none" href="/admin/products">Products</a>
+          <a class="link-body-emphasis fw-semibold text-decoration-none  text-success" href="/admin/products">Products</a>
         </li>
 
         <li class="breadcrumb-item active" aria-current="page">Add Product</li>
@@ -23,184 +23,159 @@
 <div class="container d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
   <h1 class="h2"><%= locals.title ? locals.title : 'Dashboard' %></h1>
 </div>
-<div class="container">
-  <div style="width: 50vw;">
-    <div class="form-group m-3">
-      <legend class="h2 fw-bold text-center m-3">Add New Product</legend>
-    <br>
-      <label for="productName">Product Name : </label>
-      <input type="text" name="ProductName" class="form-control bg-light" id="productName"
-        placeholder="Product name"/>
-      <div class="error" id="productNameError"></div>
-    </div><br>
-    <div class="form-group m-3">
-      <label for="productDescription">Product Description:</label>
-      <textarea class="form-control bg-light" name="Description" id="productDescription" rows="4"
-        placeholder="Enter product description"></textarea>
-      <div class="error" id="description-error"></div>
-      
-    </div>
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body">
+          <div class="text-dark"> <!-- Add text-dark class here -->
+            <h4 class="card-title">Add New Product</h4>
+          </div>
+          <form class="forms-sample" action="/admin/addproduct" method="post" enctype="multipart/form-data" onsubmit="return validateForm()" novalidate>
 
-<section class="new-product">
-  <form id="addProductForm" class="container row m-3 justify-content-evenly border" style="width: 100%;"></form>
-  <div class="row d-flex justify-content-between mt-3">
-    <div class="col-lg-3 col-md-4 rounded-image-preview">
-        <label for="imageInput1" class="image-label">Image 1
-            <div class="rounded-image-preview d-flex flex-column align-items-center">
-                <!-- <img id="imagePreview1" src="https://www.creativefabrica.com/wp-content/uploads/2021/04/05/Image-Upload-Icon-Graphics-10388650-1-580x386.jpg" alt="Preview" class="small-image" /> -->
-                <div class="d-flex">
-                    <input name="image1" type="file" accept="image/*" id="imageInput1" class="imageInput" onchange="openImageCropper(1)">
-                    <button type="button" class="btn btn-sm btn-secondary mt-2 ml-2" onclick="openModal('imagePreview1')">Crop</button>
-                </div>
-            </div>
-        </label>
-        <span id="imageError1" class="text-danger"></span>
-    </div>
-  
-    <div class="row d-flex justify-content-between mt-3">
-      <div class="col-lg-3 col-md-6 rounded-image-preview">
-          <label for="imageInput1" class="image-label">Image 2
-              <div class="rounded-image-preview d-flex flex-column align-items-center">
-                  <!-- <img id="imagePreview1" src="https://www.creativefabrica.com/wp-content/uploads/2021/04/05/Image-Upload-Icon-Graphics-10388650-1-580x386.jpg" alt="Preview" class="small-image" /> -->
-                  <div class="d-flex">
-                      <input name="image1" type="file" accept="image/*" id="imageInput1" class="imageInput" onchange="openImageCropper(1)">
-                      <button type="button" class="btn btn-sm btn-secondary mt-2 ml-2" onclick="openModal('imagePreview1')">Crop</button>
-                  </div>
+            <div class="form-group row">
+              <div class="col-6">
+                <label for="product_name" class="text-dark">Product Title</label> <!-- Add text-dark class here -->
+                <input type="text" class="form-control text-dark text-justify" name="product_name" id="exampleInputName1"
+                  placeholder="Name" >
+                  <span id="productNameError" class="text-danger"></span>
               </div>
-          </label>
-          <span id="imageError1" class="text-danger"></span>
-      </div>
-  
-      <div class="row d-flex justify-content-between mt-3">
-        <div class="col-lg-3 col-md-6 rounded-image-preview">
-            <label for="imageInput1" class="image-label">Image 3
-                <div class="rounded-image-preview d-flex flex-column align-items-center">
-                    <!-- <img id="imagePreview1" src="https://www.creativefabrica.com/wp-content/uploads/2021/04/05/Image-Upload-Icon-Graphics-10388650-1-580x386.jpg" alt="Preview" class="small-image" /> -->
-                    <div class="d-flex">
-                        <input name="image1" type="file" accept="image/*" id="imageInput1" class="imageInput" onchange="openImageCropper(1)">
-                        <button type="button" class="btn btn-sm btn-secondary mt-2 ml-2" onclick="openModal('imagePreview1')">Crop</button>
+              <div class="col-6">
+                <label for="product_price" class="text-dark">Actual Price</label> <!-- Add text-dark class here -->
+                <input type="number" class="form-control text-dark" id="inlineFormInputName1" name="product_price"
+                  placeholder="Price">
+                <div id="priceError" class="text-danger"></div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <div class="col-sm-12">
+                    <label for="category" class="text-dark">Category</label> <!-- Add text-dark class here -->
+                    <select name="category" class="form-control text-dark" id="category" >
+                      <option value="" disabled selected>Select Category</option>
+                      <% for (let i in categories) { %>
+                        <option <% if (categories[i].is_listed == false) { %>disabled<% } %>> <%= categories[i].category_name %></option>
+                      <% } %>
+                    </select>
+                    <div id="categoryError" class="text-danger"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <div class="col-sm-12">
+                    <label for="product_price" class="text-dark">Discount Price</label> <!-- Add text-dark class here -->
+                <input type="number" class="form-control text-dark" id="inlineFormInputName1" name="product_price"
+                  placeholder="Price">
+                    <div id="genderError" class="text-danger"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <div class="col-sm-12">
+                    <label for="brand" class="text-dark">Brand</label> <!-- Add text-dark class here -->
+                    <input type="text" class="form-control text-dark" id="brand" name="brand"
+                      placeholder="Brand Name" onkeyup="capitalizeFirstLetter(this)" >
+                      <span id="brandError" class="text-danger"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <div class="col-sm-12">
+                    <label for="stock" class="text-dark">Stock</label> <!-- Add text-dark class here -->
+                    <input type="number" class="form-control text-dark" id="quantity" name="stock"
+                      placeholder="Enter Stock" >
+                      <span id="quantityError" class="text-danger"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group mt-2">
+              <label for="description" class="text-dark">Description</label> <!-- Add text-dark class here -->
+              <textarea name="product_description" class="form-control text-dark" id="exampleTextarea1" rows="4"
+                ></textarea>
+                <span id="descriptionError" class="text-danger"></span>
+            </div>
+              <div class="row d-flex justify-content-between mt-3">
+                <div class="col-lg-3 col-md-6 rounded-image-preview">
+                  <label for="imageInput1" class="image-label">Image 1
+                    <div class="rounded-image-preview">
+                      <!-- <img id="imagePreview1" src="https://www.creativefabrica.com/wp-content/uploads/2021/04/05/Image-Upload-Icon-Graphics-10388650-1-580x386.jpg" alt="Preview" /> -->
                     </div>
+                    <input name="image1" type="file" accept="image/*" id="imageInput1" class="imageInput" onchange="openImageCropper(1)">
+                    <button type="button" class="btn btn-sm btn-secondary mt-2" onclick="openModal('imagePreview1')">Crop</button>
+                  </label>
+                  <span id="imageError1" class="text-danger"></span>
                 </div>
-            </label>
-            <span id="imageError1" class="text-danger"></span>
-        </div>
-         <!-- Modal for Cropping -->
-  <div class="modal fade" id="cropModal" tabindex="-1" role="dialog" aria-labelledby="cropModalLabel" aria-hidden="true" style="">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="cropModalLabel">Crop Image</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body" >
-          <img id="cropperImage" src="#" alt="Croppable Image"  />
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" onclick="cropImage()">Crop</button>
+    
+                <div class="col-lg-3 col-md-6 rounded-image-preview">
+                  <label for="imageInput2" class="image-label">Image 2
+                    <div class="rounded-image-preview">
+                      <!-- <img id="imagePreview2" src="https://www.creativefabrica.com/wp-content/uploads/2021/04/05/Image-Upload-Icon-Graphics-10388650-1-580x386.jpg" alt="Preview" /> -->
+                    </div>
+                    <input name="image2" type="file" accept="image/*" id="imageInput2" class="imageInput" onchange="openImageCropper(2)">
+                    <button type="button" class="btn btn-sm btn-secondary mt-2" onclick="openModal('imagePreview2')">Crop</button>
+                  </label>
+                  <span id="imageError2" class="text-danger"></span>
+                </div>
+    
+                <div class="col-lg-3 col-md-6 rounded-image-preview">
+                  <label for="imageInput3" class="image-label">Image 3
+                    <div class="rounded-image-preview">
+                      <!-- <img id="imagePreview3" src="https://www.creativefabrica.com/wp-content/uploads/2021/04/05/Image-Upload-Icon-Graphics-10388650-1-580x386.jpg" alt="Preview" /> -->
+                    </div>
+                    <input name="image3" type="file" accept="image/*" id="imageInput3" class="imageInput" onchange="openImageCropper(3)">
+                    <button type="button" class="btn btn-sm btn-secondary mt-2" onclick="openModal('imagePreview3')">Crop</button>
+                  </label>
+                  <span id="imageError3" class="text-danger"></span>
+                </div>
+    
+                <div class="col-lg-3 col-md-6 rounded-image-preview">
+                  <label for="imageInput4" class="image-label">Image 4
+                    <div class="rounded-image-preview">
+                      <!-- <img id="imagePreview4" src="https://www.creativefabrica.com/wp-content/uploads/2021/04/05/Image-Upload-Icon-Graphics-10388650-1-580x386.jpg" alt="Preview" /> -->
+                    </div>
+                    <input name="image4" type="file" accept="image/*" id="imageInput4" class="imageInput" onchange="openImageCropper(4)">
+                    <button type="button" class="btn btn-sm btn-secondary mt-2" onclick="openModal('imagePreview4')">Crop</button>
+                  </label>
+                  <span id="imageError4" class="text-danger"></span>
+                </div>
+              </div>  
+            </div>  
+            <button type="submit" class="btn btn-lg btn-success mr-2 mt-5">Add product</button>
+          </form>
         </div>
       </div>
     </div>
   </div>
- 
-  
-    <div class="d-flex">
-      <div style="width:50rem">
-        
-        <div class="border p-3 m-3">
-          <h2>Pricing</h2>
-          <div class="form-group">
-            <label for="basePrice">Acutal Price:</label>
-            <input type="number" name="Price" class="form-control bg-light" id="basePrice"
-            placeholder="Enter base price"/>
-            <div class="error" id="priceerror"></div>
-          </div>
-          <br>
-          <div class="form-group">
-            <label for="discountAmount">Discount Amount:</label>
-            <input type="number" name="DiscountAmount" class="form-control bg-light" id="discountAmount"
-            placeholder="Enter discount amount"/>
-            <div class="error" id="discError"></div>
-          </div>
-        </div>
-        <div class="border p-3 m-3">
-          <h2>Stock</h2>
-          <div class="form-group">
-            <label for="quantity">Quantity:</label>
-            <input type="number" name="AvailableQuantity" class="form-control bg-light" id="quantity"
-            placeholder="Enter quantity"/>
-            <div class="error" id="quantityError"></div>
-          </div>
-        </div>
+<!-- Modal for Cropping -->
+<div class="modal fade" id="cropModal" tabindex="-1" role="dialog" aria-labelledby="cropModalLabel" aria-hidden="true" style="">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="cropModalLabel">Crop Image</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
-      <div class="border p-3 m-3" style="width:50rem;">
-        <div class="">
-          <div class="form-group">
-            <br>
-            
-          </div><br>
-          <div class="form-group">
-            <br>
-            <label>Brand Name:</label>
-            <select name="BrandName" class="form-select bg-light" id="brand" required>
-              <option value="" selected disabled>Select a Brand</option>
-              <option>Chanel</option>
-              <option>H&M</option>
-              <option>Adidas</option>
-              <option>Nike</option>
-              <option>Gucci</option>
-            </select>
-          </div><br>
-    <div class="form-group">  
-                  <label for="tags">Categories:</label>
-                  <select class="form-select text-capitalize" name="category" required>
-                    <% categories.forEach(function(category) { %>
-                    <option class="text-capitalize" value="<%= category._id %>">
-                      <%= category.name %>
-                    </option>
-                    <% }); %>
-                  </select>
-                  </div>
-                <div class="d-flex justify-content-evenly m-4">
-                  <button type="submit" class="btn btn-primary">Submit</button>
-                  <button type="reset" class="btn btn-warning">Clear</button>
-                </div>
-              </div>
-            </div>
-              
-              
-          
-          </div>
-        </div>
-
-      </form>
-    </div>
-  
-  <div style="display: none" class="crop-product card p-2 shadow" id="crp-container">
-    <div class="d-flex flex-column">
-      <img src="" id="images" style="object-fit: cover" />
-      <button id="cropImageBtn" class="btn btn-primary mt-3">Crop Image</button>
+      <div class="modal-body" >
+        <img id="cropperImage" src="#" alt="Croppable Image"  />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="cropImage()">Crop</button>
+      </div>
     </div>
   </div>
-</section>
-<style>
-  .crop-product {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 4;
-    width: 30rem;
-  }
+</div>
+  <script>
 
-  .error {
-    color: rgb(255, 0, 0);
-  }
-</style>
-<script>
-  function capitalizeFirstLetter(input) {
+function capitalizeFirstLetter(input) {
     input.value = input.value.charAt(0).toUpperCase() + input.value.slice(1);
   }
 
@@ -303,5 +278,70 @@ function cropImage(imageIndex) {
     }
   }
 
+
+function validateForm() {
+  const productName = document.getElementById("exampleInputName1").value;
+  const brand = document.getElementById("brand").value;
+  const category = document.getElementById("category").value;
+  const gender = document.getElementById("gender").value;
+  const price = parseFloat(document.getElementById("inlineFormInputName1").value);
+  const quantity = parseInt(document.getElementById("quantity").value);
+  const description = document.getElementById("exampleTextarea1").value;
+
+  
+
+  if (productName.trim() === "") {
+    document.getElementById("productNameError").textContent = "Product Name is required.";
+  }else {
+    document.getElementById("productNameError").textContent = "";
+  }
+
+  if (price === "" || price <= 0 || isNaN(price)) {
+    document.getElementById("priceError").textContent = "Price must be a valid number greater than 0.";
+    
+  } else {
+    document.getElementById("priceError").textContent = "";
+  }
+
+  if (category === "") {
+    document.getElementById("categoryError").textContent = "Category is required.";
+  } else {
+    document.getElementById("categoryError").textContent = "";
+  }
+
+  if (gender === "") {
+    document.getElementById("genderError").textContent = "Gender is required.";
+  } else {
+    document.getElementById("genderError").textContent = "";
+  }
+
+  if (brand.trim() === "") {
+    document.getElementById("brandError").textContent = "Brand is required.";
+    
+  } else {
+    document.getElementById("brandError").textContent = "";
+  }
+
+
+
+
+  if (quantity === "" || quantity < 0 || isNaN(quantity)) {
+    document.getElementById("quantityError").textContent = "Quantity must be a valid number of at least 0.";
+    
+  } else {
+    document.getElementById("quantityError").textContent = "";
+  }
+
+  if (description.trim() === "") {
+    document.getElementById("descriptionError").textContent = "Description is required.";
+   
+  } else {
+    document.getElementById("descriptionError").textContent = "";
+  }
+
+
+
+  return true;
+}
+
 </script>
-<!-- <script defer src="/js/admin/products/add-product.js"></script> -->

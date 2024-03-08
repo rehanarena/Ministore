@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const flash = require("connect-flash")
 const MongoStore = require("connect-mongo");
+const multer = require('multer');
 const nocache = require('nocache');
 const { v4: uuidv4} = require("uuid")
 const expressLayouts=require('express-ejs-layouts')

@@ -65,5 +65,8 @@ router
 //   .get(authController.getAdminRegister)
 //   .post(authController.adminRegister);
 
+//logout
+router.get("/logout", authController.userLogout);
+router.get("/admin/logout", authController.userLogout);
 
 module.exports = router;

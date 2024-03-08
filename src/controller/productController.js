@@ -1,6 +1,6 @@
 const layout = "./layouts/adminLayout.ejs";
 const Product = require("../model/productSchema");
-const Category=require("../model/categorySchema")
+
 
 
 

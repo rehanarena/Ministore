@@ -474,4 +474,33 @@ forgotPass: async (req, res) => {
       return res.redirect("/forgot-password");
     }
   },
+  /**
+   * User Logout
+   */
+  userLogout: async (req, res) => {
+    req.logOut((err) => {
+      if (err) {
+        console.log(err);
+      } else {
+        req.flash("success", `Logged Out!!`);
+        res.clearCookie("connect.sid");
+        res.redirect("/login");
+      }
+    });
+  },
+/**
+   * Admin Logout
+   */
+  adminLogout: async (req, res) => {
+    req.logOut((err) => {
+      if (err) {
+        console.log(err);
+      } else {
+        req.flash("success", `Logged Out!!`);
+        res.clearCookie("connect.sid");
+        res.redirect("/admin/login");
+      }
+    });
+  },
 }
+
