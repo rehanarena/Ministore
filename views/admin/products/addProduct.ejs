@@ -153,10 +153,16 @@
               <option>Gucci</option>
             </select>
           </div><br>
-    <!-- <div class="form-group">  
-                  <label for="tags">Tags:</label>
-                  <input type="text" class="form-control bg-light" name="Tags" id="tags" placeholder="Enter tags"/>
-                </div> -->
+    <div class="form-group">  
+                  <label for="tags">Categories:</label>
+                  <select class="form-select text-capitalize" name="category" required>
+                    <% categories.forEach(function(category) { %>
+                    <option class="text-capitalize" value="<%= category._id %>">
+                      <%= category.name %>
+                    </option>
+                    <% }); %>
+                  </select>
+                  </div>
                 <div class="d-flex justify-content-evenly m-4">
                   <button type="submit" class="btn btn-primary">Submit</button>
                   <button type="reset" class="btn btn-warning">Clear</button>

@@ -27,7 +27,7 @@ router.get("/", adminController.getDashboard);
 
 router.route("/users").get(adminController.getUsersList);
 
-// router.route("/users/toggle-block/:id").patch(adminController.toggleBlock)
+router.route("/users/toggle-block/:id").patch(adminController.toggleBlock)
 
 
 

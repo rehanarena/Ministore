@@ -1,5 +1,6 @@
 const layout = "./layouts/adminLayout.ejs";
 const Product = require("../model/productSchema");
+const Category=require("../model/categorySchema")
 
 
 
@@ -32,10 +33,10 @@ module.exports = {
       });
     },
     getAddProduct: async (req, res) => {
-      // const categories = await Category.find({ isActive: true });
+      const categories = await Category.find({ isActive: true });
       res.render("admin/products/addProduct", {
         layout,
-        // categories,
+        categories,
       });
     },
     getEditProduct: async (req, res) => {

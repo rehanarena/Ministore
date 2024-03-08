@@ -13,7 +13,6 @@ module.exports = {
       res.render('./admin/dashboard',{
         locals,
         users,
-        admin:req.User,
         layout:adminLayout,
       })
     } catch (error) {

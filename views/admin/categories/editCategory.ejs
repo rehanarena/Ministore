@@ -23,7 +23,7 @@
             <div class="form-group mb-3">
                 <label class="form-label" for="category-status">Status</label>
                 <select class="form-select" name="status" id="category-status" aria-label="List or Unlist the Banner">
-                    <% if (category._status === 'true') { %>
+                    <% if (category.isActive) { %>
                         <option value="true" selected>Listed</option>
                         <option value="false">Unlisted</option>
                     <% } else { %>
@@ -44,9 +44,6 @@
             <button type="reset" class="btn btn-sm btn-warning px-3">Clear</button>
         </div>
     </form>
-    <div style="display: none;" class="crop-banner card container p-2 shadow" id="category-crp-container">
-        <!-- Crop banner code remains unchanged -->
-    </div>
 </div>
 <script src="/js/admin/category/editcategory.js"></script>
 <style>

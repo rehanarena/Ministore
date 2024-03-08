@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const categorystatusSelect = document.getElementById("category-status")
                     const categorystatus = categorystatusSelect.value.trim()
 
-                    const id =  document.getElementById("category-id")
+                    const id =  document.getElementById("category-id").value
                     const body = JSON.stringify({category,status:categorystatus})
                     if (category === "") {
                         error.innerHTML = "category field can't be empty"
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         })
         // deleting category
-  const deleteCategory = (id, imageName) => {
+  const deleteCategory = (id) => {
     Swal.fire({
         title: 'Are you sure?',
         text: "You won't be able to revert this!",
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }).then(async (result) => {
         if (result.isConfirmed) {
             try {
-                await fetch(`/admin/category/delete-category?id=${id}&image=${imageName}`)
+                await fetch(`/admin/category/delete-category?id=${id}`)
                     .then(responses => responses.json())
                     .then(data => {
                         if (data.success) {

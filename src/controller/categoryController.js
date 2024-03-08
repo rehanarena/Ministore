@@ -14,23 +14,24 @@ module.exports = {
     });
   },
   getAddCategory: async (req, res) => {
-    res.render("./admin/categories/addCategory", {
+    res.render("admin/categories/addCategory", {
       layout,
     });
   },
   getEditCategory: async (req, res) => {
     const category = await Category.findById(req.params.id);
+    console.log(category);
     res.render("admin/categories/editCategory", {
       category,
       layout,
     });
   },
   addCategory: async (req, res) => {
-    // console.log(req.body,"reqbody");
+    console.log(req.body, "reqbody");
     const name = String(req.body.category).toLowerCase()
     const category = await Category.findOne({ name: name });
     if (category) {
-      return res.json({'error': "Category Already Exist!!"})
+      return res.json({ 'error': "Category Already Exist!!" })
     } else {
 
       // console.log(req.body);
@@ -47,36 +48,30 @@ module.exports = {
   },
   editCategory: async (req, res) => {
     try {
-      const { status } = req.body;
-
+      const { status, category } = req.body;
       console.log(req.body);
-   
-    let editCategory = {
-    
-      isActive: status === "true" ? true : false,
-    };
-    
-    // update banner deatails
-    const id = req.params.id;
-    const update_category = await Category.findByIdAndUpdate(
-      { _id: id },
-      editCategory,
-      { new: true }
-    );
+      const id = req.params.id
 
-    if (update_category) {
-      res.json({
-        success: true,
-      });
+      const edit = await Category.findById(id)
+
+      edit.name = category.toLowerCase() || edit.name
+      edit.isActive=!edit.isActive
+
+      const update_category = await edit.save()
+      if (update_category) {
+        res.json({
+          success: true,
+        })
+      }
     }
-    } catch (error) {
-      console.error(error.message); 
+    catch (error) {
+      console.log(error.message)
     }
   },
   deleteCategory: async (req, res) => {
     const id = req.query.id;
-    
-    // deleteing banner image from db
+
+    // deleteing category from db
     const deleteCategory = await Category.findByIdAndDelete({ _id: id });
     if (deleteCategory) {
       res.json({

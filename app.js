@@ -17,6 +17,7 @@ const adminRouter =  require('./src/routes/admin');
 // const {}=require('./src/config/db');
 const connectDB = require('./src/config/db');
 const passport = require('./src/config/passport-config');
+const { checkBlockedUser } = require('./src/middlewares/authMiddleware');
 
 
 
@@ -39,7 +40,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //Configure session middleware
 app.use(
   session({
-    secret: uuidv4(),
+    secret: "rena",
     resave: false,
     saveUninitialized: false,
     store:MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
@@ -59,10 +60,10 @@ app.use(passport.initialize());
 app.use(passport.session())
 
 //custom middleware to expose flash messages to views
-app.use((req,res,next)=>{
+app.use(checkBlockedUser,(req,res,next)=>{
   if(req.user){
     res.locals.user =req.user;
-
+    // console.log(req.session);
   }
   res.locals.success=req.flash('success');
   res.locals.error = req.flash('error');
