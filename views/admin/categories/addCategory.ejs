@@ -51,17 +51,14 @@ editform.addEventListener("submit", function (event) {
 
                 const formData = new FormData(editform);
                   console.log(formData)
-                  
-                const categoryInput = document.getElementById("edit-category")
+
+                const categoryInput = document.getElementById("categoryname")
                 const category = categoryInput.value
                 console.log(categoryInput);
 
                 
-                const categorystatusSelect = document.getElementById("category-status")
-                const categorystatus = categorystatusSelect.value.trim()
-
-                const id = document.getElementById("category-id")
-                const body = JSON.stringify({ category, status: categorystatus })
+                
+                const body = JSON.stringify({ category })
                 if (category === "") {
                     error.innerHTML = "category field can't be empty"
                     return;
@@ -69,10 +66,10 @@ editform.addEventListener("submit", function (event) {
 
 
                 let res = await fetch(
-                    `/admin/category/add-category/${id}`,
+                    `/admin/category/add-category`,
                     {
                         method: "POST",
-                        body: body, id,
+                        body: body,
                         headers: {
                             'Content-Type': 'application/json',
                         },

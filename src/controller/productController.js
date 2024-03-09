@@ -82,6 +82,7 @@ module.exports = {
       }
     } catch (error) {
       res.status(400).send(error);
+      console.log(error)
     }
   },
   editProduct: async (req, res) => {

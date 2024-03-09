@@ -8,7 +8,9 @@ const productController = require("../controller/productController");
 
 const { isAdmin } = require("../middlewares/authMiddleware");
 
-// const { productUpload } = require("../middlewares/multer");
+const { upload } = require("../middlewares/multer");
+const multer = require("multer");
+
 router.use (isAdmin,(req,res,next)=>{
   if(req.isAuthenticated()&& req.user.isAdmin){
     res.locals.admin=req.user
@@ -65,8 +67,14 @@ router.route("/products")
 router.route("/products/add-Product")
 .get(productController.getAddProduct)
 
+router.route("/products/add-product")
+    .get(productController.getAddProduct)
+    router.post('/addProduct', upload.fields([{ name: 'images' }, { name: 'primaryImage' }]), productController.addProduct);
+
+
 router.route("/products/edit-product/:id")
 .get(productController.getEditProduct)
+
 
 
 module.exports = router;
