@@ -43,48 +43,54 @@ module.exports = {
     });
   },
   addProduct: async (req, res) => {
+    console.log(req.body,req.files)
     try {
-      let seconaryImages = [];
-      req.files.images.forEach((e) => {
-        seconaryImages.push({
-          name: e.filename,
-          path: e.path,
-        });
-      });
-
-      let PrimaryImage;
-      req.files.primaryImage.forEach((e) => {
-        PrimaryImage = {
-          name: e.filename,
-          path: e.path,
-        };
-      });
-
+      let details = req.body;
+      const files = await req.files;
+      
+  
+      const img = [
+        files.image1[0].filename,
+        files.image2[0].filename,
+        files.image3[0].filename,
+        files.image4[0].filename,
+      ];
+  
+      for (let i = 0; i < img.length; i++) {
+        await sharp("public/products/images/" + img[i])
+          .resize(480, 480)
+          .toFile("public/products/croped/" + img[i]);
+      }
+  
       const product = new Product({
-        product_name: req.body.product_name,
-        brand_name: req.body.brand_name,
-        description: req.body.description,
-        category: req.body.category,
-        stock: req.body.stock,
-        size: req.body.size,
-        actualPrice: req.body.actualPrice,
-        sellingPrice: req.body.sellingPrice,
-        color: req.body.product_color,
-        primary_image: PrimaryImage,
-        secondary_images: seconaryImages,
+        product_name: details.product_name,
+        product_price: details.product_price,
+        category: details.category,
+        gender: details.gender,
+        brand:details.brand,
+        stock: details.stock,
+        product_description: details.product_description,
+        "images.image1": files.image1[0].filename,
+        "images.image2": files.image2[0].filename,
+        "images.image3": files.image3[0].filename,
+        "images.image4": files.image4[0].filename,
       });
-      const saved = await product.save();
-      if (saved) {
-        req.flash("success", "New product Added Sucessfully");
-        res.json({
-          success: true,
-        });
+  
+      const result = await product.save();
+      
+      if(result){
+        req.flash('success','The Product added Successfully');
+        res.redirect("/admin/products");
+      }else{
+        req.flash('error','Something went wrong please try again!');
+        res.redirect("/admin/addproduct");
       }
     } catch (error) {
-      res.status(400).send(error);
-      console.log(error)
+       console.error(error); // Log the error for debugging
+       res.status(400).send({ error: "An error occurred while adding the product." });
     }
-  },
+   },
+   
   editProduct: async (req, res) => {
     try {
       console.log(req.body, req.params.id);

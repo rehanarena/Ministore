@@ -41,7 +41,7 @@ module.exports = {
     
     if (req.isAuthenticated()) {
       const user = await User.findOne({ _id: req.user.id });
-      // console.log(user);
+      console.log(user);
       if (user.isBlocked) {
         req.logout((err) => {
           if (err) {

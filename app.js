@@ -62,7 +62,7 @@ app.use(passport.session())
 
 //custom middleware to expose flash messages to views
 app.use(checkBlockedUser,(req,res,next)=>{
-  if(req.user){
+  if(req.user && req.isAuthenticated){
     res.locals.user =req.user;
     // console.log(req.session);
   }

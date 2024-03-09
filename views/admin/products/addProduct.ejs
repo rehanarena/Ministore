@@ -35,14 +35,14 @@
 
             <div class="form-group row">
               <div class="col-6">
-                <label for="productName" class="text-dark">Product Title</label> <!-- Add text-dark class here -->
-                <input type="text" class="form-control text-dark text-justify" name="productName" id="exampleInputName1"
+                <label for="product_name" class="text-dark">Product Title</label> <!-- Add text-dark class here -->
+                <input type="text" class="form-control text-dark text-justify" name="product_name" id="product_name"
                   placeholder="Name" >
                   <span id="productNameError" class="text-danger"></span>
               </div>
               <div class="col-6">
-                <label for="actualprice" class="text-dark">Actual Price</label> <!-- Add text-dark class here -->
-                <input type="number" class="form-control text-dark" id="inlineFormInputName1" name="actualprice"
+                <label for="actualPrice" class="text-dark">Actual Price</label> <!-- Add text-dark class here -->
+                <input type="number" class="form-control text-dark" id="actualPrice" name="actualPrice"
                   placeholder="Price">
                 <div id="priceError" class="text-danger"></div>
               </div>
@@ -52,7 +52,7 @@
                 <div class="form-group row">
                   <div class="col-sm-12">
                     <div class="form-group">  
-                      <label for="tags">Categories:</label>
+                      <label for="category">Categories:</label>
                       <select class="form-select text-capitalize" name="category" required>
                         <% categories.forEach(function(category) { %>
                         <option class="text-capitalize" value="<%= category._id %>">
@@ -69,7 +69,7 @@
                 <div class="form-group row">
                   <div class="col-sm-12">
                     <label for="sellingPrice" class="text-dark">Discount Price</label> <!-- Add text-dark class here -->
-                <input type="number" class="form-control text-dark" id="inlineFormInputName1" name="sellingPrice"
+                <input type="number" class="form-control text-dark" id="sellingPrice" name="sellingPrice"
                   placeholder="Price">
                     <div id="genderError" class="text-danger"></div>
                   </div>
@@ -80,8 +80,8 @@
               <div class="col-md-6">
                 <div class="form-group row">
                   <div class="col-sm-12">
-                    <label for="brandName" class="text-dark">Brand</label> <!-- Add text-dark class here -->
-                    <input type="text" class="form-control text-dark" id="brand" name="brandName"
+                    <label for="brand_name" class="text-dark">Brand</label> <!-- Add text-dark class here -->
+                    <input type="text" class="form-control text-dark" id="brand_name" name="brand_name"
                       placeholder="Brand Name" onkeyup="capitalizeFirstLetter(this)" >
                       <span id="brandError" class="text-danger"></span>
                   </div>
@@ -90,8 +90,8 @@
               <div class="col-md-6">
                 <div class="form-group row">
                   <div class="col-sm-12">
-                    <label for="stock" class="text-dark">Stock</label> <!-- Add text-dark class here -->
-                    <input type="number" class="form-control text-dark" id="quantity" name="stock"
+                    <label for="product_stock" class="text-dark">Stock</label> <!-- Add text-dark class here -->
+                    <input type="number" class="form-control text-dark" id="product_stock" name="stock"
                       placeholder="Enter Stock" >
                       <span id="quantityError" class="text-danger"></span>
                   </div>
@@ -100,23 +100,55 @@
             </div>
             <div class="form-group mt-2">
               <label for="description" class="text-dark">Description</label> <!-- Add text-dark class here -->
-              <textarea name="product_description" class="form-control text-dark" id="exampleTextarea1" rows="4"
+              <textarea name="description" class="form-control text-dark" id="description" rows="4"
                 ></textarea>
                 <span id="descriptionError" class="text-danger"></span>
             </div>
-            <span class="fw-bold m-2">Select the Primary Image</span>
-
-            <div class="d-flex align-items-center justify-content-center">
-              <img id="prev" class="img-fluid img-thumbnail border my-1 rounded" width="100rem" height="100rem" src="" alt="" />
-            </div>
-    
-            <input id="primaryIMG" type="file" accept=".jpg,.jpeg,.png,.webp,.svg" class="form-control FilUploader" class="mb-3" required />
-            <input id="result" type="hidden" name="" value="" />
-            <span class="fw-bold">Select secondary images <br />
-              <span class="fw-normal text-success">Maximum 3 images</span></span>
-            <input type="file" id="image" class="form-control FilUploader" accept=".jpg,.jpeg,.png,.webp,.svg" name="images" class="mb-3" multiple required />
-          </fieldset>
-        </div>
+            <div class="row d-flex justify-content-between mt-3">
+              <div class="col-lg-3 col-md-6 rounded-image-preview">
+                <label for="imageInput1" class="image-label">Image 1
+                  <div class="rounded-image-preview">
+                    <img id="imagePreview1" src="https://www.creativefabrica.com/wp-content/uploads/2021/04/05/Image-Upload-Icon-Graphics-10388650-1-580x386.jpg" alt="Preview" />
+                  </div>
+                  <input name="image1" type="file" accept="image/*" id="imageInput1" class="imageInput" onchange="openImageCropper(1)">
+                  <button type="button" class="btn btn-sm btn-secondary mt-2" onclick="openModal('imagePreview1')">Crop</button>
+                </label>
+                <span id="imageError1" class="text-danger"></span>
+              </div>
+  
+              <div class="col-lg-3 col-md-6 rounded-image-preview">
+                <label for="imageInput2" class="image-label">Image 2
+                  <div class="rounded-image-preview">
+                    <img id="imagePreview2" src="https://www.creativefabrica.com/wp-content/uploads/2021/04/05/Image-Upload-Icon-Graphics-10388650-1-580x386.jpg" alt="Preview" />
+                  </div>
+                  <input name="image2" type="file" accept="image/*" id="imageInput2" class="imageInput" onchange="openImageCropper(2)">
+                  <button type="button" class="btn btn-sm btn-secondary mt-2" onclick="openModal('imagePreview2')">Crop</button>
+                </label>
+                <span id="imageError2" class="text-danger"></span>
+              </div>
+  
+              <div class="col-lg-3 col-md-6 rounded-image-preview">
+                <label for="imageInput3" class="image-label">Image 3
+                  <div class="rounded-image-preview">
+                    <img id="imagePreview3" src="https://www.creativefabrica.com/wp-content/uploads/2021/04/05/Image-Upload-Icon-Graphics-10388650-1-580x386.jpg" alt="Preview" />
+                  </div>
+                  <input name="image3" type="file" accept="image/*" id="imageInput3" class="imageInput" onchange="openImageCropper(3)">
+                  <button type="button" class="btn btn-sm btn-secondary mt-2" onclick="openModal('imagePreview3')">Crop</button>
+                </label>
+                <span id="imageError3" class="text-danger"></span>
+              </div>
+  
+              <div class="col-lg-3 col-md-6 rounded-image-preview">
+                <label for="imageInput4" class="image-label">Image 4
+                  <div class="rounded-image-preview">
+                    <img id="imagePreview4" src="https://www.creativefabrica.com/wp-content/uploads/2021/04/05/Image-Upload-Icon-Graphics-10388650-1-580x386.jpg" alt="Preview" />
+                  </div>
+                  <input name="image4" type="file" accept="image/*" id="imageInput4" class="imageInput" onchange="openImageCropper(4)">
+                  <button type="button" class="btn btn-sm btn-secondary mt-2" onclick="openModal('imagePreview4')">Crop</button>
+                </label>
+                <span id="imageError4" class="text-danger"></span>
+              </div>
+            </div>  
             <button type="submit" class="btn btn-lg btn-success mr-2 mt-5">Add product</button>
           </form>
         </div>
@@ -124,7 +156,7 @@
     </div>
   </div>
 <!-- Modal for Cropping -->
-<!-- <div class="modal fade" id="cropModal" tabindex="-1" role="dialog" aria-labelledby="cropModalLabel" aria-hidden="true" style="">
+<div class="modal fade" id="cropModal" tabindex="-1" role="dialog" aria-labelledby="cropModalLabel" aria-hidden="true" style="">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -142,6 +174,6 @@
       </div>
     </div>
   </div>
-</div> -->
-  <script defer>/js/admin/products/add-product.js</script>
+</div>
+  <script defer>"/js/admin/products/add-product.js"</script>
 

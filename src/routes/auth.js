@@ -67,6 +67,6 @@ router
 
 //logout
 router.get("/logout", authController.userLogout);
-router.get("/admin/logout", authController.userLogout);
+router.get("/admin/logout", authController.adminLogout);
 
 module.exports = router;

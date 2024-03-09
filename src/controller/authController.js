@@ -474,6 +474,7 @@ forgotPass: async (req, res) => {
       return res.redirect("/forgot-password");
     }
   },
+  
   /**
    * User Logout
    */

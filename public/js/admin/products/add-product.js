@@ -35,19 +35,7 @@ const checkBrandName = () => {
   return valid;
 };
 
-const checkSize = () => {
-  let valid = false;
-  const size = sizeEl.value;
-  if (!isRequired(size)) {
-    showError(sizeEl, "Size cannot be blank.");
-  } else if (!isPositiveInteger(size)) {
-    showError(sizeEl, "Size should be a positive integer.");
-  } else {
-    showSuccess(sizeEl);
-    valid = true;
-  }
-  return valid;
-};
+
 
 const checkStock = () => {
   let valid = false;
@@ -124,65 +112,114 @@ const isAlpha = (value) => {
 
 const isRequired = (value) => (value === "" ? false : true);
 
-// Image change event handler
-document.getElementById("image").addEventListener("change", function () {
-  if (this.files.length > 3) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: "You can select maximum of  3 images",
-    });
-    this.value = "";
-  }
-});
-
-// Primary image change event handler
-document.getElementById("primaryIMG").addEventListener("change", function (e) {
-  let container = document.getElementById("crp-container");
-  container.style.display = "block";
-  let image = document.getElementById("images");
-  let file = e.target.files[0];
-
-  if (file) {
-    let reader = new FileReader();
-    reader.onload = function (event) {
-      image.src = event.target.result;
-      let cropper = new Cropper(image, {
-        aspectRatio: 1 / 1,
-        viewMode: 0,
-        autoCrop: true,
-        background: false,
-      });
-
-      document
-        .getElementById("cropImageBtn")
-        .addEventListener("click", function () {
-          let cropedImg = cropper.getCroppedCanvas().toDataURL("image/png");
-          if (cropedImg) {
-            document.getElementById("prev").src = cropedImg;
-            document.getElementById("result").value = cropedImg;
-            container.style.display = "none";
-            document.querySelector(".btn-group").style.display = "block";
-          }
-          cropper.destroy();
-        });
-    };
-    reader.readAsDataURL(file);
-  }
-});
 
 
-const debounce = (fn, delay = 50) => {
-  let timeoutId;
-  return (...args) => {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
+$(document).ready(function() {
+  $(".imageInput").change(function() {
+    var input = this;
+    var imagePreview = $(input).siblings('.rounded-image-preview').children('img')[0];
+
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+
+      reader.onload = function(e) {
+        imagePreview.src = e.target.result;
+        $(imagePreview).show();
+      };
+
+      reader.readAsDataURL(input.files[0]);
     }
-    timeoutId = setTimeout(() => {
-      fn.apply(null, args);
-    }, delay);
-  };
-};
+  });
+});
+
+// Initialize Cropper.js instance
+var cropper;
+
+// Function to open the Cropper modal
+function openModal(imageId) {
+  var image = document.getElementById(imageId);
+  var cropperImage = document.getElementById('cropperImage');
+
+  cropperImage.src = image.src;
+
+  // Ensure that any existing Cropper instance is destroyed before initializing a new one
+  if (cropper) {
+    cropper.destroy();
+  }
+
+  $('#cropModal').modal('show');
+
+  // Initialize Cropper.js for the selected image
+  cropper = new Cropper(cropperImage, {
+    aspectRatio: 0,
+    viewMode: 0,
+  });
+}
+
+function cropImage(imageIndex) {
+  // Get the cropped canvas
+  var canvas = cropper.getCroppedCanvas();
+
+  // Convert the canvas to a data URL
+  var croppedImageDataUrl = canvas.toDataURL();
+
+  // Set the cropped image as the source of the original image preview
+  var imagePreview = document.getElementById('imagePreview' + imageIndex);
+  if (imagePreview) {
+    imagePreview.src = croppedImageDataUrl;
+  }
+
+  // Set the data URL as the value of the corresponding image input field
+  var imageInput = document.getElementById('imageInput' + imageIndex);
+  if (imageInput) {
+    imageInput.value = croppedImageDataUrl;
+  }
+
+  // Close the Cropper modal
+  $('#cropModal').modal('hide');
+}
+
+  // ... your existing script ...
+
+  // Function to open the Cropper modal for a specific image
+  function openImageCropper(imageIndex) {
+    var imageInput = document.getElementById('imageInput' + imageIndex);
+    var cropperImage = document.getElementById('cropperImage');
+
+    // Check if a file is selected
+    if (imageInput.files && imageInput.files[0]) {
+      var reader = new FileReader();
+
+      reader.onload = function (e) {
+        cropperImage.src = e.target.result;
+
+        // Ensure that any existing Cropper instance is destroyed before initializing a new one
+        if (cropper) {
+          cropper.destroy();
+        }
+
+        // Show the Cropper modal
+        $('#cropModal').modal('show');
+
+        // Initialize Cropper.js for the selected image
+        cropper = new Cropper(cropperImage, {
+          aspectRatio: 1,
+          viewMode: 2,
+        });
+      };
+
+      // Read the selected file as a data URL
+      reader.readAsDataURL(imageInput.files[0]);
+    }
+  }
+
+
+
+
+
+
+
+
 
 // Form submission event handler
 document
