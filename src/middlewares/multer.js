@@ -4,7 +4,7 @@ const sharp = require('sharp');
 
 const storageProduct = multer.diskStorage({
  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "./public/uploads/images/"));
+    cb(null,  "./public/uploads/images/");
  },
  filename: function (req, file, cb) {
     // Sanitize the file name to prevent security vulnerabilities

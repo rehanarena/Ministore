@@ -14,6 +14,7 @@ const authRouter = require('./src/routes/auth');
 const usersRouter = require('./src/routes/users');
 const shopRouter =  require('./src/routes/shop');
 const adminRouter =  require('./src/routes/admin');
+const logger = require('morgan');
 
 // const {}=require('./src/config/db');
 const connectDB = require('./src/config/db');
@@ -31,6 +32,7 @@ app.use(expressLayouts)
 app.set('layout','./layouts/main.ejs')
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+app.use(logger("dev"))
 
 //Middlewares
 app.use(express.json());

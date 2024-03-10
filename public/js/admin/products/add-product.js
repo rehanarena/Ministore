@@ -133,85 +133,6 @@ $(document).ready(function() {
 });
 
 // Initialize Cropper.js instance
-var cropper;
-
-// Function to open the Cropper modal
-function openModal(imageId) {
-  var image = document.getElementById(imageId);
-  var cropperImage = document.getElementById('cropperImage');
-
-  cropperImage.src = image.src;
-
-  // Ensure that any existing Cropper instance is destroyed before initializing a new one
-  if (cropper) {
-    cropper.destroy();
-  }
-
-  $('#cropModal').modal('show');
-
-  // Initialize Cropper.js for the selected image
-  cropper = new Cropper(cropperImage, {
-    aspectRatio: 0,
-    viewMode: 0,
-  });
-}
-
-function cropImage(imageIndex) {
-  // Get the cropped canvas
-  var canvas = cropper.getCroppedCanvas();
-
-  // Convert the canvas to a data URL
-  var croppedImageDataUrl = canvas.toDataURL();
-
-  // Set the cropped image as the source of the original image preview
-  var imagePreview = document.getElementById('imagePreview' + imageIndex);
-  if (imagePreview) {
-    imagePreview.src = croppedImageDataUrl;
-  }
-
-  // Set the data URL as the value of the corresponding image input field
-  var imageInput = document.getElementById('imageInput' + imageIndex);
-  if (imageInput) {
-    imageInput.value = croppedImageDataUrl;
-  }
-
-  // Close the Cropper modal
-  $('#cropModal').modal('hide');
-}
-
-  // ... your existing script ...
-
-  // Function to open the Cropper modal for a specific image
-  function openImageCropper(imageIndex) {
-    var imageInput = document.getElementById('imageInput' + imageIndex);
-    var cropperImage = document.getElementById('cropperImage');
-
-    // Check if a file is selected
-    if (imageInput.files && imageInput.files[0]) {
-      var reader = new FileReader();
-
-      reader.onload = function (e) {
-        cropperImage.src = e.target.result;
-
-        // Ensure that any existing Cropper instance is destroyed before initializing a new one
-        if (cropper) {
-          cropper.destroy();
-        }
-
-        // Show the Cropper modal
-        $('#cropModal').modal('show');
-
-        // Initialize Cropper.js for the selected image
-        cropper = new Cropper(cropperImage, {
-          aspectRatio: 1,
-          viewMode: 2,
-        });
-      };
-
-      // Read the selected file as a data URL
-      reader.readAsDataURL(imageInput.files[0]);
-    }
-  }
 
 
 
@@ -255,22 +176,22 @@ document
         if (result.isConfirmed) {
           const form = document.getElementById("addProductForm");
           try {
-            const formData = new FormData(form);
-            const base64String = document.getElementById("result").value;
-            const base64Data = base64String.split(",")[1];
-            const binaryData = atob(base64Data);
-            const uint8Array = new Uint8Array(binaryData.length);
-            for (let i = 0; i < binaryData.length; i++) {
-              uint8Array[i] = binaryData.charCodeAt(i);
-            }
-            const blob = new Blob([uint8Array], { type: "image/png" });
-            const file = new File([blob], "image.png", { type: "image/png" });
-            formData.append("primaryImage", file);
+            // const formData = new FormData(form);
+            // const base64String = document.getElementById("result").value;
+            // const base64Data = base64String.split(",")[1];
+            // const binaryData = atob(base64Data);
+            // const uint8Array = new Uint8Array(binaryData.length);
+            // for (let i = 0; i < binaryData.length; i++) {
+            //   uint8Array[i] = binaryData.charCodeAt(i);
+            // }
+            // const blob = new Blob([uint8Array], { type: "image/png" });
+            // const file = new File([blob], "image.png", { type: "image/png" });
+            // formData.append("primaryImage", file);
 
-            let res = await fetch("/admin/products/add-product", {
-              method: "POST",
-              body: formData,
-            });
+            // let res = await fetch("/admin/products/add-product", {
+            //   method: "POST",
+            //   body: formData,
+            // });
             let data = await res.json();
             if (data.success) {
               Swal.fire(
@@ -322,3 +243,8 @@ const searchProduct = async () => {
   let queryLink = document.getElementById("querry");
   queryLink.href = "/products/?search=" + encodeURIComponent(search);
 };
+
+
+function capitalizeFirstLetter(input) {
+  input.value = input.value.charAt(0).toUpperCase() + input.value.slice(1);
+}

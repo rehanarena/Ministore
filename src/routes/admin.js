@@ -74,6 +74,11 @@ router.route("/products/add-product")
 
 router.route("/products/edit-product/:id")
 .get(productController.getEditProduct)
+.post(multer.productImagesUpload,productController.editProduct)
+
+// list/unlist product
+
+router.patch("/products/toggle-listing/:id", productController.toggleListing);
 
 
 
