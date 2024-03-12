@@ -8,7 +8,7 @@ module.exports = {
       title: "Ministore - Dashboard",
     };
 
-    console.log(req.user);
+    // console.log(req.user);
     const users = await User.find();
       res.render('./admin/dashboard',{
         locals,

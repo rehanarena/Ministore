@@ -74,7 +74,7 @@ app.use(checkBlockedUser,(req,res,next)=>{
 })
  
 app.use('/', authRouter);
-app.use('/users', usersRouter);
+app.use('/user', usersRouter);
 app.use('/', shopRouter);
 app.use("/admin", adminRouter);
 

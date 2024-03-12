@@ -17,6 +17,27 @@ router.route("/reset-password")
 .post(userController.resetPass);
 
 
+/**
+ * User Address
+ */
+
+router.route("/address")
+.get(userController.getAddress);
+router.route("/address/add-address")
+.post(userController.addAddress);
+
+router
+  .route("/address/edit-address/:id")
+  .get(userController.getEditAddress)
+  .post(userController.editAddress)
+  .delete(userController.deleteAddress);
+
+router
+  .route("/address/delete-address/:id")
+  .delete(userController.deleteAddress);
+
+
+
 
 
 

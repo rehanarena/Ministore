@@ -41,14 +41,16 @@
                 </nav><!-- End .main-nav -->
             </div><!-- End .header-left -->
 
-            <li class="nav-item text-nowrap">
-                <a class="nav-link"  href="/logout" style="color: black; position: relative; left: -20px;">Sign out</a>
-            </li>
+            <div class="nav-item navbar-icon-link">
+                    <a class="nav-link"  href="/logout" style="color: black; position: relative; left: -20px;">Sign out</a>
+                </li>
+            </div>
+            
              <!-- User Not Logged - link to login page-->
           <% if (typeof user !=='undefined') { %>
             <% if (user) { %>
             <div class="nav-item navbar-icon-link">
-              <a href="user/profile" class="navbar-icon-link">
+              <a href="/user/profile" class="navbar-icon-link">
                 <i class="bi bi-person" style="width: 450;color: black;"></i>
                 <span class="text-sm ms-2 ms-lg-0 text-uppercase text-sm fw-bold d-none d-sm-inline d-lg-none">
                   Account

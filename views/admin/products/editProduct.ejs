@@ -133,7 +133,7 @@
     const actualPriceEl = document.querySelector("#actualPrice");
     const sellingPriceEl = document.querySelector("#sellingPrice");
     const statusEl = document.querySelector("#status");
-    const form = document.querySelector("#editProductForm");
+    const editProductForm = document.querySelector("#editProductForm");
   
     const isRequired = (value) => (value === "" ? false : true);
   
@@ -327,7 +327,7 @@
       };
     };
   
-    form.addEventListener("submit", function(e) {
+    editProductForm.addEventListener("submit", function(e) {
       e.preventDefault();
   
       let isProductNameValid = checkProductName(),
@@ -365,13 +365,13 @@
           confirmButtonText: 'Yes, submit it!'
         }).then((result) => {
           if (result.isConfirmed) {
-            form.submit();
+            editProductForm.submit();
           }
         })
       }
     });
   
-    form.addEventListener(
+    editProductForm.addEventListener(
       "input",
       debounce(function(e) {
         switch (e.target.id) {

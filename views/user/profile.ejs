@@ -1,113 +1,123 @@
-<style>
-    .password-toggle .form-control {
-      padding-right: 3rem;
-    }
-  </style>
-  
-  <section>
+
+<main class="main">
+  <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
     <div class="container">
-      <!-- Breadcrumbs -->
-      <ol class="breadcrumb justify-content-center">
-        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-        <li class="breadcrumb-item"><a href="index.html">Account</a></li>
-        <li class="breadcrumb-item active">Profile</li>
-      </ol>
-      <!-- Hero Content-->
-      <div class="hero-content pb-5 text-center">
-        <h1 class="hero-heading">Your Profile</h1>
-      </div>
-    </div>
-  </section>
-  
-  
-  
-  <div class="container mb-5">
-    <div class="row">
-      <%- include('../partials/user/sidebar.ejs') %>
-      <div class="col-lg-8">
-        <!-- Profile form-->
-        <form id="update-form" action="/user/profile" method="POST">
-          <div class="bg-secondary-subtle rounded-3 p-4 mb-4">
-            <div class="d-flex align-items-center">
-              <img class="rounded" src="/uploads/profile-image/avatar.png" width="90" alt="<%- user.username %>">
-              <h3 class="m-2 text-capitalize"><%- user.firstName + ' ' + user.lastName %></h3>
-              <p class="lead m-2 text-uppercase">Update Profile</p>
-            </div>
-          </div>
-          <div class="row gx-4 gy-3">
-            <div class="col-sm-6">
-              <label class="form-label" for="account-fn">First Name</label>
-              <input name="firstName" class="form-control" type="text" id="account-fn" value="<%- user.firstName %>">
-              <small></small>
-            </div>
-            <div class="col-sm-6">
-              <label class="form-label" for="account-ln">Last Name</label>
-              <input name="lastName" class="form-control" type="text" id="account-ln" value="<%- user.lastName %>">
-              <small></small>
-            </div>
-            <div class="col-sm-6">
-              <label class="form-label" for="account-email">Email Address</label>
-              <input class="form-control" type="email" id="account-email" value="<%- user.email %>" disabled>
-            </div>
-            <div class="col-sm-6">
-              <label class="form-label" for="account-phone">Phone Number</label>
-              <input name="phone" class="form-control" type="text" id="account-phone" placeholder="+91 80534 89572" required>
-              <small></small>
-            </div>
-            <div class="col-12">
-              <hr class="mt-2 mb-3">
-              <div class="d-flex flex-wrap justify-content-between align-items-center">
-                <button class="btn btn-outline-primary m-3 mt-sm-0" type="submit">Update profile</button>
-              </div>
-            </div>
-          </div>
-        </form>
-        <!-- Change Password Form -->
-        <form action="/user/reset-password" method="POST" id="reset-password-form">
-          <hr class="my-4">
-          <div class="bg-secondary rounded-3 p-4 mb-4">
-            <h4>Change Password</h4>
-          </div>
-          <div class="col px-5 mx-5">
-            <div class="col-md-12  mb-5 form-group">
-              <div class="d-flex align-items-center">
-                <label class="form-label" for="oldPassword">Old Password</label>
-                <input type="password" class="form-control" id="oldPassword" name="oldPassword" placeholder="Old Password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'">
-                <i class="bi bi-eye-slash" id="toggleOldPassword" style="position: relative;z-index: 8; left: -30px; width: 0%; cursor: pointer;"></i>
-              </div>
-              <small></small>
-            </div>
-            <div class="row">
-              <div class="col-md-6 mb-3 form-group">
-                <div class="d-flex align-items-center">
-                  <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="New Password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'">
-                  <i class="bi bi-eye-slash" id="toggleNewPassword" style="position: relative;z-index: 8; left: -30px; width: 0%; cursor: pointer;"></i>
-                </div>
+      <h1 class="page-title">My Account<span style="color: green;">Ministore</span></h1>
+    </div><!-- End .container -->
+  </div><!-- End .page-header -->
+    <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item"><a href="#">Shop</a></li>
+                <li class="breadcrumb-item active" aria-current="page">My Account</li>
+            </ol>
+        </div><!-- End .container -->
+      </nav><!-- End .breadcrumb-nav -->
+
+      <div class="container mb-5">
+        <div class="row">
+          <%- include('../partials/user/sidebar.ejs') %>
+          <div class="col-lg-8">
+            <div class="center">
+                        <br>
+                        <div class="center" >
+                        <h3 class="m-2 text-capitalize"><%- user.firstName + ' ' + user.lastName %></h3><br>
+                        <p class="m-2 text-capitalize">Email Address   : <%- user.email %></p><br>
+                        <p class="m-2 text-capitalize">phone No :<%- user.phone%></p><br>
+                        <p class="m-2 text-capitalize">Country: India</p><br>
+                        </div>
+                      </div>
+                    </div>
+                    </div>
+                    </div>
+                    <!-- update form-->
+          <form id="update-form" action="/user/profile" method="POST">
+            <div class="bg-secondary-subtle rounded-3 p-4 mb-4">
+            <div class="row gx-4 gy-3">
+              <div class="col-sm-6">
+                <label class="form-label" for="account-fn">First Name</label>
+                <input name="firstName" class="form-control" type="text" id="account-fn" value="<%- user.firstName %>">
                 <small></small>
               </div>
-              <div class="col-md-6 mb-3 form-group">
-                <div class="d-flex align-items-center">
-                  <input type="password" class="form-control password" id="confirmNewPassword" name="confirmNewPassword" placeholder="Confirm New Password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Confirm New Password'">
-                  <i class="bi bi-eye-slash" id="toggleNewPasswordConfirm" style="position: relative;z-index: 8; left: -30px; width: 0%; cursor: pointer;"></i>
-                </div>
+              <div class="col-sm-6">
+                <label class="form-label" for="account-ln">Last Name</label>
+                <input name="lastName" class="form-control" type="text" id="account-ln" value="<%- user.lastName %>">
                 <small></small>
               </div>
+              <div class="col-sm-6">
+                <label class="form-label" for="account-email">Email Address</label>
+                <input class="form-control" type="email" id="account-email" value="<%- user.email %>" disabled>
+              </div>
+              <div class="col-sm-6">
+                <label class="form-label" for="account-phone">Phone Number</label>
+                <input name="phone" class="form-control" type="text" id="account-phone" placeholder="+91 9778160650" required>
+                <small></small>
+              </div>
+              <div class="col-12">
+                <hr class="mt-2 mb-3">
+                <div class="d-flex flex-wrap justify-content-between align-items-center">
+                  <button class="btn btn-outline-success m-3 mt-sm-0" type="submit">Update profile</button>
+                </div>
+              </div>
             </div>
+          </form>
+
+          <div class="mt-5 text-center">
+            <a href="/user/address">
+                <button class="btn btn-outline-success profile-button rounded-0" type="button">
+                    Manage addresses
+                </button>
+            </a>
+            <br><br>
+        </div>
+
+          <!-- Change Password Form --> 
+<form action="/user/reset-password" method="POST" id="reset-password-form">
+  <div class="container border rounded-3 p-4 mb-4" style="background-color: #f8f9fa;">
+    <h4>Change Password</h4>
+    <hr class="my-4">
+    <div class="col px-5 mx-5">
+      <div class="col-md-12  mb-5 form-group">
+        <div class="d-flex align-items-center">
+          <label class="form-label" for="oldPassword">Old Password</label>
+          <input type="password" class="form-control" id="oldPassword" name="oldPassword" placeholder="Old Password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'">
+          <i class="bi bi-eye-slash" id="toggleOldPassword" style="position: relative;z-index: 8; left: -30px; width: 0%; cursor: pointer;"></i>
+        </div>
+        <small></small>
+      </div>
+      <div class="row">
+        <div class="col-md-6 mb-3 form-group">
+          <div class="d-flex align-items-center">
+            <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="New Password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'">
+            <i class="bi bi-eye-slash" id="toggleNewPassword" style="position: relative;z-index: 8; left: -30px; width: 0%; cursor: pointer;"></i>
           </div>
-          <div class="col-12">
-            <hr class="mt-2 mb-3">
-            <div class="d-flex flex-wrap justify-content-between align-items-center">
-              <!-- <button class="btn btn-outline-primary m-3 mt-sm-0" type="button">Update profile</button> -->
-              <button class="btn btn-outline-warning m-3 mt-sm-0" type="submit">Change Password</button>
-            </div>
+          <small></small>
+        </div>
+        <div class="col-md-6 mb-3 form-group">
+          <div class="d-flex align-items-center">
+            <input type="password" class="form-control password" id="confirmNewPassword" name="confirmNewPassword" placeholder="Confirm New Password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Confirm New Password'">
+            <i class="bi bi-eye-slash" id="toggleNewPasswordConfirm" style="position: relative;z-index: 8; left: -30px; width: 0%; cursor: pointer;"></i>
           </div>
-  
-        </form>
+          <small></small>
+        </div>
       </div>
     </div>
-  
+    <div class="col-12">
+      <hr class="mt-2 mb-3">
+      <div class="d-flex flex-wrap justify-content-between align-items-center">
+        <!-- <button class="btn btn-outline-primary m-3 mt-sm-0" type="button">Update profile</button> -->
+        <button class="btn btn-outline-success m-3 mt-sm-0" type="submit">Change Password</button>
+      </div>
+    </div>
   </div>
-  </div>
-  
-  <script defer src="/javascripts/updateProfile.js"></script>
-  <script defer src="/javascripts/resetPassValidation.js"></script>
+</form>
+
+        </div>
+      </div>
+    
+    </div>
+    </div>
+    
+    <script defer src="/javascripts/updateProfile.js"></script>
+    <script defer src="/javascripts/resetPassValidation.js"></script>
