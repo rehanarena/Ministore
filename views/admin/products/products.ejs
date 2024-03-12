@@ -199,3 +199,63 @@
     }
   };
 </script>
+<script defer>
+  //delete product
+  deleteProduct: async (req, res) => {
+    console.log(req.params);
+
+    try {
+      const product = await Product.findById(req.params.id);
+      if (!product) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+
+      // Delete main image
+      if (product.img1 && product.img1.path) {
+        fs.unlink(
+          path.join(__dirname, "..", product.img1.path),
+          (err) => {
+            if (err) console.error(err);
+          }
+        );
+      }
+
+      // Delete secondary images
+      if (product.img2 && product.img2.length > 0) {
+        product.img2.forEach((image) => {
+          fs.unlink(path.join(__dirname, "..", image2.path), (err) => {
+            if (err) console.error(err);
+          });
+        });
+      }
+      if (product.img2 && product.img2.length > 0) {
+        product.img2.forEach((image) => {
+          fs.unlink(path.join(__dirname, "..", image2.path), (err) => {
+            if (err) console.error(err);
+          });
+        });
+      }
+      if (product.img3 && product.img3.length > 0) {
+        product.img3.forEach((image) => {
+          fs.unlink(path.join(__dirname, "..", image3.path), (err) => {
+            if (err) console.error(err);
+          });
+        });
+      }
+      if (product.img4 && product.img3.length > 0) {
+        product.img4.forEach((image) => {
+          fs.unlink(path.join(__dirname, "..", image4.path), (err) => {
+            if (err) console.error(err);
+          });
+        });
+      }
+
+      // Delete the product from the database
+      await Product.deleteOne({ _id: req.params.id });
+      res.status(200).json({ message: "Product deleted successfully" });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Server error" });
+    }
+  }
+</script>

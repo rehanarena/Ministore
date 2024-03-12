@@ -43,8 +43,19 @@ async function processImage(filePath) {
     console.error('Error processing image:', error);
  }
 }
+const profileStorage = multer.diskStorage({
+   destination : ( req, file, cb ) => {
+       cb( null, './public/uploads/profile-images/')
+   },
+   filename : ( req, file, cb ) => {
+       const filename = file.originalname
+       const uniqueName = Date.now() + '-' + filename
+       cb( null, uniqueName )
+   }
+})
 
 module.exports = {
  productImagesUpload,
- processImage // Export the image processing function if you want to use it elsewhere
+ processImage, // Export the image processing function if you want to use it elsewhere
+ profileUpload: multer({storage : profileStorage}),
 };

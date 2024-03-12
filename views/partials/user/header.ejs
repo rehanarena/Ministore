@@ -44,12 +44,36 @@
             <li class="nav-item text-nowrap">
                 <a class="nav-link"  href="/logout" style="color: black; position: relative; left: -20px;">Sign out</a>
             </li>
-            <a href="/login" class="login-logo" >
-                <i class="fas fa-user fa-2x" style="color: black; position: relative; left: -20px;"></i>
-
-
-            </a>
-        
+             <!-- User Not Logged - link to login page-->
+          <% if (typeof user !=='undefined') { %>
+            <% if (user) { %>
+            <div class="nav-item navbar-icon-link">
+              <a href="user/profile" class="navbar-icon-link">
+                <i class="bi bi-person" style="width: 450;color: black;"></i>
+                <span class="text-sm ms-2 ms-lg-0 text-uppercase text-sm fw-bold d-none d-sm-inline d-lg-none">
+                  Account
+                </span>
+              </a>
+            </div>
+            <% } %>
+            <% } else { %>
+            <div class="nav-item navbar-icon-link m-0">
+              <a href="/login" class="navbar-icon-link">
+                <i class="bi bi-door-open-fill text-success"></i>
+                <span class="text-sm ms-3 ms-lg-0 text-uppercase text-sm fw-bold d-none d-sm-inline d-lg-none">Log
+                  in
+                </span>
+              </a>
+            </div>
+            <div class="nav-item navbar-icon-link m-0">
+              <a href="/register" class="navbar-icon-link">
+                <i class="bi bi-plus-circle text-info"></i>
+                <span class="text-sm ms-2 ms-lg-0 text-uppercase text-sm fw-bold d-none d-sm-inline d-lg-none">Sign
+                  Up
+                </span>
+              </a>
+            </div>
+            <% } %>
 
             
             <div class="header-right">

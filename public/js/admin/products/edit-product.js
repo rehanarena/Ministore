@@ -44,7 +44,13 @@ $(document).ready(function () {
     };
     //delete existing image
     deleteImg = (img_id, path, filename) => {
-      if (path == "secondary_img") {
+      if (path == "img2") {
+        changeProdImg.push(img_id);
+      }
+      else if (path == "img3") {
+        changeProdImg.push(img_id);
+      }
+      if (path == "img4") {
         changeProdImg.push(img_id);
       }
       document.getElementById("img" + filename).remove();

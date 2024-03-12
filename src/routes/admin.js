@@ -80,6 +80,13 @@ router.route("/products/edit-product/:id")
 
 router.patch("/products/toggle-listing/:id", productController.toggleListing);
 
+// Product Delete
+router.delete("/products/delete-product/:id", productController.deleteProduct);
+
+// Product Image Delete
+// router.delete("/products/delete-image/", productController.deleteImage);
+
+
 
 
 module.exports = router;
