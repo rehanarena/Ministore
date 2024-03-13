@@ -6,48 +6,48 @@
                     style="width: 6.375rem; height: 6.375rem;"><img class="img-fluid rounded-circle" src="/uploads/profile-image/avatar.png"
                         style="height: 100%; width: 100%;" alt="User"></div>
                 <div class="ps-md-3">
-                    <h3 class="fs-base mb-0 text-capitalize" style="color: #333; font-size: 1.25rem;"><%- user.firstName + ' ' + user.lastName %></h3><span class="text-accent fs-sm" style="color: #666; font-size: 0.875rem;"><%- user.email %></span>
+                    <h3 class="fs-3 mb-0 text-capitalize" style="color: #333;"> <%- user.firstName + ' ' + user.lastName %></h3><span class="text-accent fs-5" style="color: #666;"><%- user.email %></span>
                 </div>
             </div><a class="btn btn-primary d-lg-none mb-2 mt-3 mt-md-0" href="#account-menu" data-bs-toggle="collapse"
                 aria-expanded="false"><i class="ci-menu me-2"></i>Account menu</a>
         </div>
         <div class="d-lg-block collapse" id="account-menu">
             <div class="bg-body-secondary px-4 py-3">
-                <h3 class="fs-sm mb-0 text-muted" style="color: #666; font-size: 1rem;">Account settings</h3>
+                <h3 class="fs-5 mb-0 text-muted" style="color: #666;">Account settings</h3>
             </div>
             <ul class="list-unstyled mb-0">
                 <li class="border-bottom mb-0"><a class="nav-link-style d-flex align-items-center px-4 py-3 active"
-                        href="/user/profile" style="color: #333; font-size: 1rem;"><i class="ci-user opacity-60 me-2"></i>Profile info</a></li>
+                        href="/user/profile" style="color: #333;"><i class="ci-user opacity-60 me-2 fs-5"></i>Profile info</a></li>
                 <li class="border-bottom mb-0"><a class="nav-link-style d-flex align-items-center px-4 py-3"
-                        href="/user/address" style="color: #333; font-size: 1rem;"><i class="ci-location opacity-60 me-2"></i>Addresses</a></li>
+                        href="/user/address" style="color: #333;"><i class="ci-location opacity-60 me-2 fs-5"></i>Manage Addresses</a></li>
             </ul>
             <div class="bg-body-secondary px-4 py-3">
-                <h3 class="fs-sm mb-0 text-muted" style="color: #666; font-size: 1rem;">Orders & Wishlist</h3>
+                <h3 class="fs-5 mb-0 text-muted" style="color: #666;">Orders & Wishlist</h3>
             </div>
             <ul class="list-unstyled mb-0">
                 <li class="border-bottom mb-0">
                     <a class="nav-link-style d-flex align-items-center px-4 py-3 "
-                        href="/user/orders" style="color: #333; font-size: 1rem;">
-                        <i class="ci-bag opacity-60 me-2"></i>
+                        href="/user/orders" style="color: #333;">
+                        <i class="ci-bag opacity-60 me-2 fs-5"></i>
                         Orders
 
                         <% if (typeof orderCount !== 'undefined') { %>
-                            <span class="fs-sm text-muted ms-auto"><%= orderCount %></span>
+                            <span class="fs-5 text-muted ms-auto"><%= orderCount %></span>
                         <% } %>
                     </a>
                 </li>
                 <li class="border-bottom mb-0">
-                    <a class="nav-link-style d-flex align-items-center px-4 py-3" href="/user/wishlist" style="color: #333; font-size: 1rem;">
-                        <i class="ci-heart opacity-60 me-2"></i>
+                    <a class="nav-link-style d-flex align-items-center px-4 py-3" href="/user/wishlist" style="color: #333;">
+                        <i class="ci-heart opacity-60 me-2 fs-5"></i>
                         Wishlist
                         <% if (typeof wishlistCount !== 'undefined') { %>
-                            <span class="fs-sm text-muted ms-auto"><%= wishlistCount %></span>
+                            <span class="fs-5 text-muted ms-auto"><%= wishlistCount %></span>
                         <% } %>
                     </a></li>
             </ul>
             <div class="d-flex justify-content-center my-3 pb-3">
                 <a href="/logout">
-                    <button class="btn btn-outline-danger">Sign Out</button>
+                    <button class="btn btn-outline-danger fs-5">Sign Out</button>
                 </a>
             </div>
         </div>
