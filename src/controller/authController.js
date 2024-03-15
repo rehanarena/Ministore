@@ -191,9 +191,9 @@ userRegister: async (req, res) => {
     }
 },
 userLogin: async (req, res, next) => {
-  console.log(req.body)
+  // console.log(req.body)
   const user = await User.findOne({ email: req.body.email, isAdmin: false });
-  console.log(user);
+  // console.log(user);
   if (user) {
     if (user.isBlocked) {
       req.flash("error", "You are blocked by the admin!!!!!!");

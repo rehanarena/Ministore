@@ -8,6 +8,7 @@ const flash = require("connect-flash")
 const MongoStore = require("connect-mongo");
 const multer = require('multer');
 const nocache = require('nocache');
+const methodOverride=require('method-override');
 const { v4: uuidv4} = require("uuid")
 const expressLayouts=require('express-ejs-layouts')
 const authRouter = require('./src/routes/auth');
@@ -33,7 +34,7 @@ app.set('layout','./layouts/main.ejs')
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(logger("dev"))
-
+app.use(methodOverride('_method'));
 //Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

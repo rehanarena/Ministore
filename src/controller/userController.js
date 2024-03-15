@@ -20,17 +20,24 @@ module.exports = {
       });
     },
     editProfile: async (req, res) => {
-      // console.log(req.body);
-      const user = await User.findById(req.user.id)
-  
-      const {firstName, lastName, phone} = req.body
-  
-      user.firstName = firstName
-      user.lastName = lastName
-      user.phone = phone
-  
-      await user.save()
-    },
+        try {
+          console.log(req.body);
+          const user = await User.findById(req.user.id);
+    
+          const { firstName, lastName, phone } = req.body;
+    
+          user.firstName = firstName || user.firstName;
+          user.lastName = lastName || user.lastName;
+          user.phone = phone || user.phone;
+    
+          await user.save();
+    
+          return res.status(200).json({ message: "Profile updated successfully", user });
+        } catch (error) {
+          console.error("Error updating profile:", error);
+          return res.status(500).json({ error: "Internal server error" });
+        }
+      },
      // Password Reset From Profile
   resetPass: async (req, res) => {
     try {
@@ -147,12 +154,20 @@ module.exports = {
   },
 
   deleteAddress: async (req, res) => {
-    let id = req.params.id;
-    const address = await Address.deleteOne({ _id: id });
+    try {
+        let id = req.params.id;
+        const address = await Address.deleteOne({ _id: id });
 
-    if (address) {
-      req.flash("success", "Address Deleted");
-      return res.redirect("/user/address");
+        if (address.deletedCount === 1) {
+            req.flash("success", "Address Deleted");
+            return res.redirect("/user/address");
+        } else {
+            throw new Error("Failed to delete address");
+        }
+    } catch (error) {
+        console.error("Error deleting address:", error);
+        req.flash("error", "Failed to delete address");
+        return res.redirect("/user/address");
     }
-  },
+}
 };

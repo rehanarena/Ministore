@@ -93,6 +93,62 @@
               <small></small>
             </div>
           </div>
+          <!-- Image Upload 1 -->
+          <div class="col-lg-3 col-md-6">
+            <div class="rounded-image-preview">
+              <label for="imageInput1" class="image-label">Image 1
+                <div class="rounded-image-preview">
+                  <img id="imagePreview1" src="/uploads/cropped/<%= product.images.image1 %>" alt="Preview" />
+                </div>
+                <input name="image1" type="file" accept="image/*" id="imageInput1" class="imageInput"
+                  onchange="updateImagePreview(this, 'imagePreview1', '/uploads/cropped<%= product.images.image1 %>', 'removeButton1')">
+              </label>
+            </div>
+            <button type="button"  class="remove-button" id="removeButton1"
+              onclick="removeImagePreview('imagePreview1', '/uploads/cropped<%= product.images.image1 %>', 'removeButton1')">Remove</button>
+          </div>
+
+          <!-- Image Upload 2 -->
+          <div class="col-lg-3 col-md-6">
+            <div class="rounded-image-preview">
+              <label for="imageInput2" class="image-label">Image 2
+                <div class="rounded-image-preview">
+                  <img id="imagePreview2" src="/uploads/cropped/<%- product.images.image2 %>" alt="Preview" />
+                </div>
+                <input name="image2" type="file" accept="image/*" id="imageInput2" class="imageInput"
+                  onchange="updateImagePreview(this, 'imagePreview2', '/uploads/cropped<%= product.images.image2 %>', 'removeButton2')">
+              </label>
+            </div>
+            <button type="button" style="display: none;" class="remove-button" id="removeButton2"
+              onclick="removeImagePreview('imagePreview2', '/uploads/cropped/<%= product.images.image2 %>', 'removeButton2')">Remove</button>
+          </div>
+          <!-- Repeat similar code for Image Upload 3 and 4 with unique IDs -->
+          <div class="col-lg-3 col-md-6">
+            <div class="rounded-image-preview">
+              <label for="imageInput3" class="image-label">Image 3
+                <div class="rounded-image-preview">
+                  <img id="imagePreview3" src="/uploads/cropped/<%- product.images.image3 %>" alt="Preview" />
+                </div>
+                <input name="image3" type="file" accept="image/*" id="imageInput3" class="imageInput"
+                  onchange="updateImagePreview(this, 'imagePreview3', '/uploads/cropped<%= product.images.image3 %>', 'removeButton3')">
+              </label>
+            </div>
+            <button type="button" style="display: none;" class="remove-button" id="removeButton3"
+              onclick="removeImagePreview('imagePreview3', '/uploads/cropped<%= product.images.image3 %>', 'removeButton3')">Remove</button>
+          </div>
+
+         
+
+
+
+
+        </div>
+
+
+
+
+      </div>
+
         </fieldset>
       </div>
       <div class="d-flex justify-content-evenly m-4">
@@ -100,12 +156,12 @@
         <button type="reset" class="btn btn-warning">Clear</button>
       </div>
     </form>
-    <div style="display: none" class="crop-product card p-2 shadow" id="crp-container">
+    <!-- <div style="display: none" class="crop-product card p-2 shadow" id="crp-container">
       <div class="d-flex flex-column">
         <img src="" id="images" style="object-fit: cover" />
         <button id="cropImageBtn" class="btn btn-primary mt-3">Crop Image</button>
       </div>
-    </div>
+    </div> -->
   </section>
   <style>
     .crop-product {
@@ -123,6 +179,62 @@
   </style>
   
   <script defer>
+
+  async function deleteImage(imageId, productId) {
+    try {
+      // Show a confirmation dialog
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      });
+
+      if (result.isConfirmed) {
+        // Send a request to the server to delete the image
+        const response = await fetch(`/admin/products/delete-image?productId=${productId}&imageId=${imageId}`, {
+          method: 'DELETE',
+        });
+
+        if (response.ok) {
+          // If the image was deleted successfully, show a success message
+          Swal.fire(
+            'Deleted!',
+            'The image has been deleted.',
+            'success'
+          ).then(()=>{
+            location.reload()
+          });
+          // Optionally, remove the image from the UI here
+        } else {
+          // If there was an error, show an error message
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Something went wrong!',
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Something went wrong!',
+      });
+    }
+  }
+
+
+
+
+
+
+
+
     const productNameEl = document.querySelector("#product_name");
     const brandNameEl = document.querySelector("#brand_name");
     const sizeEl = document.querySelector("#size");
@@ -201,35 +313,8 @@
       return valid;
     };
   
-    const checkSize = () => {
-      let valid = false;
-      const size = sizeEl.value.trim();
   
-      if (!isRequired(size)) {
-        showError(sizeEl, "Size cannot be blank.");
-      } else if (!isNumber(size)) {
-        showError(sizeEl, "Size must be a number.");
-      } else {
-        showSuccess(sizeEl);
-        valid = true;
-      }
-      return valid;
-    };
-  
-    const checkProductColor = () => {
-      let valid = false;
-      const productColor = productColorEl.value.trim();
-  
-      if (!isRequired(productColor)) {
-        showError(productColorEl, "Color cannot be blank.");
-      } else if (!isColor(productColor)) {
-        showError(productColorEl, "Color is not valid.");
-      } else {
-        showSuccess(productColorEl);
-        valid = true;
-      }
-      return valid;
-    };
+    
   
     const checkProductStock = () => {
       let valid = false;
@@ -332,8 +417,6 @@
   
       let isProductNameValid = checkProductName(),
         isBrandNameValid = checkBrandName(),
-        isSizeValid = checkSize(),
-        isProductColorValid = checkProductColor(),
         isProductStockValid = checkProductStock(),
         isDescriptionValid = checkDescription(),
         isActualPriceValid = checkActualPrice(),
@@ -343,8 +426,6 @@
       let isFormValid =
         isProductNameValid &&
         isBrandNameValid &&
-        isSizeValid &&
-        isProductColorValid &&
         isProductStockValid &&
         isDescriptionValid &&
         isActualPriceValid &&
@@ -380,12 +461,6 @@
             break;
           case "brand_name":
             checkBrandName();
-            break;
-          case "size":
-            checkSize();
-            break;
-          case "product_color":
-            checkProductColor();
             break;
           case "product_stock":
             checkProductStock();

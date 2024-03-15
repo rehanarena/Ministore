@@ -23,9 +23,9 @@
                         <br>
                         <div class="center" >
                         <h3 class="m-2 text-capitalize"><%- user.firstName + ' ' + user.lastName %></h3><br>
-                        <p class="m-2 text-capitalize">Email Address   : <%- user.email %></p><br>
-                        <p class="m-2 text-capitalize">phone No :<%- user.phone%></p><br>
-                        <p class="m-2 text-capitalize">Country: India</p><br>
+                        <p class="m-2 ">Email Address   : <%- user.email %></p><br>
+                        <p class="m-2">phone No :<%- user.phone%></p><br>
+                        <p class="m-2 ">Country: India</p><br>
                         </div>
                       </div>
                     </div>
@@ -51,13 +51,13 @@
               </div>
               <div class="col-sm-6">
                 <label class="form-label" for="account-phone">Phone Number</label>
-                <input name="phone" class="form-control" type="text" id="account-phone" placeholder="+91 9778160650" required>
+                <input name="phone" class="form-control" type="text" id="account-phone" value="<%- user.phone %>" placeholder=" 9778877665" required>
                 <small></small>
               </div>
               <div class="col-12">
                 <hr class="mt-2 mb-3">
                 <div class="d-flex flex-wrap justify-content-between align-items-center">
-                  <button class="btn btn-outline-success m-3 mt-sm-0" type="submit">Update profile</button>
+                  <button class="btn btn-outline-success m-3 mt-sm-0" type="submit">Save profile</button>
                 </div>
               </div>
             </div>

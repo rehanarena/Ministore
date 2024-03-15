@@ -9,7 +9,19 @@ const path = require("path");
 
 
 module.exports = {
+  getProductDetails : async(id)=>{
+    try {
+      let product=await Product.find({_id:id});
+      
+      return product[0]
+    } catch (error) {
+      console.log(error);
+    }
+  },
   getAllProducts: async (req, res) => {
+    const locals = {
+      title: "Product Management",
+    };
     let perPage = 9;
     let page = req.query.page || 1;
 
@@ -18,13 +30,14 @@ module.exports = {
       .limit(perPage)
       .exec();
 
-    console.log(products)
+    console.log(products[0])
     const count = await Product.find().countDocuments()
     const nextPage = parseInt(page) + 1;
     const hasNextPage = nextPage <= Math.ceil(count / perPage);
 
 
     res.render("admin/products/products", {
+      locals,
       layout,
       products,
       current: page,
@@ -69,7 +82,7 @@ module.exports = {
           .toFile("./public/uploads/cropped/" + img[i]);
       }
 
-      console.log(details);
+      // console.log(details);
       const product = new Product({
         product_name: details.product_name,
         actualPrice: details.actualPrice,
@@ -156,9 +169,10 @@ module.exports = {
    console.log(error);
   }
 },
-  deleteProduct: async (req, res) => {
-    console.log(req.body);
-  },
+
+  // deleteProduct: async (req, res) => {
+  //   console.log(req.body);
+  // },
 
   // List / Unlist - Products (Soft Delete)
   toggleListing: async (req, res) => {

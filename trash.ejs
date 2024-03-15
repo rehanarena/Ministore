@@ -1,498 +1,199 @@
-<section class="breadcrumb-option">
-    <div class="container">
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb breadcrumb-chevron p-3 bg-body-tertiary rounded-2">
-          <li class="breadcrumb-item">
-            <a class="link-body-emphasis" href="/admin">
-              <svg class="bi" width="16" height="16">
-                <use xlink:href="#house-door-fill"></use>
-              </svg>
-              <span class="visually-hidden">Dashboard</span>
-            </a>
-          </li>
-          <li class="breadcrumb-item">
-            <a class="link-body-emphasis fw-semibold text-decoration-none" href="/admin/products">Products</a>
-          </li>
-  
-          <li class="breadcrumb-item active" aria-current="page">Add Product</li>
-        </ol>
-      </nav>
-    </div>
-  </section>
-  
-  <div class="container d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2"><%= locals.title ? locals.title : 'Dashboard' %></h1>
-  </div>
-  <div class="container">
-    <div style="width: 50vw;">
-      <div class="form-group m-3">
-        <legend class="h2 fw-bold text-center m-3">Add New Product</legend>
-      <br>
-        <label for="productName">Product Name : </label>
-        <input type="text" name="ProductName" class="form-control bg-light" id="productName"
-          placeholder="Product name"/>
-        <div class="error" id="productNameError"></div>
-      </div><br>
-      <div class="form-group m-3">
-        <label for="productDescription">Product Description:</label>
-        <textarea class="form-control bg-light" name="Description" id="productDescription" rows="4"
-          placeholder="Enter product description"></textarea>
-        <div class="error" id="description-error"></div>
-        
-      </div>
-  
-  <section class="new-product">
-    <form id="addProductForm" class="container row m-3 justify-content-evenly border" style="width: 100%;"></form>
-    <div class="row d-flex justify-content-between mt-3">
-      <div class="col-lg-3 col-md-4 rounded-image-preview">
-          <label for="imageInput1" class="image-label">Image 1
-              <div class="rounded-image-preview d-flex flex-column align-items-center">
-                  <img id="imagePreview1" src="https://www.creativefabrica.com/wp-content/uploads/2021/04/05/Image-Upload-Icon-Graphics-10388650-1-580x386.jpg" alt="Preview" class="small-image" />
-                  <div class="d-flex">
-                      <input name="image1" type="file" accept="image/*" id="imageInput1" class="imageInput" onchange="openImageCropper(1)">
-                      <button type="button" class="btn btn-sm btn-secondary mt-2 ml-2" onclick="openModal('imagePreview1')">Crop</button>
-                  </div>
-              </div>
-          </label>
-          <span id="imageError1" class="text-danger"></span>
-      </div>
-    
-      <div class="row d-flex justify-content-between mt-3">
-        <div class="col-lg-3 col-md-6 rounded-image-preview">
-            <label for="imageInput1" class="image-label">Image 2
-                <div class="rounded-image-preview d-flex flex-column align-items-center">
-                    <img id="imagePreview1" src="https://www.creativefabrica.com/wp-content/uploads/2021/04/05/Image-Upload-Icon-Graphics-10388650-1-580x386.jpg" alt="Preview" class="small-image" />
-                    <div class="d-flex">
-                        <input name="image1" type="file" accept="image/*" id="imageInput1" class="imageInput" onchange="openImageCropper(1)">
-                        <button type="button" class="btn btn-sm btn-secondary mt-2 ml-2" onclick="openModal('imagePreview1')">Crop</button>
-                    </div>
-                </div>
-            </label>
-            <span id="imageError1" class="text-danger"></span>
-        </div>
-    
-        <div class="row d-flex justify-content-between mt-3">
-          <div class="col-lg-3 col-md-6 rounded-image-preview">
-              <label for="imageInput1" class="image-label">Image 3
-                  <div class="rounded-image-preview d-flex flex-column align-items-center">
-                      <img id="imagePreview1" src="https://www.creativefabrica.com/wp-content/uploads/2021/04/05/Image-Upload-Icon-Graphics-10388650-1-580x386.jpg" alt="Preview" class="small-image" />
-                      <div class="d-flex">
-                          <input name="image1" type="file" accept="image/*" id="imageInput1" class="imageInput" onchange="openImageCropper(1)">
-                          <button type="button" class="btn btn-sm btn-secondary mt-2 ml-2" onclick="openModal('imagePreview1')">Crop</button>
-                      </div>
-                  </div>
-              </label>
-              <span id="imageError1" class="text-danger"></span>
-          </div>
-           <!-- Modal for Cropping -->
-    <div class="modal fade" id="cropModal" tabindex="-1" role="dialog" aria-labelledby="cropModalLabel" aria-hidden="true" style="">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="cropModalLabel">Crop Image</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body" >
-            <img id="cropperImage" src="#" alt="Croppable Image"  />
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" onclick="cropImage()">Crop</button>
-          </div>
-        </div>
-      </div>
-    </div>
-   
-    
-      <div class="d-flex">
-        <div style="width:50rem">
-          
-          <div class="border p-3 m-3">
-            <h2>Pricing</h2>
-            <div class="form-group">
-              <label for="basePrice">Acutal Price:</label>
-              <input type="number" name="Price" class="form-control bg-light" id="basePrice"
-              placeholder="Enter base price"/>
-              <div class="error" id="priceerror"></div>
-            </div>
-            <br>
-            <div class="form-group">
-              <label for="discountAmount">Discount Amount:</label>
-              <input type="number" name="DiscountAmount" class="form-control bg-light" id="discountAmount"
-              placeholder="Enter discount amount"/>
-              <div class="error" id="discError"></div>
-            </div>
-          </div>
-          <div class="border p-3 m-3">
-            <h2>Stock</h2>
-            <div class="form-group">
-              <label for="quantity">Quantity:</label>
-              <input type="number" name="AvailableQuantity" class="form-control bg-light" id="quantity"
-              placeholder="Enter quantity"/>
-              <div class="error" id="quantityError"></div>
-            </div>
-          </div>
-        </div>
-        <div class="border p-3 m-3" style="width:50rem;">
-          <div class="">
-            <div class="form-group">
-              <br>
+const mongoose = require("mongoose");
+const Product = require("../model/productSchema");
+const Order = require("../model/orderSchema");
+// const Cart = require("../model/cartSchema");
+const User = require("../model/userSchema");
+
+const addProductToCart = async (userId, productId) => {
+    const addProductToCart = async (userId, productId) => {
+        const user = await User.findOne({ _id: userId });
+       
+        // Assuming you have a Product model and a pipeline to get the stock
+        const product = await Product.findById(productId);
+        const stock = product.stock; // Assuming stock is directly on the product
+       
+        const currentQuantity = user.cart.find(
+           (item) => item.product_id.toString() === productId
+        );
+       
+        if (currentQuantity) {
+           // Product exists in the cart, increment quantity
+           let quantity = currentQuantity.quantity;
+       
+           if (quantity >= stock) {
+             // Quantity exceeds stock, return false
+             return false;
+           } else {
+             // Increment quantity and update the cart
+             const updated = await User.findOneAndUpdate(
+               {
+                 _id: userId,
+                 "cart.product_id": productId,
+               },
+               {
+                 $inc: {
+                   "cart.$.quantity": 1,
+                 },
+               }
+             );
+             return updated;
+           }
+        } else {
+           const cart = {
+             $push: {
+               cart: {
+                 product_id: productId,
+                 quantity: 1,
+               },
+             },
+           };
+           const updatedCart = await User.findByIdAndUpdate({ _id: userId }, cart, {
+             new: true,
+           });
+           return updatedCart;
+        }
+       };
+       const handleCartUpdate = async (req, res, increment = true) => {
+        try {
+           const userID = req.user.id;
+           const { id: productId } = req.params; // Removed variantId
+           let user = await User.findOne({ _id: userID });
+       
+           // Assuming you have a Product model and a pipeline to get the stock
+           const product = await Product.findById(productId);
+           const stock = product.stock; // Assuming stock is directly on the product
+       
+           const currentQuantity = user.cart.find(
+             (item) => item.product_id.toString() === productId
+           );
+       
+           if (increment && currentQuantity && currentQuantity.quantity >= stock) {
+             return res.status(400).json({
+               success: false,
+               message: "Quantity Exceeds Product Stock",
+             });
+           } else if (!increment && currentQuantity && currentQuantity.quantity <= 1) {
+             return res.status(400).json({
+               success: false,
+               message: "Cannot decrease quantity below 1",
+             });
+           }
+       
+           const updated = await User.updateOne(
+             {
+               _id: userID,
+               "cart.product_id": productId,
+             },
+             {
+               $inc: {
+                 "cart.$.quantity": increment ? 1 : -1,
+               },
+             },
+             { new: true }
+           );
+       
+           if (updated) {
+             let userCart = await User.findById(userID).populate("cart.product_id");
+             let totalPrice = 0;
+             for (let prod of userCart.cart) {
+               prod.price = prod.product_id.sellingPrice * prod.quantity;
+               totalPrice += prod.price;
+             }
+             const currentItem = userCart.cart.find(
+               (item) => item.product_id._id.toString() === productId
+             );
+       
+             console.log(totalPrice);
+             return res.status(200).json({
+               success: true,
+               cart: currentItem,
+               totalPrice,
+             });
+           } else {
+             return res.status(400).json({
+               success: false,
+               message: "Failed to update cart item",
+             });
+           }
+        } catch (error) {
+           console.log(error);
+           return res.status(500).json({
+             success: false,
+             message: "Server error",
+             error: error.message,
+           });
+        }
+       };
               
-            </div><br>
-            <div class="form-group">
-              <br>
-              <label>Brand Name:</label>
-              <select name="BrandName" class="form-select bg-light" id="brand" required>
-                <option value="" selected disabled>Select a Brand</option>
-                <option>Chanel</option>
-                <option>H&M</option>
-                <option>Adidas</option>
-                <option>Nike</option>
-                <option>Gucci</option>
-              </select>
-            </div><br>
-      <div class="form-group">  
-                    <label for="tags">Categories:</label>
-                    <select class="form-select text-capitalize" name="category" required>
-                      <% categories.forEach(function(category) { %>
-                      <option class="text-capitalize" value="<%= category._id %>">
-                        <%= category.name %>
-                      </option>
-                      <% }); %>
-                    </select>
-                    </div>
-                  <div class="d-flex justify-content-evenly m-4">
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                    <button type="reset" class="btn btn-warning">Clear</button>
-                  </div>
-                </div>
-              </div>
-                
-                
-            
-            </div>
-          </div>
-  
-        </form>
-      </div>
-    
-    <div style="display: none" class="crop-product card p-2 shadow" id="crp-container">
-      <div class="d-flex flex-column">
-        <img src="" id="images" style="object-fit: cover" />
-        <button id="cropImageBtn" class="btn btn-primary mt-3">Crop Image</button>
-      </div>
-    </div>
-  </section>
-  <style>
-    .crop-product {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 4;
-      width: 30rem;
-    }
-  
-    .error {
-      color: rgb(255, 0, 0);
-    }
-  </style>
-  <script>
-    function capitalizeFirstLetter(input) {
-      input.value = input.value.charAt(0).toUpperCase() + input.value.slice(1);
-    }
-  
-  $(document).ready(function() {
-    $(".imageInput").change(function() {
-      var input = this;
-      var imagePreview = $(input).siblings('.rounded-image-preview').children('img')[0];
-  
-      if (input.files && input.files[0]) {
-        var reader = new FileReader();
-  
-        reader.onload = function(e) {
-          imagePreview.src = e.target.result;
-          $(imagePreview).show();
-        };
-  
-        reader.readAsDataURL(input.files[0]);
-      }
-    });
-  });
-  
-  // Initialize Cropper.js instance
-  var cropper;
-  
-  // Function to open the Cropper modal
-  function openModal(imageId) {
-    var image = document.getElementById(imageId);
-    var cropperImage = document.getElementById('cropperImage');
-  
-    cropperImage.src = image.src;
-  
-    // Ensure that any existing Cropper instance is destroyed before initializing a new one
-    if (cropper) {
-      cropper.destroy();
-    }
-  
-    $('#cropModal').modal('show');
-  
-    // Initialize Cropper.js for the selected image
-    cropper = new Cropper(cropperImage, {
-      aspectRatio: 0,
-      viewMode: 0,
-    });
-  }
-  
-  function cropImage(imageIndex) {
-    // Get the cropped canvas
-    var canvas = cropper.getCroppedCanvas();
-  
-    // Convert the canvas to a data URL
-    var croppedImageDataUrl = canvas.toDataURL();
-  
-    // Set the cropped image as the source of the original image preview
-    var imagePreview = document.getElementById('imagePreview' + imageIndex);
-    if (imagePreview) {
-      imagePreview.src = croppedImageDataUrl;
-    }
-  
-    // Set the data URL as the value of the corresponding image input field
-    var imageInput = document.getElementById('imageInput' + imageIndex);
-    if (imageInput) {
-      imageInput.value = croppedImageDataUrl;
-    }
-  
-    // Close the Cropper modal
-    $('#cropModal').modal('hide');
-  }
-  
-    // ... your existing script ...
-  
-    // Function to open the Cropper modal for a specific image
-    function openImageCropper(imageIndex) {
-      var imageInput = document.getElementById('imageInput' + imageIndex);
-      var cropperImage = document.getElementById('cropperImage');
-  
-      // Check if a file is selected
-      if (imageInput.files && imageInput.files[0]) {
-        var reader = new FileReader();
-  
-        reader.onload = function (e) {
-          cropperImage.src = e.target.result;
-  
-          // Ensure that any existing Cropper instance is destroyed before initializing a new one
-          if (cropper) {
-            cropper.destroy();
-          }
-  
-          // Show the Cropper modal
-          $('#cropModal').modal('show');
-  
-          // Initialize Cropper.js for the selected image
-          cropper = new Cropper(cropperImage, {
-            aspectRatio: 1,
-            viewMode: 2,
-          });
-        };
-  
-        // Read the selected file as a data URL
-        reader.readAsDataURL(imageInput.files[0]);
-      }
-    }
-  
-  </script>
-  <!-- <script defer src="/js/admin/products/add-product.js"></script> -->
-  
-
-
-
-
-
-
-
-
-
-
-  <section class="breadcrumb-option">
-    <div class="container">
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb breadcrumb-chevron p-3 bg-body-tertiary rounded-2">
-          <li class="breadcrumb-item">
-            <a class="link-body-emphasis" href="/admin">
-              <svg class="bi" width="16" height="16">
-                <use xlink:href="#house-door-fill"></use>
-              </svg>
-              <span class="visually-hidden">Dashboard</span>
-            </a>
-          </li>
-          <li class="breadcrumb-item">
-            <a class="link-body-emphasis fw-semibold text-decoration-none  text-success" href="/admin/products">Products</a>
-          </li>
-  
-          <li class="breadcrumb-item active" aria-current="page">Add Product</li>
-        </ol>
-      </nav>
-    </div>
-  </section>
-  
-  <div class="container d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2"><%= locals.title ? locals.title : 'Dashboard' %></h1>
-  </div>
-  <div class="main-panel">
-    <div class="content-wrapper">
-      <div class="col-12 grid-margin stretch-card">
-        <div class="card">
-          <div class="card-body">
-            <div class="text-dark"> <!-- Add text-dark class here -->
-              <h4 class="card-title">Add New Product</h4>
-            </div>
-            <form class="addProductForm" action="/admin/addProduct" method="post" enctype="multipart/form-data" onsubmit="return validateForm()" novalidate>
-  
-              <div class="form-group row">
-                <div class="col-6">
-                  <label for="product_name" class="text-dark">Product Title</label> <!-- Add text-dark class here -->
-                  <input type="text" class="form-control text-dark text-justify" name="product_name" id="product_name"
-                    placeholder="Name" >
-                    <span id="productNameError" class="text-danger"></span>
-                </div>
-                <div class="col-6">
-                  <label for="actualPrice" class="text-dark">Actual Price</label> <!-- Add text-dark class here -->
-                  <input type="number" class="form-control text-dark" id="actualPrice" name="actualPrice"
-                    placeholder="Price">
-                  <div id="priceError" class="text-danger"></div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group row">
-                    <div class="col-sm-12">
-                      <div class="form-group">  
-                        <label for="category">Categories:</label>
-                        <select class="form-select text-capitalize" name="category" required>
-                          <% categories.forEach(function(category) { %>
-                          <option class="text-capitalize" value="<%= category._id %>">
-                            <%= category.name %>
-                          </option>
-                          <% }); %>
-                        </select>
-                      </div>
-                      <div id="categoryError" class="text-danger"></div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group row">
-                    <div class="col-sm-12">
-                      <label for="sellingPrice" class="text-dark">Discount Price</label> <!-- Add text-dark class here -->
-                  <input type="number" class="form-control text-dark" id="sellingPrice" name="sellingPrice"
-                    placeholder="Price">
-                      <div id="genderError" class="text-danger"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group row">
-                    <div class="col-sm-12">
-                      <label for="brand_name" class="text-dark">Brand</label> <!-- Add text-dark class here -->
-                      <input type="text" class="form-control text-dark" id="brand_name" name="brand_name"
-                        placeholder="Brand Name" onkeyup="capitalizeFirstLetter(this)" >
-                        <span id="brandError" class="text-danger"></span>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group row">
-                    <div class="col-sm-12">
-                      <label for="product_stock" class="text-dark">Stock</label> <!-- Add text-dark class here -->
-                      <input type="number" class="form-control text-dark" id="product_stock" name="stock"
-                        placeholder="Enter Stock" >
-                        <span id="quantityError" class="text-danger"></span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="form-group mt-2">
-                <label for="description" class="text-dark">Description</label> <!-- Add text-dark class here -->
-                <textarea name="description" class="form-control text-dark" id="description" rows="4"
-                  ></textarea>
-                  <span id="descriptionError" class="text-danger"></span>
-              </div>
-              <div class="row d-flex justify-content-between mt-3">
-                <div class="col-lg-3 col-md-6 rounded-image-preview">
-                  <label for="imageInput1" class="image-label">Image 1
-                    <div class="rounded-image-preview">
-                      <img id="imagePreview1" src="https://www.creativefabrica.com/wp-content/uploads/2021/04/05/Image-Upload-Icon-Graphics-10388650-1-580x386.jpg" alt="Preview" />
-                    </div>
-                    <input name="image1" type="file" accept="image/*" id="imageInput1" class="imageInput" onchange="openImageCropper(1)">
-                    <button type="button" class="btn btn-sm btn-secondary mt-2" onclick="openModal('imagePreview1')">Crop</button>
-                  </label>
-                  <span id="imageError1" class="text-danger"></span>
-                </div>
-    
-                <div class="col-lg-3 col-md-6 rounded-image-preview">
-                  <label for="imageInput2" class="image-label">Image 2
-                    <div class="rounded-image-preview">
-                      <img id="imagePreview2" src="https://www.creativefabrica.com/wp-content/uploads/2021/04/05/Image-Upload-Icon-Graphics-10388650-1-580x386.jpg" alt="Preview" />
-                    </div>
-                    <input name="image2" type="file" accept="image/*" id="imageInput2" class="imageInput" onchange="openImageCropper(2)">
-                    <button type="button" class="btn btn-sm btn-secondary mt-2" onclick="openModal('imagePreview2')">Crop</button>
-                  </label>
-                  <span id="imageError2" class="text-danger"></span>
-                </div>
-    
-                <div class="col-lg-3 col-md-6 rounded-image-preview">
-                  <label for="imageInput3" class="image-label">Image 3
-                    <div class="rounded-image-preview">
-                      <img id="imagePreview3" src="https://www.creativefabrica.com/wp-content/uploads/2021/04/05/Image-Upload-Icon-Graphics-10388650-1-580x386.jpg" alt="Preview" />
-                    </div>
-                    <input name="image3" type="file" accept="image/*" id="imageInput3" class="imageInput" onchange="openImageCropper(3)">
-                    <button type="button" class="btn btn-sm btn-secondary mt-2" onclick="openModal('imagePreview3')">Crop</button>
-                  </label>
-                  <span id="imageError3" class="text-danger"></span>
-                </div>
-    
-                <div class="col-lg-3 col-md-6 rounded-image-preview">
-                  <label for="imageInput4" class="image-label">Image 4
-                    <div class="rounded-image-preview">
-                      <img id="imagePreview4" src="https://www.creativefabrica.com/wp-content/uploads/2021/04/05/Image-Upload-Icon-Graphics-10388650-1-580x386.jpg" alt="Preview" />
-                    </div>
-                    <input name="image4" type="file" accept="image/*" id="imageInput4" class="imageInput" onchange="openImageCropper(4)">
-                    <button type="button" class="btn btn-sm btn-secondary mt-2" onclick="openModal('imagePreview4')">Crop</button>
-                  </label>
-                  <span id="imageError4" class="text-danger"></span>
-                </div>
-              </div>  
-              <button type="submit" class="btn btn-lg btn-success mr-2 mt-5">Add product</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  <!-- Modal for Cropping -->
-  <div class="modal fade" id="cropModal" tabindex="-1" role="dialog" aria-labelledby="cropModalLabel" aria-hidden="true" style="">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="cropModalLabel">Crop Image</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body" >
-          <img id="cropperImage" src="#" alt="Croppable Image"  />
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" onclick="cropImage()">Crop</button>
-        </div>
-      </div>
-    </div>
-  </div>
-    <script defer>"/js/admin/products/add-product.js"</script>
-  
-  
+   
+       module.exports = {
+        getCart: async (req, res) => {
+           let errors = [];
+           if (!req.isAuthenticated()) {
+             req.flash("error", "Please log in to view cart.");
+             return res.redirect("/login");
+           } else {
+             let user = await User.findById(req.user.id);
+       
+             let userCart = await User.findById(req.user.id).populate("cart.product_id");
+       
+             let cartList = await User.aggregate([
+               { $match: { _id: user._id } },
+               { $project: { cart: 1, _id: 0 } },
+               { $unwind: "$cart" },
+               {
+                 $lookup: {
+                   from: "products",
+                   localField: "cart.product_id",
+                   foreignField: "_id",
+                   as: "prod_details",
+                 },
+               },
+               { $unwind: "$prod_details" },
+             ]);
+       
+             let totalPrice = 0;
+             for (let prod of cartList) {
+               prod.price = prod.prod_details.sellingPrice * prod.cart.quantity;
+               totalPrice += prod.price; // Calculate total price
+             }
+       
+             for (const item of user.cart) {
+               try {
+                 const product = await Product.findOne({
+                   _id: item.product_id,
+                 });
+                 if (product) {
+                   let notFound = false;
+                   if (!product.isActive) {
+                     notFound = true;
+                     errors.push(
+                       `The Product ${product.product_name} is not available!!`
+                     );
+                   }
+                   if (notFound) {
+                     errors.push(
+                       `The Product ${product.product_name} is not found!!`
+                     );
+                   }
+                 } else {
+                   errors.push(`The Product ${product.product_name} is not found!!`);
+                 }
+               } catch (error) {
+                 console.error(`Error finding stock for item: ${error.message}`);
+               }
+             }
+       
+             let cartCount = req.user.cart.length; // Update cartCount
+       
+             res.render("shop/cart", {
+               cartList: userCart.cart,
+               cartCount,
+               totalPrice,
+               errorMsg: errors,
+             });
+           }
+        },
+        // Other functions remain unchanged
+       };
+    }       
