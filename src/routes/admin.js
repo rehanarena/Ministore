@@ -5,23 +5,17 @@ const adminController = require("../controller/adminController");
 const categoryController = require("../controller/categoryController");
 const productController = require("../controller/productController");
 
-
 const { isAdmin } = require("../middlewares/authMiddleware");
 
-const multer= require("../middlewares/multer");
+const multer = require("../middlewares/multer");
 
-
-router.use (isAdmin,(req,res,next)=>{
-  if(req.isAuthenticated()&& req.user.isAdmin){
-    res.locals.admin=req.user
+router.use(isAdmin, (req, res, next) => {
+  if (req.isAuthenticated() && req.user.isAdmin) {
+    res.locals.admin = req.user;
   }
   next();
-})
+});
 router.get("/", adminController.getDashboard);
-
-
-
-
 
 /**
  * Customer Management
@@ -29,9 +23,7 @@ router.get("/", adminController.getDashboard);
 
 router.route("/users").get(adminController.getUsersList);
 
-router.route("/users/toggle-block/:id").patch(adminController.toggleBlock)
-
-
+router.route("/users/toggle-block/:id").patch(adminController.toggleBlock);
 
 /**
  * Category Management
@@ -44,7 +36,7 @@ router
   .get(categoryController.getAddCategory)
   .post(categoryController.addCategory);
 
-  router
+router
   .route("/category/edit-category/:id")
   .get(categoryController.getEditCategory)
   .post(categoryController.editCategory);
@@ -53,28 +45,24 @@ router
   .route("/category/delete-category")
   .get(categoryController.deleteCategory);
 
-
-
-
-  /**
+/**
  * Product Management
  */
 
-router.route("/products")
-.get(productController.getAllProducts)
+router.route("/products").get(productController.getAllProducts);
 
+router.route("/products/add-Product").get(productController.getAddProduct);
 
-router.route("/products/add-Product")
-.get(productController.getAddProduct)
+router
+  .route("/products/add-product")
+  .get(productController.getAddProduct)
 
-router.route("/products/add-product")
-    .get(productController.getAddProduct)
-    
-    .post(multer.productImagesUpload,productController.addProduct)
+  .post(multer.productImagesUpload, productController.addProduct);
 
-router.route("/products/edit-product/:id")
-.get(productController.getEditProduct)
-.post(multer.productImagesUpload,productController.editProduct)
+router
+  .route("/products/edit-product/:id")
+  .get(productController.getEditProduct)
+  .post(multer.productImagesUpload, productController.editProduct);
 
 // list/unlist product
 
@@ -85,8 +73,5 @@ router.delete("/products/delete-product/:id", productController.deleteProduct);
 
 // Product Image Delete
 // router.delete("/products/delete-image/", productController.deleteImage);
-
-
-
 
 module.exports = router;

@@ -15,6 +15,7 @@ const authRouter = require('./src/routes/auth');
 const usersRouter = require('./src/routes/users');
 const shopRouter =  require('./src/routes/shop');
 const adminRouter =  require('./src/routes/admin');
+const cartRouter =  require('./src/routes/cart');
 const logger = require('morgan');
 
 // const {}=require('./src/config/db');
@@ -78,6 +79,8 @@ app.use('/', authRouter);
 app.use('/user', usersRouter);
 app.use('/', shopRouter);
 app.use("/admin", adminRouter);
+app.use("/user/", cartRouter);
+
 
 
 

@@ -1,19 +1,17 @@
 const layout = "./layouts/adminLayout.ejs";
 const Product = require("../model/productSchema");
 const Category = require("../model/categorySchema");
-const sharp = require('sharp');
-
+const sharp = require("sharp");
 
 const fs = require("fs");
 const path = require("path");
 
-
 module.exports = {
-  getProductDetails : async(id)=>{
+  getProductDetails: async (id) => {
     try {
-      let product=await Product.find({_id:id});
-      
-      return product[0]
+      let product = await Product.find({ _id: id });
+
+      return product[0];
     } catch (error) {
       console.log(error);
     }
@@ -30,11 +28,10 @@ module.exports = {
       .limit(perPage)
       .exec();
 
-    console.log(products[0])
-    const count = await Product.find().countDocuments()
+    console.log(products[0]);
+    const count = await Product.find().countDocuments();
     const nextPage = parseInt(page) + 1;
     const hasNextPage = nextPage <= Math.ceil(count / perPage);
-
 
     res.render("admin/products/products", {
       locals,
@@ -63,11 +60,10 @@ module.exports = {
     });
   },
   addProduct: async (req, res) => {
-    console.log(req.body, req.files)
+    console.log(req.body, req.files);
     try {
       let details = req.body;
       const files = await req.files;
-
 
       const img = [
         files.image1[0].filename,
@@ -100,75 +96,96 @@ module.exports = {
       const result = await product.save();
 
       if (result) {
-        req.flash('success', 'The Product added Successfully');
+        req.flash("success", "The Product added Successfully");
         res.redirect("/admin/products");
       } else {
-        req.flash('error', 'Something went wrong please try again!');
+        req.flash("error", "Something went wrong please try again!");
         res.redirect("/admin/addproduct");
       }
     } catch (error) {
       console.error(error); // Log the error for debugging
-      res.status(400).send({ error: "An error occurred while adding the product." });
+      res
+        .status(400)
+        .send({ error: "An error occurred while adding the product." });
     }
   },
 
   editProduct: async (req, res) => {
     try {
       console.log(req.files, req.body);
-      let details=req.body;
-    let imagesFiles= req.files;
-    let currentData= await getProductDetails(req.query.id);
-  
-    let img1,img2,img3,img4;
+      let details = req.body;
+      let imagesFiles = req.files;
+      let currentData = await Product.findById(req.params.id);
 
-      img1 = imagesFiles.image1 ? imagesFiles.image1[0].filename : currentData.images.image1;
-      img2 = imagesFiles.image2 ? imagesFiles.image2[0].filename : currentData.images.image2;
-      img3 = imagesFiles.image3 ? imagesFiles.image3[0].filename : currentData.images.image3;
-      img4 = imagesFiles.image4 ? imagesFiles.image4[0].filename : currentData.images.image4;
+      let img1, img2, img3, img4;
+      if(req.files){
 
-      const img = [
-        imagesFiles.image1 ? imagesFiles.image1[0].filename : currentData.images.image1,
-        imagesFiles.image2 ? imagesFiles.image2[0].filename : currentData.images.image2,
-        imagesFiles.image3 ? imagesFiles.image3[0].filename : currentData.images.image3,
-        imagesFiles.image4 ? imagesFiles.image4[0].filename : currentData.images.image4,
-       ];
-       
+        img1 = typeof imagesFiles.image1 !== undefined
+          ? imagesFiles.image1[0].filename
+          : currentData.images.image1;
+        img2 = typeof  imagesFiles.image2 !==undefined
+          ? imagesFiles.image2[0].filename
+          : currentData.images.image2;
+        img3 =  typeof imagesFiles.image3 !==undefined
+          ? imagesFiles.image3[0].filename
+          : currentData.images.image3;
+        img4 = typeof  imagesFiles.image4 !==undefined
+          ? imagesFiles.image4[0].filename
+          : currentData.images.image4;
   
-      for (let i = 0; i < img.length; i++) {
-        await sharp("public/products/images/" + img[i])
-          .resize(480, 480)
-          .toFile("public/products/croped/" + img[i]);
+        const img = [
+          imagesFiles.image1
+            ? imagesFiles.image1[0].filename
+            : currentData.images.image1,
+          imagesFiles.image2
+            ? imagesFiles.image2[0].filename
+            : currentData.images.image2,
+          imagesFiles.image3
+            ? imagesFiles.image3[0].filename
+            : currentData.images.image3,
+          imagesFiles.image4
+            ? imagesFiles.image4[0].filename
+            : currentData.images.image4,
+        ];
+
+        for (let i = 0; i < img.length; i++) {
+          await sharp("public/products/images/" + img[i])
+            .resize(480, 480)
+            .toFile("public/products/croped/" + img[i]);
+        }
       }
 
-      const update= await Product.updateOne(
-        {_id:req.query.id},
+
+      const update = await Product.updateOne(
+        { _id: req.params.id },
         {
-          $set:{
-            product_name:details.product_name,
-            actualPrice:details.actualPrice,
-            sellingPrice:details.sellingPrice,
-            category:details.category,
-            brand_name:details.brand_name,
-            description:details.description,
-            stock:details.stock,
-            "images.image1": img1,
-            "images.image2": img2,
-            "images.image3": img3,
-            "images.image4": img4
-          }
-        })
-        
-        if(update){
-          req.flash('success','The Prodect successfully Updated');
-        res.redirect('/admin/products')
-        }else{
-          req.flash('error','Something went wrong Please Try again!')
-          res.redirect('/admin/products')
+          $set: {
+            product_name: details.product_name,
+            actualPrice: details.actualPrice,
+            sellingPrice: details.sellingPrice,
+            category: details.category,
+            brand_name: details.brand_name,
+            description: details.description,
+            stock: details.stock,
+            // "images.image1": img1,
+            // "images.image2": img2,
+            // "images.image3": img3,
+            // "images.image4": img4,
+          },
         }
-  } catch (error) {
-   console.log(error);
-  }
-},
+      );
+
+      if (update) {
+        req.flash("success", "The Prodect successfully Updated");
+        res.redirect("/admin/products");
+      } else {
+        req.flash("error", "Something went wrong Please Try again!");
+        res.redirect("/admin/products");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
 
   // deleteProduct: async (req, res) => {
   //   console.log(req.body);
@@ -192,7 +209,7 @@ module.exports = {
       res.status(500).json({ message: "Server error" });
     }
   },
-//delete product
+  //delete product
   deleteProduct: async (req, res) => {
     console.log(req.params);
 
@@ -204,12 +221,9 @@ module.exports = {
 
       // Delete main image
       if (product.img1 && product.img1.path) {
-        fs.unlink(
-          path.join(__dirname, "..", product.img1.path),
-          (err) => {
-            if (err) console.error(err);
-          }
-        );
+        fs.unlink(path.join(__dirname, "..", product.img1.path), (err) => {
+          if (err) console.error(err);
+        });
       }
 
       // Delete secondary images

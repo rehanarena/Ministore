@@ -35,94 +35,182 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <% cartList.forEach((x,i)=> { %>
-                                 <tr id="row<%-i%>">
+                                <% userCart.items.forEach((item)=> { %>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <button class="btn cart-remove close mt-3 d-md-none" onclick="removeFromCart('<%- item.product_id._id %>', '<%- item.variant %>')"><i class="bi bi-x-lg text-danger"></i></button>
-                                            <div class="d-flex align-items-center">
-                                                <a href="/shop/product/<%- item.product_id._id %>"><img class="cart-item-img" src="/uploads/cropped/<%= item.product_id.productimages.image1 %>" alt="..."></a>
-                                                <div class="cart-title text-start"><a class="text-uppercase text-dark" href="/shop/product/<%- item.product_id._id %>"><strong><%= item.product_id.product_name %></strong></a></div>
-                                            </div>
+                                            <img class="cart-item-img"
+                                                src="/uploads/cropped/<%= item.product_id.images.image1 %>"
+                                                alt="..."></a>
+                                            <div class="cart-title text-start"><a
+                                                    class="text-uppercase text-dark"><strong>
+                                                        <%= item.product_id.product_name %>
+                                                    </strong></a></div>
+                                        </div>
+                    </div>
+                    </td>
+                    <td class="align-middle">$<%= item.product_id.sellingPrice %>
+                    </td>
+
+                    <td class="align-middle">
+                        <div class="d-flex flex-row">
+                            <button class="btn btn-link px-2" type="button">
+                                <i class="fas fa-minus fa-sm"></i>
+                            </button>
+
+                            <input id="quantity-<%= item.product_id._id %>" min="0" name="quantity"
+                                value="<%= p.quantity %>" type="number" class="form-control form-control-sm"
+                                style="width:  50px;" readonly />
+
+                            <button class="btn btn-link px-2" type="button">
+                                <i class="fas fa-plus fa-sm"></i>
+                            </button>
+                        </div>
+                    </td>
+
+
+
+                    <td class="align-middle" id="itemTotal-<%- item.product_id._id %>">$<%= item.price %>
+                    </td>
+                    <td class="align-middle">
+                        <button onclick="removeFromCart('<%- item.product_id._id %>')"
+                            class="btn btn-light cart-remove">
+                            <i class="delete bi bi-x-lg text-danger"></i>
+                        </button>
+                    </td>
+                    </tr>
+                    <% }) %>
+                        </tbody>
+                        </table>
+                </div>
+                <!-- Cart Summary -->
+                <aside class="col-lg-3">
+                    <div class="summary summary-cart">
+                        <h3 class="summary-title">Cart Total</h3>
+                        <table class="table table-summary">
+                            <tbody>
+                                <tr class="summary-subtotal">
+                                    <td>Subtotal:</td>
+                                    <td><span id="cartTotal">$<%= totalPrice %></span></td>
+                                </tr>
+                                <tr class="summary-shipping">
+                                    <td>Shipping:</td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <!-- Shipping Options -->
+                                <tr class="summary-shipping-row">
+                                    <td>
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" id="free-shipping" name="shipping"
+                                                class="custom-control-input">
+                                            <label class="custom-control-label" for="free-shipping">Free
+                                                Shipping</label>
                                         </div>
                                     </td>
-                                    <td class="align-middle">$<%= item.product_id.sellingPrice %></td>
-                                    <td class="align-middle">
-                                        <div class="d-flex flex-row">
-                                            <button onclick="decreaseCartQuantity('<%- item.product_id._id %>')" class="btn btn-outline-dark btn-items btn-items-decrease col-3">-</button>
-                                            <input id="quantityInput-<%- item.product_id._id %>" readonly min="1" name="quantity" class="form-control text-center border-0 border-md input-items" type="text" value="<%= item.quantity %>">
-                                            <button onclick="increaseCartQuantity('<%- item.product_id._id %>' )" class="btn btn-outline-dark btn-items btn-items-increase col-3">+</button>
+                                    <td>$0.00</td>
+                                </tr>
+                                <tr class="summary-shipping-row">
+                                    <td>
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" id="standart-shipping" name="shipping"
+                                                class="custom-control-input">
+                                            <label class="custom-control-label"
+                                                for="standart-shipping">Standard:</label>
                                         </div>
                                     </td>
-                                    <td class="align-middle" id="itemTotal-<%- item.product_id._id %>">$<%= item.price %></td>
-                                    <td class="align-middle">
-                                        <button onclick="removeFromCart('<%- item.product_id._id %>')" class="btn btn-light cart-remove">
-                                            <i class="delete bi bi-x-lg text-danger"></i>
-                                        </button>
+                                    <td>$10.00</td>
+                                </tr>
+                                <tr class="summary-shipping-row">
+                                    <td>
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" id="express-shipping" name="shipping"
+                                                class="custom-control-input">
+                                            <label class="custom-control-label" for="express-shipping">Express:</label>
+                                        </div>
                                     </td>
-                                 </tr>
-                                <% }) %>
+                                    <td>$20.00</td>
+                                </tr>
+                                <tr class="summary-shipping-estimate">
+                                    <td>Estimate for Your Country<br> <a href="/address">Change address</a></td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr class="summary-total">
+                                    <td>Total:</td>
+                                    <td><strong id="grandTotal" class="order-summary-total">$<%= totalPrice %></strong>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
+                        <a href="/checkout" class="btn btn-outline-primary-2 btn-order btn-block">PROCEED TO
+                            CHECKOUT</a>
+                        <a href="/" class="btn btn-outline-dark-2 btn-block mb-3"><span>CONTINUE SHOPPING</span><i
+                                class="icon-refresh"></i></a>
                     </div>
-                    <!-- Cart Summary -->
-                    <aside class="col-lg-3">
-                        <div class="summary summary-cart">
-                            <h3 class="summary-title">Cart Total</h3>
-                            <table class="table table-summary">
-                                <tbody>
-                                    <tr class="summary-subtotal">
-                                        <td>Subtotal:</td>
-                                        <td><span id="cartTotal">$<%= totalPrice %></span></td>
-                                    </tr>
-                                    <tr class="summary-shipping">
-                                        <td>Shipping:</td>
-                                        <td>&nbsp;</td>
-                                    </tr>
-                                    <!-- Shipping Options -->
-                                    <tr class="summary-shipping-row">
-                                        <td>
-                                            <div class="custom-control custom-radio">
-                                                <input type="radio" id="free-shipping" name="shipping" class="custom-control-input">
-                                                <label class="custom-control-label" for="free-shipping">Free Shipping</label>
-                                            </div>
-                                        </td>
-                                        <td>$0.00</td>
-                                    </tr>
-                                    <tr class="summary-shipping-row">
-                                        <td>
-                                            <div class="custom-control custom-radio">
-                                                <input type="radio" id="standart-shipping" name="shipping" class="custom-control-input">
-                                                <label class="custom-control-label" for="standart-shipping">Standard:</label>
-                                            </div>
-                                        </td>
-                                        <td>$10.00</td>
-                                    </tr>
-                                    <tr class="summary-shipping-row">
-                                        <td>
-                                            <div class="custom-control custom-radio">
-                                                <input type="radio" id="express-shipping" name="shipping" class="custom-control-input">
-                                                <label class="custom-control-label" for="express-shipping">Express:</label>
-                                            </div>
-                                        </td>
-                                        <td>$20.00</td>
-                                    </tr>
-                                    <tr class="summary-shipping-estimate">
-                                        <td>Estimate for Your Country<br> <a href="/address">Change address</a></td>
-                                        <td>&nbsp;</td>
-                                    </tr>
-                                    <tr class="summary-total">
-                                        <td>Total:</td>
-                                        <td><strong id="grandTotal" class="order-summary-total">$<%= totalPrice %></strong></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <a href="/checkout" class="btn btn-outline-primary-2 btn-order btn-block">PROCEED TO CHECKOUT</a>
-                            <a href="/" class="btn btn-outline-dark-2 btn-block mb-3"><span>CONTINUE SHOPPING</span><i class="icon-refresh"></i></a>
-                        </div>
-                    </aside>
-                </div>
+                </aside>
             </div>
         </div>
     </div>
+    </div>
 </main>
+
+
+<script defer>
+    function decrementQuantity(productId, cartId) {
+        // Show a confirmation dialog using SweetAlert
+        swal({
+            title: "Are you sure?",
+            text: "You will decrease the quantity of this item.",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then(async (willDecrement) => {
+                if (willDecrement) {
+                    // If the user confirms, make the fetch call to decrement the quantity
+                    try {
+                        const response = await fetch(`/update-quantity/${productId}?cartId=${cartId}&quantity=-1`, {
+                            method: 'POST',
+                        });
+                        const data = await response.json();
+                        // Update the UI based on the response
+                        console.log(data);
+                        // Optionally, show a success message using SweetAlert
+                        swal("Success!", "Quantity decreased successfully.", "success");
+                    } catch (error) {
+                        console.error('Error:', error);
+                        // Optionally, show an error message using SweetAlert
+                        swal("Oops!", "Something went wrong.", "error");
+                    }
+                }
+            });
+    }
+    function incrementQuantity(productId, cartId, availableQuantity) {
+        // Show a confirmation dialog using SweetAlert
+        swal({
+            title: "Are you sure?",
+            text: "You will increase the quantity of this item.",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then(async (willIncrement) => {
+                if (willIncrement) {
+                    // If the user confirms, make the fetch call to increment the quantity
+                    try {
+                        const response = await fetch(`/update-quantity/${productId}?cartId=${cartId}&quantity=1`, {
+                            method: 'POST',
+                        });
+                        const data = await response.json();
+                        // Update the UI based on the response
+                        console.log(data);
+                        // Optionally, show a success message using SweetAlert
+                        swal("Success!", "Quantity increased successfully.", "success");
+                    } catch (error) {
+                        console.error('Error:', error);
+                        // Optionally, show an error message using SweetAlert
+                        swal("Oops!", "Something went wrong.", "error");
+                    }
+                }
+            });
+    }
+
+</script>
