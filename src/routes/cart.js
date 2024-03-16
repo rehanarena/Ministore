@@ -14,6 +14,9 @@ router.post("/add-to-cart/:id",cartController.addToCart)
 router.post('/update-quantity/:productId',cartController.updateQuantity);
 
 
+router.delete( "/cart/remove-cartItem/:id", cartController.removeCartItem);
+
+
 
 
 

@@ -52,22 +52,21 @@
                     </td>
 
                     <td class="align-middle">
-                        <div class="d-flex flex-row">
-                            <button  onclick="updateQuantity('<%- item.product_id._id %>','false')" class="btn btn-link px-2" type="button">
-                                <i class="fas fa-minus fa-sm"></i>
-                            </button>
+    <div class="d-flex flex-row">
+        <button onclick="updateQuantity('<%- item.product_id._id %>', 'false')" class="btn btn-link px-2" type="button">
+            <i class="fas fa-minus fa-sm"></i>
+        </button>
 
-                            <pre><%- item.quantity %></pre>
-                            <input id="quantity-<%= item.product_id._id %>" min="0" name="quantity"
-                                value="<%= item.quantity %>" type="number" class="form-control form-control-sm"
-                                style="width:  50px;" readonly />
+        <pre id="quantity-display-<%- item.product_id._id %>"><%- item.quantity %></pre>
+        <input id="quantity-input-<%- item.product_id._id %>" min="0" name="quantity"
+            value="<%- item.quantity %>" type="number" class="form-control form-control-sm"
+            style="width:  50px;" readonly />
 
-                            <button onclick="updateQuantity('<%- item.product_id._id %>','true')" class="btn btn-link px-2" type="button">
-                                <i class="fas fa-plus fa-sm"></i>
-                            </button>
-                        </div>
-                    </td>
-
+        <button onclick="updateQuantity('<%- item.product_id._id %>', 'true')" class="btn btn-link px-2" type="button">
+            <i class="fas fa-plus fa-sm"></i>
+        </button>
+    </div>
+</td>
 
 
                     <td class="align-middle" id="itemTotal-<%- item.product_id._id %>">$<%= item.price %>
@@ -91,7 +90,7 @@
                             <tbody>
                                 <tr class="summary-subtotal">
                                     <td>Subtotal:</td>
-                                    <td><span id="cartTotal">$<%= userCart.totalPrice %></span></td>
+                                    <td><span id="cartTotal">₹<%= userCart.totalPrice %></span></td>
                                 </tr>
                                 <tr class="summary-shipping">
                                     <td>Shipping:</td>
@@ -107,7 +106,7 @@
                                                 Shipping</label>
                                         </div>
                                     </td>
-                                    <td>$0.00</td>
+                                    <td>₹0.00</td>
                                 </tr>
                                 <tr class="summary-shipping-row">
                                     <td>
@@ -118,7 +117,7 @@
                                                 for="standart-shipping">Standard:</label>
                                         </div>
                                     </td>
-                                    <td>$10.00</td>
+                                    <td>₹10.00</td>
                                 </tr>
                                 <tr class="summary-shipping-row">
                                     <td>
@@ -128,7 +127,7 @@
                                             <label class="custom-control-label" for="express-shipping">Express:</label>
                                         </div>
                                     </td>
-                                    <td>$20.00</td>
+                                    <td>₹20.00</td>
                                 </tr>
                                 <tr class="summary-shipping-estimate">
                                     <td>Estimate for Your Country<br> <a href="/address">Change address</a></td>
@@ -136,7 +135,7 @@
                                 </tr>
                                 <tr class="summary-total">
                                     <td>Total:</td>
-                                    <td><strong id="grandTotal" class="order-summary-total">$<%= userCart.totalPrice %></strong>
+                                    <td><strong id="grandTotal" class="order-summary-total">₹<%= userCart.totalPrice %></strong>
                                     </td>
                                 </tr>
                             </tbody>
@@ -177,13 +176,14 @@
             if (data.success) {
                 // UI update
         
-            document.getElementById(`quantity-${item.product_id._id}`).innerHTML = data.Quantity;
+            document.getElementById(`quantity-${productId}`).innerHTML = data.quantity;
             document.getElementById("carTotal").innerHTML = "₹" + data.subtotal;
             document.getElementById("grandtotal").innerHTML = "₹" + data.total;
 
 
 
                 console.log(data);
+                console.log(error);
             } else {
                 Swal.fire({
                     title: 'Error!',
@@ -207,4 +207,37 @@
 
 
     }
+
+    
+</script>
+<script defer>
+    const removeFromCart = async (productId, variantId) => {
+        Swal.fire({
+            title: "Are you sure?",
+            text: `This item will be removed from the cart`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, Remove it!",
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                await fetch(`/user/cart/remove-cartItem/${productId}`, {
+                    method: "DELETE",
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then((response) =>
+                 response.json())
+                .then((data) => {
+                    
+                    if (data.status) {
+                       
+                        location.reload();
+                    }
+                });
+            }
+        });
+    };
 </script>
