@@ -38,7 +38,7 @@
                                 <% userCart.items.forEach((item)=> { %>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <img class="cart-item-img"
+                                            <img class="cart-item-img img-fluid img-thumbnail" style="width: 7rem;"
                                                 src="/uploads/cropped/<%= item.product_id.images.image1 %>"
                                                 alt="..."></a>
                                             <div class="cart-title text-start"><a
@@ -53,15 +53,16 @@
 
                     <td class="align-middle">
                         <div class="d-flex flex-row">
-                            <button class="btn btn-link px-2" type="button">
+                            <button  onclick="updateQuantity('<%- item.product_id._id %>','false')" class="btn btn-link px-2" type="button">
                                 <i class="fas fa-minus fa-sm"></i>
                             </button>
 
+                            <pre><%- item.quantity %></pre>
                             <input id="quantity-<%= item.product_id._id %>" min="0" name="quantity"
-                                value="<%= p.quantity %>" type="number" class="form-control form-control-sm"
+                                value="<%= item.quantity %>" type="number" class="form-control form-control-sm"
                                 style="width:  50px;" readonly />
 
-                            <button class="btn btn-link px-2" type="button">
+                            <button onclick="updateQuantity('<%- item.product_id._id %>','true')" class="btn btn-link px-2" type="button">
                                 <i class="fas fa-plus fa-sm"></i>
                             </button>
                         </div>
@@ -90,7 +91,7 @@
                             <tbody>
                                 <tr class="summary-subtotal">
                                     <td>Subtotal:</td>
-                                    <td><span id="cartTotal">$<%= totalPrice %></span></td>
+                                    <td><span id="cartTotal">$<%= userCart.totalPrice %></span></td>
                                 </tr>
                                 <tr class="summary-shipping">
                                     <td>Shipping:</td>
@@ -135,7 +136,7 @@
                                 </tr>
                                 <tr class="summary-total">
                                     <td>Total:</td>
-                                    <td><strong id="grandTotal" class="order-summary-total">$<%= totalPrice %></strong>
+                                    <td><strong id="grandTotal" class="order-summary-total">$<%= userCart.totalPrice %></strong>
                                     </td>
                                 </tr>
                             </tbody>
@@ -153,64 +154,57 @@
 </main>
 
 
-<script defer>
-    function decrementQuantity(productId, cartId) {
-        // Show a confirmation dialog using SweetAlert
-        swal({
-            title: "Are you sure?",
-            text: "You will decrease the quantity of this item.",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-        })
-            .then(async (willDecrement) => {
-                if (willDecrement) {
-                    // If the user confirms, make the fetch call to decrement the quantity
-                    try {
-                        const response = await fetch(`/update-quantity/${productId}?cartId=${cartId}&quantity=-1`, {
-                            method: 'POST',
-                        });
-                        const data = await response.json();
-                        // Update the UI based on the response
-                        console.log(data);
-                        // Optionally, show a success message using SweetAlert
-                        swal("Success!", "Quantity decreased successfully.", "success");
-                    } catch (error) {
-                        console.error('Error:', error);
-                        // Optionally, show an error message using SweetAlert
-                        swal("Oops!", "Something went wrong.", "error");
-                    }
-                }
-            });
-    }
-    function incrementQuantity(productId, cartId, availableQuantity) {
-        // Show a confirmation dialog using SweetAlert
-        swal({
-            title: "Are you sure?",
-            text: "You will increase the quantity of this item.",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-        })
-            .then(async (willIncrement) => {
-                if (willIncrement) {
-                    // If the user confirms, make the fetch call to increment the quantity
-                    try {
-                        const response = await fetch(`/update-quantity/${productId}?cartId=${cartId}&quantity=1`, {
-                            method: 'POST',
-                        });
-                        const data = await response.json();
-                        // Update the UI based on the response
-                        console.log(data);
-                        // Optionally, show a success message using SweetAlert
-                        swal("Success!", "Quantity increased successfully.", "success");
-                    } catch (error) {
-                        console.error('Error:', error);
-                        // Optionally, show an error message using SweetAlert
-                        swal("Oops!", "Something went wrong.", "error");
-                    }
-                }
-            });
-    }
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<script defer>
+    const updateQuantity = async (productId, increment = 'true') => {
+        let qty = increment === 'true' ? 1 : -1
+
+        try {
+            const response = await fetch(`/user/update-quantity/${productId}?qty=${qty}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            })
+
+            const data = await response.json()
+
+            if (!response.ok) {
+                throw new Error(data.message);
+            }
+
+            if (data.success) {
+                // UI update
+        
+            document.getElementById(`quantity-${item.product_id._id}`).innerHTML = data.Quantity;
+            document.getElementById("carTotal").innerHTML = "₹" + data.subtotal;
+            document.getElementById("grandtotal").innerHTML = "₹" + data.total;
+
+
+
+                console.log(data);
+            } else {
+                Swal.fire({
+                    title: 'Error!',
+                    text: data.message,
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+
+        } catch (error) {
+            console.log(error);
+
+            Swal.fire({
+                title: 'Error!',
+                text: error.message,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+
+
+
+    }
 </script>

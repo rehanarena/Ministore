@@ -73,53 +73,109 @@ module.exports = {
     }
   },
   updateQuantity: async (req, res) => {
-    const product_id = req.params.id;
-    const quantity = req.query.quantity;
-
     try {
-      // Find the cart by its ID
-      let cart = await Cart.findOne({user_id: req.user.id});
-
-      if (!cart) {
-        // Cart does not exist
-        return res.status(404).send("Cart not found");
-      }
-
-      // Find the product in the cart
-      let itemIndex = cart.items.findIndex(
-        (p) => p.product_id.toString() === product_id
-      ); // Corrected field name
-
-      if (itemIndex === -1) {
-        // Product does not exist in the cart
-        return res.status(404).send("Product not found in the cart");
-      }
-
-      // Assuming you have a Product model with a method to get stock
-      const product = await Product.findById(product_id);
-      if (!product) {
-        return res.status(404).send("Product not found");
-      }
-
-      // Compare the requested quantity with the available stock
-      if (quantity > product.stock) {
+      const productId = req.params.productId;
+      const qty = parseInt(req.query.qty);
+  
+      const userCart = await Cart.findOne({ user_id: req.user.id });
+  
+      if (!userCart) {
         return res
           .status(400)
-          .send("Requested quantity exceeds available stock");
+          .json({ success: false, message: "Cart not found" });
       }
-
-      // Update the quantity of the product in the cart
-      let productItem = cart.items[itemIndex];
-      productItem.quantity += parseInt(quantity); // Corrected to use `quantity`
-      cart.items[itemIndex] = productItem;
-
-      // Save the updated cart
-      cart = await cart.save();
-
-      return res.status(200).send(cart);
-    } catch (err) {
-      console.log(err);
-      res.status(500).send("Something went wrong");
+  
+      const productExist = await Product.findById(productId);
+  
+      if (!productExist) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Product not found" });
+      }
+  
+      const cartItem = userCart.items.find(
+        (item) => item.product_id.toString() === productId
+      );
+  
+      if (!cartItem) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Product not in cart" });
+      }
+  
+      let currentQuantity = cartItem.quantity;
+      if (qty > 0) {
+        currentQuantity += qty;
+  
+        if (currentQuantity > productExist.stock) {
+          return res
+            .status(400)
+            .json({ success: false, message: "Insufficient Stock" });
+        }
+      } else if (qty < 0) {
+        currentQuantity += qty;
+  
+        if (currentQuantity < 0) {
+          return res
+            .status(400)
+            .json({
+              success: false,
+              message: "Cannot Decrease quantity to Zero",
+            });
+        }
+      }
+  
+      const updateCart = await Cart.updateOne(
+        {
+          user_id: req.user.id,
+          "items.product_id": productId,
+        },
+        {
+          $set: {
+            "items.$.quantity": currentQuantity,
+          },
+        },
+        {
+          new: true,
+        }
+      );
+  
+      // console.log(updateCart);
+  
+      if (updateCart) {
+        const updatedCart = await Cart.findOne({user_id: req.user.id}).populate('items.product_id')
+  
+        // itemTotal recalculate
+        // cart totalPrice recalculate
+        let totalPrice = 0
+        for(prod of updatedCart.items){
+          prod.itemTotal += prod.product_id.sellingPrice * prod.quantity
+          totalPrice += prod.itemTotal
+        }
+  
+        updatedCart.totalPrice = totalPrice
+  
+        const updatedItem = updatedCart.items.find(
+          (item) => item.product_id.toString() === productId
+        );
+  
+        console.log(updatedItem);
+  
+  
+        await updatedCart.save()
+  
+  
+        return res.status(200).json({ success: true, currentItem: updatedItem, totalPrice });
+      }
+  
+    } catch (error) {
+      console.log(error);
+      res
+        .status(500)
+        .json({
+          success: false,
+          message: error.message || "Internal Server Error",
+        });
     }
   },
 };
