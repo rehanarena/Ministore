@@ -76,37 +76,37 @@ module.exports = {
     try {
       const productId = req.params.productId;
       const qty = parseInt(req.query.qty);
-  
+
       const userCart = await Cart.findOne({ user_id: req.user.id });
-  
+
       if (!userCart) {
         return res
           .status(400)
           .json({ success: false, message: "Cart not found" });
       }
-  
+
       const productExist = await Product.findById(productId);
-  
+
       if (!productExist) {
         return res
           .status(400)
           .json({ success: false, message: "Product not found" });
       }
-  
+
       const cartItem = userCart.items.find(
         (item) => item.product_id.toString() === productId
       );
-  
+
       if (!cartItem) {
         return res
           .status(400)
           .json({ success: false, message: "Product not in cart" });
       }
-  
+
       let currentQuantity = cartItem.quantity;
       if (qty > 0) {
         currentQuantity += qty;
-  
+
         if (currentQuantity > productExist.stock) {
           return res
             .status(400)
@@ -114,17 +114,15 @@ module.exports = {
         }
       } else if (qty < 0) {
         currentQuantity += qty;
-  
+
         if (currentQuantity < 0) {
-          return res
-            .status(400)
-            .json({
-              success: false,
-              message: "Cannot Decrease quantity to Zero",
-            });
+          return res.status(400).json({
+            success: false,
+            message: "Cannot Decrease quantity to Zero",
+          });
         }
       }
-  
+
       const updateCart = await Cart.updateOne(
         {
           user_id: req.user.id,
@@ -139,69 +137,73 @@ module.exports = {
           new: true,
         }
       );
-  
+
       // console.log(updateCart);
-  
+
       if (updateCart) {
-        const updatedCart = await Cart.findOne({user_id: req.user.id}).populate('items.product_id')
-  
+        const updatedCart = await Cart.findOne({
+          user_id: req.user.id,
+        }).populate("items.product_id");
+
         // itemTotal recalculate
         // cart totalPrice recalculate
-        let totalPrice = 0
-        for(prod of updatedCart.items){
-          prod.itemTotal += prod.product_id.sellingPrice * prod.quantity
-          totalPrice += prod.itemTotal
+        let totalPrice = 0;
+        for (prod of updatedCart.items) {
+          prod.itemTotal += prod.product_id.sellingPrice * prod.quantity;
+          totalPrice += prod.itemTotal;
         }
-  
-        updatedCart.totalPrice = totalPrice
-  
+
+        updatedCart.totalPrice = totalPrice;
+
         const updatedItem = updatedCart.items.find(
           (item) => item.product_id.toString() === productId
         );
-  
+
         console.log(updatedItem);
-  
-  
-        await updatedCart.save()
-  
-  
-        return res.status(200).json({ success: true, currentItem: updatedItem, totalPrice });
+
+        await updatedCart.save();
+
+        return res
+          .status(200)
+          .json({ success: true, currentItem: updatedItem, totalPrice });
       }
-  
     } catch (error) {
       console.log(error);
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: error.message || "Internal Server Error",
-        });
+      res.status(500).json({
+        success: false,
+        message: error.message || "Internal Server Error",
+      });
     }
   },
   removeCartItem: async (req, res) => {
     try {
-        const productId = req.params.productId;
-        const userId = req.user.id;
+      const productId = req.params.productId;
+      const userId = req.user.id;
 
-        console.log(`Removing product with ID: ${productId} from user with ID: ${userId}`);
+      console.log(
+        `Removing product with ID: ${productId} from user with ID: ${userId}`
+      );
 
-        const result = await Cart.updateOne(
-            { user_id: userId }, 
-            { $pull: { items: { product_id: productId } } } 
+      const result = await Cart.updateOne(
+        { user_id: userId },
+        { $pull: { items: { product_id: productId } } }
+      );
+
+      if (result.modifiedCount === 0) {
+        console.log(
+          "No items were removed. Product ID might not exist in the cart."
         );
+        return res
+          .status(404)
+          .json({ success: false, message: "Item not found in cart" });
+      }
 
-        if (result.modifiedCount === 0) {
-            console.log("No items were removed. Product ID might not exist in the cart.");
-            return res.status(404).json({ success: false, message: "Item not found in cart" });
-        }
-
-        res.json({ success: true, message: "Item removed from cart" });
+      res.json({ success: true, message: "Item removed from cart" });
     } catch (error) {
-        console.error("Error removing item", error);
-        res.status(500).json({ success: false, message: "Error removing item from cart" });
+      console.error("Error removing item", error);
+      res
+        .status(500)
+        .json({ success: false, message: "Error removing item from cart" });
     }
-}
-
-   
-
+  },
 };

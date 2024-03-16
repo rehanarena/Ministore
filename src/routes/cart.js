@@ -1,23 +1,18 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
 const Cart = require("../model/cartSchema");
-const { isLoggedIn } = require('../middlewares/authMiddleware');
-const cartController = require('../controller/cartController');
+const { isLoggedIn } = require("../middlewares/authMiddleware");
+const cartController = require("../controller/cartController");
 
-router.use(isLoggedIn)
+router.use(isLoggedIn);
 
-router.get("/cart",cartController.getCart)
+router.get("/cart", cartController.getCart);
 
-router.post("/add-to-cart/:id",cartController.addToCart)
+router.post("/add-to-cart/:id", cartController.addToCart);
 
-router.post('/update-quantity/:productId',cartController.updateQuantity);
+router.post("/update-quantity/:productId", cartController.updateQuantity);
 
+router.delete("/cart/remove-cartItem/:id", cartController.removeCartItem);
 
-router.delete( "/cart/remove-cartItem/:id", cartController.removeCartItem);
-
-
-
-
-
-module.exports = router
+module.exports = router;

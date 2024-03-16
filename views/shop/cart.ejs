@@ -52,21 +52,23 @@
                     </td>
 
                     <td class="align-middle">
-    <div class="d-flex flex-row">
-        <button onclick="updateQuantity('<%- item.product_id._id %>', 'false')" class="btn btn-link px-2" type="button">
-            <i class="fas fa-minus fa-sm"></i>
-        </button>
+                        <div class="d-flex flex-row">
+                            <button onclick="updateQuantity('<%- item.product_id._id %>', 'false')"
+                                class="btn btn-link px-2" type="button">
+                                <i class="fas fa-minus fa-sm"></i>
+                            </button>
 
-        <pre id="quantity-display-<%- item.product_id._id %>"><%- item.quantity %></pre>
-        <input id="quantity-input-<%- item.product_id._id %>" min="0" name="quantity"
-            value="<%- item.quantity %>" type="number" class="form-control form-control-sm"
-            style="width:  50px;" readonly />
+                            <pre id="quantity-display-<%- item.product_id._id %>"><%- item.quantity %></pre>
+                            <input id="quantity-input-<%- item.product_id._id %>" min="0" name="quantity"
+                                value="<%- item.quantity %>" type="number" class="form-control form-control-sm"
+                                style="width:  50px;" readonly />
 
-        <button onclick="updateQuantity('<%- item.product_id._id %>', 'true')" class="btn btn-link px-2" type="button">
-            <i class="fas fa-plus fa-sm"></i>
-        </button>
-    </div>
-</td>
+                            <button onclick="updateQuantity('<%- item.product_id._id %>', 'true')"
+                                class="btn btn-link px-2" type="button">
+                                <i class="fas fa-plus fa-sm"></i>
+                            </button>
+                        </div>
+                    </td>
 
 
                     <td class="align-middle" id="itemTotal-<%- item.product_id._id %>">$<%= item.price %>
@@ -135,7 +137,8 @@
                                 </tr>
                                 <tr class="summary-total">
                                     <td>Total:</td>
-                                    <td><strong id="grandTotal" class="order-summary-total">₹<%= userCart.totalPrice %></strong>
+                                    <td><strong id="grandTotal" class="order-summary-total">₹<%= userCart.totalPrice %>
+                                                </strong>
                                     </td>
                                 </tr>
                             </tbody>
@@ -175,10 +178,10 @@
 
             if (data.success) {
                 // UI update
-        
-            document.getElementById(`quantity-${productId}`).innerHTML = data.quantity;
-            document.getElementById("carTotal").innerHTML = "₹" + data.subtotal;
-            document.getElementById("grandtotal").innerHTML = "₹" + data.total;
+
+                document.getElementById(`quantity-${productId}`).innerHTML = data.quantity;
+                document.getElementById("carTotal").innerHTML = "₹" + data.subtotal;
+                document.getElementById("grandtotal").innerHTML = "₹" + data.total;
 
 
 
@@ -208,7 +211,7 @@
 
     }
 
-    
+
 </script>
 <script defer>
     const removeFromCart = async (productId, variantId) => {
@@ -228,15 +231,15 @@
                         'Content-Type': 'application/json',
                     }
                 })
-                .then((response) =>
-                 response.json())
-                .then((data) => {
-                    
-                    if (data.status) {
-                       
-                        location.reload();
-                    }
-                });
+                    .then((response) =>
+                        response.json())
+                    .then((data) => {
+
+                        if (data.status) {
+
+                            location.reload();
+                        }
+                    });
             }
         });
     };
