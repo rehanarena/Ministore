@@ -27,7 +27,7 @@ module.exports = {
       status = "pending";
     }
 
-    const userCart = await Cart.findOne({ user_id: req.user.id }).populate(
+    const userCart = await Cart.find({ user_id: req.user.id }).populate(
       "items.product_id"
     );
 
@@ -38,15 +38,15 @@ module.exports = {
 
       for (let i = 0; i < userCart.length; i++) {
         items.push({
-          product_id: userCart[i].cart.product_id,
-          quantity: userCart[i].cart.quantity,
-          price: parseInt(userCart[i].prod_detail.sellingPrice),
+          product_id: userCart[i].items.product_id, 
+          quantity: userCart[i].items.quantity, 
+          price: parseInt(userCart[i].items.product_id.sellingPrice),
         });
       }
 
       let totalPrice = 0;
       for (let prod of userCart) {
-        prod.price = prod.prod_detail.sellingPrice * prod.cart.quantity;
+        prod.price = prod.items.product_id.sellingPrice * prod.items.quantity; 
         totalPrice += prod.price;
       }
 
@@ -82,6 +82,7 @@ module.exports = {
       }
     }
   },
+
   // Order view
   getUserOrders: async (req, res) => {
     let user = await User.findById(req.user.id);
