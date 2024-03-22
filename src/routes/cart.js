@@ -11,7 +11,7 @@ router.get("/cart", cartController.getCart);
 
 router.post("/add-to-cart/:id", cartController.addToCart);
 
-router.post("/update-quantity/:productId", cartController.updateQuantity);
+router.post("/update-quantity/:id", cartController.updateQuantity);
 
 router.delete("/cart/remove-cartItem/:id", cartController.removeCartItem);
 

@@ -1,199 +1,258 @@
-const mongoose = require("mongoose");
-const Product = require("../model/productSchema");
-const Order = require("../model/orderSchema");
-// const Cart = require("../model/cartSchema");
-const User = require("../model/userSchema");
+<main class="main">
+    <div class="page-content">
+        <div class="product-details-top">
+            <div class="bg-light pb-5 mb-4">
+                <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
+                    <div class="container d-flex align-items-center">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/">Home</a></li>
+                            <li class="breadcrumb-item"><a href="#">Products</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Gallery</li>
+                        </ol>
 
-const addProductToCart = async (userId, productId) => {
-    const addProductToCart = async (userId, productId) => {
-        const user = await User.findOne({ _id: userId });
-       
-        // Assuming you have a Product model and a pipeline to get the stock
-        const product = await Product.findById(productId);
-        const stock = product.stock; // Assuming stock is directly on the product
-       
-        const currentQuantity = user.cart.find(
-           (item) => item.product_id.toString() === productId
-        );
-       
-        if (currentQuantity) {
-           // Product exists in the cart, increment quantity
-           let quantity = currentQuantity.quantity;
-       
-           if (quantity >= stock) {
-             // Quantity exceeds stock, return false
-             return false;
-           } else {
-             // Increment quantity and update the cart
-             const updated = await User.findOneAndUpdate(
-               {
-                 _id: userId,
-                 "cart.product_id": productId,
-               },
-               {
-                 $inc: {
-                   "cart.$.quantity": 1,
-                 },
-               }
-             );
-             return updated;
-           }
-        } else {
-           const cart = {
-             $push: {
-               cart: {
-                 product_id: productId,
-                 quantity: 1,
-               },
-             },
-           };
-           const updatedCart = await User.findByIdAndUpdate({ _id: userId }, cart, {
-             new: true,
-           });
-           return updatedCart;
-        }
-       };
-       const handleCartUpdate = async (req, res, increment = true) => {
+                        <nav class="product-pager ml-auto" aria-label="Product">
+                            <a class="product-pager-link product-pager-prev" href="#" aria-label="Previous"
+                                tabindex="-1">
+                                <i class="icon-angle-left"></i>
+                                <span>Prev</span>
+                            </a>
+
+                            <a class="product-pager-link product-pager-next" href="#" aria-label="Next" tabindex="-1">
+                                <span>Next</span>
+                                <i class="icon-angle-right"></i>
+                            </a>
+                        </nav><!-- End .pager-nav -->
+                    </div><!-- End .container -->
+                </nav><!-- End .breadcrumb-nav -->
+               
+                </div>
+            </div>
+            <div class="mb-3 d-flex align-items-center">
+                <span class="d-inline-block me-2">Sort by</span>
+                <select class="form-select w-auto border-0">
+                    <option value="orderby_0">Default</option>
+                    <option value="orderby_1">Popularity</option>
+                    <option value="orderby_2">Rating</option>
+                    <option value="orderby_3">Newest first</option>
+                </select>
+        </div>
+
+
+
+
+        <div class="container justify-content-center">
+            <div class="row justify-content-center py-3 my-3">
+        <% products?.forEach(element=> { %>
+            <div class="col-md-3  p-2 m-2  text-capitalize card border rounded">
+                <img src="/uploads/cropped/<%- element.images.image1 %>" alt="<%- element.product_name %>"
+                    class="img-fluid">
+
+                </button>
+                <a class="btn btn-dark btn-buy" href="/productDetails">
+                  <i class="bi bi-search"></i>
+                  <span class="btn-buy-label ms-2">View</span>
+                </a>
+                <button id="wishlist-<%- element._id %>" class="btn btn-outline-danger btn-product-right d-none d-sm-inline-block justify-content-center" onclick="addToWishlist('<%- element._id %>')">
+                  <i class="bi bi-heart fs-5"></i>
+                </button>
+                <div class="py-2">
+                <p class="h4 card-title"><%- element.product_name %></p>
+                <div class="card-body">
+                    <p class="lead card-text">₹ <%- element.sellingPrice %></p>
+                    <p class="lead card-text"><del><%- element.actualPrice %></del></p>
+                    </div>
+                </div>
+                <div class="card-footer justify-content-center">
+                    <button onclick="addToCart('<%- element._id %>')" class="btn btn-outline-primary"
+                        type="button">Add To Cart</button>
+                </div>
+            </div>
+            <% }) %>
+            </div>
+    </div>  <!-- / Grid End-->
+    <!-- Sidebar-->
+    <div class="sidebar col-xl-3 col-lg-4 order-lg-1">
+      <div class="sidebar-block px-3 px-lg-0 me-lg-4">
+        <a class="d-lg-none block-toggler" data-bs-toggle="collapse" href="#categoryFilterMenu" aria-expanded="false" aria-controls="categoryFilterMenu">Filter by Categories</a>
+        <!-- Category filter menu-->
+        <div class="expand-lg collapse" id="categoryFilterMenu">
+          <h6 class="sidebar-heading d-none d-lg-block">Categories</h6>
+
+          <div class="mt-4 mt-lg-0" id="categories">
+            <% categories.forEach((element,i) => { %>
+            <div class="mb-1">
+              <div class="form-check">
+                <input class="form-check-input" id="category-<%- i %>" type="radio" name="category" value="<%- element._id %>" <%- element._id.toString() === categoryID ? 'checked' : '' %> />
+                <label class="form-check-label text-capitalize" for="category-<%- i %>"><%- element.name %></label>
+              </div>
+            </div>
+            <% }) %>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-block px-3 px-lg-0 me-lg-4">
+        <a class="d-lg-none block-toggler" data-bs-toggle="collapse" href="#sortSelect" aria-expanded="false" aria-controls="priceFilterMenu">Sort by price</a>
+        <div class="expand-lg collapse" id="sortSelect">
+          <h6 class="sidebar-heading d-none d-lg-block">Price</h6>
+          <div class="mt-4 mt-lg-0" id="slider-snap"></div>
+
+          <div class="mb-1">
+            <div class="form-check">
+              <input class="form-check-input" id="sortPriceLow" type="radio" name="sortPrice" value="lowPrice" <% if (sortBy==='lowPrice' ) { %> checked <% } %> />
+              <label class="form-check-label text-capitalize" for="sortPriceLow">Price Low to High</label>
+            </div>
+          </div>
+
+          <div class="mb-1">
+            <div class="form-check">
+              <input class="form-check-input" id="sortPriceHigh" type="radio" name="sortPrice" value="highPrice" <% if (sortBy==='highPrice' ) { %> checked <% } %> />
+              <label class="form-check-label text-capitalize" for="sortPriceHigh">Price High to Low</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+
+    </div>
+    <!-- /Sidebar end-->
+
+
+  </div>
+  <!-- Pagination-->
+  <% if (products.length > 0 && nextPage || current == pages) { %>
+  <nav aria-label="Product Pagination">
+    <ul class="pagination justify-content-center mt-5">
+      <% if (current == 1) { %>
+      <li class="page-item disabled">
+        <a href="#" class="page-link">First</a>
+      </li>
+
+      <% } else { %>
+      <li class="page-item">
+        <a href="?page=1" class="page-link">First</a>
+      </li>
+      <% } %> <% var i = (Number(current)> 5 ? Number(current) - 4 : 1) %>
+      <% if (i !== 1) { %>
+      <li class="page-item disabled">
+        <a href="#" class="page-link">...</a>
+      </li>
+      <% } %> <% for( ; i < Number(current) + 4 && i <= pages ; i++ ) { %>
+      <% if (i == current) { %>
+      <li class="page-item disabled">
+        <a href="#" class="page-link"><%= i %> </a>
+      </li>
+      <% } else { %>
+      <li class="page-item">
+        <a href="/shop/?page=<%= i %>" class="page-link"><%= i %></a>
+      </li>
+
+      <% } %> <% if (i == Number(current)+ 4 && i < pages) { %>
+      <li class="page-item disabled">
+        <a href="#" class="page-link">...</a>
+      </li>
+      <% } %> <% } %> <% if (current == pages) { %>
+      <li class="page-item disabled">
+        <a href="#" class="page-link">Last</a>
+      </li>
+      <% } else { %>
+      <li class="page-item">
+        <a href="/shop/?page=<%= pages %>" class="page-link">Last</a>
+      </li>
+
+      <% } %>
+    </ul>
+  </nav>
+  <% } %>
+
+</div>
+</main>
+<script defer>
+  const searchProduct = document.getElementById('search');
+  const sortSelect = document.getElementById('sortPriceLow') || document.getElementById('sortPriceHigh'); // Assuming 'sortby' is the correct ID for the sort select element
+
+  // Function to handle the change event for categories
+  function handleCategoryChange() {
+    const categoryId = this.value; // Use 'this' to refer to the radio button that triggered the event
+    const sortValue = sortSelect.value;
+    const searchValue = searchProduct.value;
+    const url = `/search/?category=${categoryId || ''}&sortBy=${sortValue}&search=${searchValue}`;
+    window.location.href = url;
+  }
+
+  // Attach the event listener to each category radio button
+  document.querySelectorAll('#categories .form-check-input').forEach(radioButton => {
+    radioButton.addEventListener('change', handleCategoryChange);
+  });
+
+  // Function to handle the change event for brands
+  function handleBrandChange() {
+    const brandId = this.value; // Use 'this' to refer to the radio button that triggered the event
+    const sortValue = sortSelect.value;
+    const searchValue = searchProduct.value;
+    const url = `/search/?brand=${brandId || ''}&sortBy=${sortValue}&search=${searchValue}`;
+    window.location.href = url;
+  }
+
+  // Attach the event listener to each brand radio button
+  document.querySelectorAll('#brands .form-check-input').forEach(radioButton => {
+    radioButton.addEventListener('change', handleBrandChange);
+  });
+
+  // Function to handle the change event for sort options
+  function handleSortChange() {
+    const sortValue = this.value; // Use 'this' to refer to the radio button that triggered the event
+    const categoryId = document.querySelector('#categories .form-check-input:checked')?.value;
+    const searchValue = searchProduct.value;
+    const url = `/search/?category=${categoryId || ''}&sortBy=${sortValue}&search=${searchValue}`;
+    window.location.href = url;
+  }
+
+  // Attach the event listener to each sort radio button
+  document.querySelectorAll('#sortSelect .form-check-input').forEach(radioButton => {
+    radioButton.addEventListener('change', handleSortChange);
+  });
+
+
+
+
+ 
+</script>
+
+
+
+
+<script defer>
+    const addToCart = async (productId) => {
+        console.log(productId);
         try {
-           const userID = req.user.id;
-           const { id: productId } = req.params; // Removed variantId
-           let user = await User.findOne({ _id: userID });
-       
-           // Assuming you have a Product model and a pipeline to get the stock
-           const product = await Product.findById(productId);
-           const stock = product.stock; // Assuming stock is directly on the product
-       
-           const currentQuantity = user.cart.find(
-             (item) => item.product_id.toString() === productId
-           );
-       
-           if (increment && currentQuantity && currentQuantity.quantity >= stock) {
-             return res.status(400).json({
-               success: false,
-               message: "Quantity Exceeds Product Stock",
-             });
-           } else if (!increment && currentQuantity && currentQuantity.quantity <= 1) {
-             return res.status(400).json({
-               success: false,
-               message: "Cannot decrease quantity below 1",
-             });
-           }
-       
-           const updated = await User.updateOne(
-             {
-               _id: userID,
-               "cart.product_id": productId,
-             },
-             {
-               $inc: {
-                 "cart.$.quantity": increment ? 1 : -1,
-               },
-             },
-             { new: true }
-           );
-       
-           if (updated) {
-             let userCart = await User.findById(userID).populate("cart.product_id");
-             let totalPrice = 0;
-             for (let prod of userCart.cart) {
-               prod.price = prod.product_id.sellingPrice * prod.quantity;
-               totalPrice += prod.price;
-             }
-             const currentItem = userCart.cart.find(
-               (item) => item.product_id._id.toString() === productId
-             );
-       
-             console.log(totalPrice);
-             return res.status(200).json({
-               success: true,
-               cart: currentItem,
-               totalPrice,
-             });
-           } else {
-             return res.status(400).json({
-               success: false,
-               message: "Failed to update cart item",
-             });
-           }
+            const response = await fetch(`/user/add-to-cart/${productId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json()
+
+            if (!response.ok) {
+                throw new Error(data.message);
+            }
+
+            Swal.fire({
+                title: 'Success!',
+                text: 'Product added to cart successfully.',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
         } catch (error) {
-           console.log(error);
-           return res.status(500).json({
-             success: false,
-             message: "Server error",
-             error: error.message,
-           });
+            Swal.fire({
+                title: 'Error!',
+                text: error.message,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
         }
-       };
-              
-   
-       module.exports = {
-        getCart: async (req, res) => {
-           let errors = [];
-           if (!req.isAuthenticated()) {
-             req.flash("error", "Please log in to view cart.");
-             return res.redirect("/login");
-           } else {
-             let user = await User.findById(req.user.id);
-       
-             let userCart = await User.findById(req.user.id).populate("cart.product_id");
-       
-             let cartList = await User.aggregate([
-               { $match: { _id: user._id } },
-               { $project: { cart: 1, _id: 0 } },
-               { $unwind: "$cart" },
-               {
-                 $lookup: {
-                   from: "products",
-                   localField: "cart.product_id",
-                   foreignField: "_id",
-                   as: "prod_details",
-                 },
-               },
-               { $unwind: "$prod_details" },
-             ]);
-       
-             let totalPrice = 0;
-             for (let prod of cartList) {
-               prod.price = prod.prod_details.sellingPrice * prod.cart.quantity;
-               totalPrice += prod.price; // Calculate total price
-             }
-       
-             for (const item of user.cart) {
-               try {
-                 const product = await Product.findOne({
-                   _id: item.product_id,
-                 });
-                 if (product) {
-                   let notFound = false;
-                   if (!product.isActive) {
-                     notFound = true;
-                     errors.push(
-                       `The Product ${product.product_name} is not available!!`
-                     );
-                   }
-                   if (notFound) {
-                     errors.push(
-                       `The Product ${product.product_name} is not found!!`
-                     );
-                   }
-                 } else {
-                   errors.push(`The Product ${product.product_name} is not found!!`);
-                 }
-               } catch (error) {
-                 console.error(`Error finding stock for item: ${error.message}`);
-               }
-             }
-       
-             let cartCount = req.user.cart.length; // Update cartCount
-       
-             res.render("shop/cart", {
-               cartList: userCart.cart,
-               cartCount,
-               totalPrice,
-               errorMsg: errors,
-             });
-           }
-        },
-        // Other functions remain unchanged
-       };
-    }       
+    }
+</script>

@@ -4,6 +4,7 @@ const router = express.Router();
 const adminController = require("../controller/adminController");
 const categoryController = require("../controller/categoryController");
 const productController = require("../controller/productController");
+const orderController = require("../controller/orderController");
 
 const { isAdmin } = require("../middlewares/authMiddleware");
 
@@ -71,7 +72,19 @@ router.patch("/products/toggle-listing/:id", productController.toggleListing);
 // Product Delete
 router.delete("/products/delete-product/:id", productController.deleteProduct);
 
-// Product Image Delete
-// router.delete("/products/delete-image/", productController.deleteImage);
+
+
+/**
+ * Order Management
+ */
+
+
+router
+.route("/orders").get(orderController.getOrders)
+// router.route("/orders").get(orderController.getOrders);
+// router.route("/orders/manage-order/:id").get(orderController.getOrderDetails);
+// router
+  // .route("/orders/manage-order/changeStatus/:id")
+  // .post(orderController.changeOrderStatus);
 
 module.exports = router;

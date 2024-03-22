@@ -43,7 +43,7 @@ module.exports = {
         await newCart.save();
         return res
           .status(200)
-          .json({ sucess: true, message: "sucessfully added to cart" });
+          .json({ success: true, message: "sucessfully added to cart" });
       } else {
         const itemExists = userCart.items.find(
           (item) => item.product_id.toString() === product_id
@@ -64,6 +64,9 @@ module.exports = {
         }
         userCart.totalPrice = totalPrice;
         await userCart.save();
+        return res
+          .status(200)
+          .json({ success: true, message: "sucessfully added to cart" });
       }
     } catch (error) {
       console.log(error);
@@ -74,7 +77,7 @@ module.exports = {
   },
   updateQuantity: async (req, res) => {
     try {
-      const productId = req.params.productId;
+      const productId = req.params.id;
       const qty = parseInt(req.query.qty);
 
       const userCart = await Cart.findOne({ user_id: req.user.id });
@@ -104,7 +107,8 @@ module.exports = {
       }
 
       let currentQuantity = cartItem.quantity;
-      if (qty > 0) {
+      console.log(currentQuantity);
+      if (qty >0) {
         currentQuantity += qty;
 
         if (currentQuantity > productExist.stock) {
@@ -112,10 +116,10 @@ module.exports = {
             .status(400)
             .json({ success: false, message: "Insufficient Stock" });
         }
-      } else if (qty < 0) {
+      } else if (qty ===-1) {
         currentQuantity += qty;
 
-        if (currentQuantity < 0) {
+        if (currentQuantity <= 0) {
           return res.status(400).json({
             success: false,
             message: "Cannot Decrease quantity to Zero",
@@ -149,14 +153,14 @@ module.exports = {
         // cart totalPrice recalculate
         let totalPrice = 0;
         for (prod of updatedCart.items) {
-          prod.itemTotal += prod.product_id.sellingPrice * prod.quantity;
+          prod.itemTotal = prod.product_id.sellingPrice * prod.quantity;
           totalPrice += prod.itemTotal;
         }
 
         updatedCart.totalPrice = totalPrice;
 
         const updatedItem = updatedCart.items.find(
-          (item) => item.product_id.toString() === productId
+          (item) => item.product_id._id.toString() === productId
         );
 
         console.log(updatedItem);
@@ -177,7 +181,8 @@ module.exports = {
   },
   removeCartItem: async (req, res) => {
     try {
-      const productId = req.params.productId;
+      console.log(req.params);
+      const productId =(req.params.id)
       const userId = req.user.id;
 
       console.log(
@@ -185,8 +190,8 @@ module.exports = {
       );
 
       const result = await Cart.updateOne(
-        { user_id: userId },
-        { $pull: { items: { product_id: productId } } }
+        { user_id: req.user.id },
+        { $pull: { items: { product_id: new mongoose.Types.ObjectId(productId) } } }
       );
 
       if (result.modifiedCount === 0) {
@@ -206,4 +211,8 @@ module.exports = {
         .json({ success: false, message: "Error removing item from cart" });
     }
   },
+
+  
+
+
 };

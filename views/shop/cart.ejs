@@ -1,246 +1,334 @@
 <main class="main">
-    <!-- Page Header -->
-    <div class="page-header text-center" style="background-image: url('/assets/images/page-header-bg.jpg')">
-        <div class="container">
-            <h1 class="page-title">Shopping Cart<span>Shop</span></h1>
-        </div>
+  <!-- Page Header -->
+  <div
+    class="page-header text-center"
+    style="background-image: url('/assets/images/page-header-bg.jpg')"
+  >
+    <div class="container">
+      <h1 class="page-title">Shopping Cart<span>Shop</span></h1>
     </div>
+  </div>
 
-    <!-- Breadcrumb Navigation -->
-    <nav aria-label="breadcrumb" class="breadcrumb-nav">
-        <div class="container">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/">Home</a></li>
-                <li class="breadcrumb-item"><a href="#">Shop</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Shopping Cart</li>
-            </ol>
-        </div>
-    </nav>
+  <!-- Breadcrumb Navigation -->
+  <nav aria-label="breadcrumb" class="breadcrumb-nav">
+    <div class="container">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item"><a href="#">Shop</a></li>
+        <li class="breadcrumb-item active" aria-current="page">
+          Shopping Cart
+        </li>
+      </ol>
+    </div>
+  </nav>
 
-    <!-- Cart Content -->
-    <div class="page-content">
-        <div class="cart">
-            <div class="container">
-                <div class="row">
-                    <!-- Cart Items -->
-                    <div class="col-lg-9">
-                        <table class="table table-cart table-mobile">
-                            <thead>
-                                <tr>
-                                    <th>Product</th>
-                                    <th>Price</th>
-                                    <th>Quantity</th>
-                                    <th>Total</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% userCart.items.forEach((item)=> { %>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <img class="cart-item-img img-fluid img-thumbnail" style="width: 7rem;"
-                                                src="/uploads/cropped/<%= item.product_id.images.image1 %>"
-                                                alt="..."></a>
-                                            <div class="cart-title text-start"><a
-                                                    class="text-uppercase text-dark"><strong>
-                                                        <%= item.product_id.product_name %>
-                                                    </strong></a></div>
-                                        </div>
+  <!-- Cart Content -->
+  <div class="page-content">
+    <div class="cart">
+      <div class="container">
+        <div class="row">
+          <!-- Cart Items -->
+          <div class="col-lg-9">
+            <table class="table table-cart table-mobile">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Price</th>
+                  <th>Quantity</th>
+                  <th>Total</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% userCart.items.forEach((item)=> { %>
+                <tr>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <img
+                        class="cart-item-img img-fluid img-thumbnail"
+                        style="width: 7rem"
+                        src="/uploads/cropped/<%= item.product_id.images.image1 %>"
+                        alt="..."
+                      />
+                      <div class="cart-title text-start">
+                        <a class="text-uppercase text-dark"
+                          ><strong>
+                            <%= item.product_id.product_name %>
+                          </strong></a
+                        >
+                      </div>
                     </div>
-                    </td>
-                    <td class="align-middle">$<%= item.product_id.sellingPrice %>
-                    </td>
+                  </td>
+                  <td class="align-middle">
+                    ₹<%= item.product_id.sellingPrice %>
+                  </td>
 
-                    <td class="align-middle">
-                        <div class="d-flex flex-row">
-                            <button onclick="updateQuantity('<%- item.product_id._id %>', 'false')"
-                                class="btn btn-link px-2" type="button">
-                                <i class="fas fa-minus fa-sm"></i>
-                            </button>
+                  <td class="align-middle">
+                    <div class="d-flex flex-row">
+                      <button
+                        onclick="updateQuantity('<%- item.product_id._id %>', 'false')"
+                        class="btn btn-link px-2"
+                        type="button"
+                      >
+                        <i class="fas fa-minus fa-sm"></i>
+                      </button>
 
-                            <pre id="quantity-display-<%- item.product_id._id %>"><%- item.quantity %></pre>
-                            <input id="quantity-input-<%- item.product_id._id %>" min="0" name="quantity"
-                                value="<%- item.quantity %>" type="number" class="form-control form-control-sm"
-                                style="width:  50px;" readonly />
+                      <input
+                        id="quantity-input-<%- item.product_id._id %>"
+                        min="0"
+                        name="quantity"
+                        value="<%-item.quantity %>"
+                        type="number"
+                        style="width: 65px"
+                        readonly
+                      />
 
-                            <button onclick="updateQuantity('<%- item.product_id._id %>', 'true')"
-                                class="btn btn-link px-2" type="button">
-                                <i class="fas fa-plus fa-sm"></i>
-                            </button>
-                        </div>
-                    </td>
-
-
-                    <td class="align-middle" id="itemTotal-<%- item.product_id._id %>">$<%= item.price %>
-                    </td>
-                    <td class="align-middle">
-                        <button onclick="removeFromCart('<%- item.product_id._id %>')"
-                            class="btn btn-light cart-remove">
-                            <i class="delete bi bi-x-lg text-danger"></i>
-                        </button>
-                    </td>
-                    </tr>
-                    <% }) %>
-                        </tbody>
-                        </table>
-                </div>
-                <!-- Cart Summary -->
-                <aside class="col-lg-3">
-                    <div class="summary summary-cart">
-                        <h3 class="summary-title">Cart Total</h3>
-                        <table class="table table-summary">
-                            <tbody>
-                                <tr class="summary-subtotal">
-                                    <td>Subtotal:</td>
-                                    <td><span id="cartTotal">₹<%= userCart.totalPrice %></span></td>
-                                </tr>
-                                <tr class="summary-shipping">
-                                    <td>Shipping:</td>
-                                    <td>&nbsp;</td>
-                                </tr>
-                                <!-- Shipping Options -->
-                                <tr class="summary-shipping-row">
-                                    <td>
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" id="free-shipping" name="shipping"
-                                                class="custom-control-input">
-                                            <label class="custom-control-label" for="free-shipping">Free
-                                                Shipping</label>
-                                        </div>
-                                    </td>
-                                    <td>₹0.00</td>
-                                </tr>
-                                <tr class="summary-shipping-row">
-                                    <td>
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" id="standart-shipping" name="shipping"
-                                                class="custom-control-input">
-                                            <label class="custom-control-label"
-                                                for="standart-shipping">Standard:</label>
-                                        </div>
-                                    </td>
-                                    <td>₹10.00</td>
-                                </tr>
-                                <tr class="summary-shipping-row">
-                                    <td>
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" id="express-shipping" name="shipping"
-                                                class="custom-control-input">
-                                            <label class="custom-control-label" for="express-shipping">Express:</label>
-                                        </div>
-                                    </td>
-                                    <td>₹20.00</td>
-                                </tr>
-                                <tr class="summary-shipping-estimate">
-                                    <td>Estimate for Your Country<br> <a href="/address">Change address</a></td>
-                                    <td>&nbsp;</td>
-                                </tr>
-                                <tr class="summary-total">
-                                    <td>Total:</td>
-                                    <td><strong id="grandTotal" class="order-summary-total">₹<%= userCart.totalPrice %>
-                                                </strong>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <a href="/checkout" class="btn btn-outline-primary-2 btn-order btn-block">PROCEED TO
-                            CHECKOUT</a>
-                        <a href="/" class="btn btn-outline-dark-2 btn-block mb-3"><span>CONTINUE SHOPPING</span><i
-                                class="icon-refresh"></i></a>
+                      <button
+                        onclick="updateQuantity('<%- item.product_id._id %>', 'true')"
+                        class="btn btn-link px-2"
+                        type="button"
+                      >
+                        <i class="fas fa-plus fa-sm"></i>
+                      </button>
                     </div>
-                </aside>
+                  </td>
+
+                  <td
+                    class="align-middle"
+                    id="itemTotal-<%- item.product_id._id %>"
+                  >
+                    ₹<%= item.itemTotal %>
+                  </td>
+                  <td class="align-middle">
+                    <button
+                      onclick="removeFromCart('<%- item.product_id._id %>')"
+                      class="btn btn-light cart-remove"
+                    >
+                      <i class="delete bi bi-x-lg text-danger"></i>
+                    </button>
+                  </td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+          <!-- Cart Summary -->
+          <aside class="col-lg-3">
+            <div class="summary summary-cart">
+              <h3 class="summary-title">Cart Total</h3>
+              <table class="table table-summary">
+                <tbody>
+                  <tr class="summary-subtotal">
+                    <td>Subtotal:</td>
+                    <td>
+                      <span id="cartTotal">₹<%= userCart.totalPrice %></span>
+                    </td>
+                  </tr>
+                  <tr class="summary-shipping">
+                    <td>Shipping:</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <!-- Shipping Options -->
+                  <tr class="summary-shipping-row">
+                    <td>
+                      <div class="custom-control custom-radio">
+                        <input
+                          type="radio"
+                          id="free-shipping"
+                          name="shipping"
+                          class="custom-control-input"
+                        />
+                        <label class="custom-control-label" for="free-shipping"
+                          >Free Shipping</label
+                        >
+                      </div>
+                    </td>
+                    <td>₹0.00</td>
+                  </tr>
+                  <tr class="summary-shipping-row">
+                    <td>
+                      <div class="custom-control custom-radio">
+                        <input
+                          type="radio"
+                          id="standart-shipping"
+                          name="shipping"
+                          class="custom-control-input"
+                        />
+                        <label
+                          class="custom-control-label"
+                          for="standart-shipping"
+                          >Standard:</label
+                        >
+                      </div>
+                    </td>
+                    <td>₹10.00</td>
+                  </tr>
+                  <tr class="summary-shipping-row">
+                    <td>
+                      <div class="custom-control custom-radio">
+                        <input
+                          type="radio"
+                          id="express-shipping"
+                          name="shipping"
+                          class="custom-control-input"
+                        />
+                        <label
+                          class="custom-control-label"
+                          for="express-shipping"
+                          >Express:</label
+                        >
+                      </div>
+                    </td>
+                    <td>₹20.00</td>
+                  </tr>
+                  <tr class="summary-shipping-estimate">
+                    <td>
+                      Estimate for Your Country<br />
+                      <a href="/address">Change address</a>
+                    </td>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr class="summary-total">
+                    <td>Total:</td>
+                    <td>
+                      <strong id="grandTotal" class="order-summary-total"
+                        >₹<%= userCart.totalPrice %>
+                      </strong>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <a
+                href="/checkout"
+                class="btn btn-outline-primary-2 btn-order btn-block"
+                >PROCEED TO CHECKOUT</a
+              >
+              <a href="/" class="btn btn-outline-dark-2 btn-block mb-3"
+                ><span>CONTINUE SHOPPING</span><i class="icon-refresh"></i
+              ></a>
             </div>
+          </aside>
         </div>
+      </div>
     </div>
-    </div>
+  </div>
 </main>
-
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script defer>
-    const updateQuantity = async (productId, increment = 'true') => {
-        let qty = increment === 'true' ? 1 : -1
+  const updateQuantity = async (productId, increment = "true") => {
+    let qty = increment === "true" ? 1 : -1;
 
-        try {
-            const response = await fetch(`/user/update-quantity/${productId}?qty=${qty}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-            })
-
-            const data = await response.json()
-
-            if (!response.ok) {
-                throw new Error(data.message);
-            }
-
-            if (data.success) {
-                // UI update
-
-                document.getElementById(`quantity-${productId}`).innerHTML = data.quantity;
-                document.getElementById("carTotal").innerHTML = "₹" + data.subtotal;
-                document.getElementById("grandtotal").innerHTML = "₹" + data.total;
-
-
-
-                console.log(data);
-                console.log(error);
-            } else {
-                Swal.fire({
-                    title: 'Error!',
-                    text: data.message,
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
-            }
-
-        } catch (error) {
-            console.log(error);
-
-            Swal.fire({
-                title: 'Error!',
-                text: error.message,
-                icon: 'error',
-                confirmButtonText: 'OK'
-            });
+    try {
+      const response = await fetch(
+        `/user/update-quantity/${productId}?qty=${qty}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
+      );
 
+      const data = await response.json();
 
+      if (!response.ok) {
+        throw new Error(data.message);
+      }
+      console.log(data);
+      const qtyInput = document.getElementById(`quantity-input-${productId}`);
+      if (parseInt(qtyInput.value) === 0) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Cant Decrease To Zero",
+        }).then(() => {
+          location.reload();
+        });
+      }
+      if (data.success) {
+        // UI update
 
+        document.getElementById(`quantity-input-${productId}`).value =
+          data.currentItem.quantity;
+        document.getElementById("cartTotal").innerHTML = "₹" + data.totalPrice;
+        document.getElementById("grandTotal").innerHTML = "₹" + data.totalPrice;
+        document.getElementById(`itemTotal-${productId}`).innerHTML =
+          "₹" + data.currentItem.itemTotal;
+      } else {
+        Swal.fire({
+          title: "Error!",
+          text: data.message,
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+
+      Swal.fire({
+        title: "Error!",
+        text: error.message,
+        icon: "error",
+        confirmButtonText: "OK",
+      });
     }
-
-
+  };
 </script>
 <script defer>
-    const removeFromCart = async (productId, variantId) => {
-        Swal.fire({
-            title: "Are you sure?",
-            text: `This item will be removed from the cart`,
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, Remove it!",
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                await fetch(`/user/cart/remove-cartItem/${productId}`, {
-                    method: "DELETE",
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                })
-                    .then((response) =>
-                        response.json())
-                    .then((data) => {
-
-                        if (data.status) {
-
-                            location.reload();
-                        }
-                    });
+  const removeFromCart = async (productId, variantId) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: `This item will be removed from the cart`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Remove it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await fetch(
+            `/user/cart/remove-cartItem/${productId}`,
+            {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+              },
             }
-        });
-    };
+          );
+          const data = await response.json();
+          console.log(response)
+          console.log(data);
+          if (!response.ok) {
+            throw new Error(data.message);
+          }
+          if(data.success){
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: data.message,
+            }).then(()=>{
+                location.reload();
+            })
+          }else{
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.message,
+            })
+          }
+        } catch (error) {
+          console.error(error);
+          Swal.fire({
+            title: "Error!",
+            text: error.message,
+            icon: "error",
+            confirmButtonText: "OK",
+          });
+        }
+      }
+    });
+  };
 </script>

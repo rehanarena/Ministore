@@ -187,11 +187,7 @@ module.exports = {
     }
   },
 
-  // deleteProduct: async (req, res) => {
-  //   console.log(req.body);
-  // },
-
-  // List / Unlist - Products (Soft Delete)
+  
   toggleListing: async (req, res) => {
     try {
       const product = await Product.findById(req.params.id);

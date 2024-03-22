@@ -56,8 +56,11 @@
                 <% products.forEach(element=> { %>
 
                     <div class="col-md-3  p-2 m-2  text-capitalize card border rounded">
-                        <img src="/uploads/cropped/<%- element.images.image1 %>" alt="<%- element.product_name %>"
-                            class="img-fluid">
+                        <a href="/ProductList">
+                            <img class="img-fluid img-thumbnail" src="/uploads/cropped/<%- element.images.image1 %>" alt="<%- element.product_name %>">
+                        </a>
+                        
+            
                         <p class="h4 card-title"><%- element.product_name %></p>
                         <div class="card-body">
                             <p class="lead card-text"><%- element.sellingPrice %></p>
@@ -279,13 +282,23 @@
             if (!response.ok) {
                 throw new Error(data.message);
             }
+            console.log(data);
+            if(data.success){
 
-            Swal.fire({
-                title: 'Success!',
-                text: 'Product added to cart successfully.',
-                icon: 'success',
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Product added to cart successfully.',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
+            }else{
+                Swal.fire({
+                title: 'Error!',
+                text: data.message,
+                icon: 'error',
                 confirmButtonText: 'OK'
             });
+            }
         } catch (error) {
             Swal.fire({
                 title: 'Error!',

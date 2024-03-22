@@ -2,6 +2,7 @@ const Order = require("../model/orderSchema");
 const User = require("../model/userSchema");
 const Product = require("../model/productSchema");
 const Address = require("../model/addressSchema");
+const Cart = require("../model/cartSchema");
 
 const layout = "./layouts/adminLayout.ejs";
 
@@ -26,43 +27,25 @@ module.exports = {
       status = "pending";
     }
 
-    let cartList = await User.aggregate([
-      { $match: { _id: user._id } },
-      { $project: { cart: 1, _id: 0 } },
-      { $unwind: { path: "$cart" } },
-      {
-        $lookup: {
-          from: "products",
-          localField: "cart.product_id",
-          foreignField: "_id",
-          as: "prod_detail",
-        },
-      },
-      { $unwind: { path: "$prod_detail" } },
-      {
-        $project: {
-          prod_detail_id: 1,
-          "prod_detail.sellingPrice": 1,
-          cart: 1,
-        },
-      },
-    ]);
+    const userCart = await Cart.findOne({ user_id: req.user.id }).populate(
+      "items.product_id"
+    );
 
     const address = await Address.findOne({ _id: req.body.address });
 
-    if (address && cartList) {
+    if (address && userCart) {
       let items = [];
 
-      for (let i = 0; i < cartList.length; i++) {
+      for (let i = 0; i < userCart.length; i++) {
         items.push({
-          product_id: cartList[i].cart.product_id,
-          quantity: cartList[i].cart.quantity,
-          price: parseInt(cartList[i].prod_detail.sellingPrice),
+          product_id: userCart[i].cart.product_id,
+          quantity: userCart[i].cart.quantity,
+          price: parseInt(userCart[i].prod_detail.sellingPrice),
         });
       }
 
       let totalPrice = 0;
-      for (let prod of cartList) {
+      for (let prod of userCart) {
         prod.price = prod.prod_detail.sellingPrice * prod.cart.quantity;
         totalPrice += prod.price;
       }
@@ -228,48 +211,49 @@ module.exports = {
     let perPage = 10;
     let page = req.query.page || 1;
 
-    const orders = await Order.aggregate([
-      {
-        $sort: {
-          createdAt: -1,
-        },
-      },
-      {
-        $lookup: {
-          from: "users",
-          localField: "customer_id",
-          foreignField: "_id",
-          as: "customer",
-        },
-      },
-      {
-        $unwind: {
-          path: "$customer",
-        },
-      },
-      {
-        $lookup: {
-          from: "products",
-          localField: "items.product_id",
-          foreignField: "_id",
-          as: "item.product",
-        },
-      },
-    ]).skip(perPage * page - perPage)
-    .limit(perPage)
-    .exec();
+    // const orders = await Order.aggregate([
+    //   {
+    //     $sort: {
+    //       createdAt: -1,
+    //     },
+    //   },
+    //   {
+    //     $lookup: {
+    //       from: "users",
+    //       localField: "customer_id",
+    //       foreignField: "_id",
+    //       as: "customer",
+    //     },
+    //   },
+    //   {
+    //     $unwind: {
+    //       path: "$customer",
+    //     },
+    //   },
+    //   {
+    //     $lookup: {
+    //       from: "products",
+    //       localField: "items.product_id",
+    //       foreignField: "_id",
+    //       as: "item.product",
+    //     },
+    //   },
+    // ])
+    // .skip(perPage * page - perPage)
+    // .limit(perPage)
+    // .exec();
 
     // console.log(orders);
-    const count = await Order.countDocuments();
-    const nextPage = parseInt(page) + 1;
-    const hasNextPage = nextPage <= Math.ceil(count / perPage);
+    // const count = await Order.countDocuments();
+    // const nextPage = parseInt(page) + 1;
+    // const hasNextPage = nextPage <= Math.ceil(count / perPage);
 
-    res.render("admin/orders/orders", {
+    res.render("admin/orders", {
       locals,
-      orders,
-      current: page,
-      pages: Math.ceil(count / perPage),
-      nextPage: hasNextPage ? nextPage : null,
+      // orders,
+      // current: page,
+      // pages: Math.ceil(count / perPage),
+      // nextPage: hasNextPage ? nextPage : null,
       currentRoute: "/admin/orders/",
       layout,
     });

@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const cartController = require("../controller/cartController");
-const checkoutController = require("../controller/checkoutController");
+
 const shopController = require("../controller/shopController");
+
 
 const Category = require("../model/categorySchema");
 const Product = require("../model/productSchema");
+const Cart = require('../model/cartSchema');
 
 const userController = require("../controller/userController");
 
@@ -19,40 +20,38 @@ router.use((req, res, next) => {
   next();
 });
 
-//  console.log(cartController);
-/* GET cart page. */
-// router.get("/user/cart", isLoggedIn, cartController.getCart);
-
-// router.post("/user/add-to-cart/", cartController.addToCart);
-
-// router.get("/cart/remove-from-cart/:id", cartController.removeCartItem);
-
-// router.get("/cart/increase-quantity/:id", cartController.incrementCartItem);
-
-// router.get("/cart/decrease-quantity/:id", cartController.decrementCartItem);
-
 /* GET home page. */
 
 router.get("/", async function (req, res, next) {
   try {
     const categories = await Category.find({ isActive: true });
-    const products = await Product.find({}); // Fetch all products, adjust the query as necessary
+    const products = await Product.find({}); 
+    const userCart = await Cart.findOne({ 'items.product_id': { $exists: true } });
+
     res.render("index", {
       title: "Ministore",
       categories: categories,
       products: products,
+      userCart: userCart,
     });
   } catch (error) {
     next(error); // Pass the error to the next middleware for error handling
   }
 });
-/* GET checkout page. */
-router.route("/checkout").get(checkoutController.getcheckout);
+
 
 /* GET ProductList page. */
-router.route("/productList").get(shopController.getproductList);
+
+// router
+//   .route("/productList")
+//   .get(shopController.getProductList)
+/* GET search page. */
+router.get("/search", shopController.search)
 
 /* GET ProducDetails page. */
-router.route("/productDetails").get(shopController.getproductDetails);
+router.route("/productDetails").get(shopController.getProductDetails);
+
+router.get("/order-success", shopController.getOrderSuccess);
+
 
 module.exports = router;

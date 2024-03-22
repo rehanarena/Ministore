@@ -53,18 +53,7 @@ const order_schema = new Schema(
       type: Number,
       required: true,
     },
-    coupon: {
-      coupon_id: {
-        type: ObjectId,
-        ref: "Coupon",
-      },
-      discount: {
-        type: Number,
-      },
-      code: {
-        type: String,
-      },
-    },
+    
     status: {
       type: String,
       required: true,
