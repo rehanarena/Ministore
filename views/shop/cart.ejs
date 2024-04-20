@@ -1,9 +1,9 @@
 <main class="main">
   <!-- Page Header -->
+  
   <div
     class="page-header text-center"
-    style="background-image: url('/assets/images/page-header-bg.jpg')"
-  >
+    style="background-image: url('/assets/images/page-header-bg.jpg')" >
     <div class="container">
       <h1 class="page-title">Shopping Cart<span>Shop</span></h1>
     </div>
@@ -22,196 +22,214 @@
     </div>
   </nav>
 
-  <!-- Cart Content -->
-  <div class="page-content">
-    <div class="cart">
-      <div class="container">
-        <div class="row">
-          <!-- Cart Items -->
-          <div class="col-lg-9">
-            <table class="table table-cart table-mobile">
-              <thead>
-                <tr>
-                  <th>Product</th>
-                  <th>Price</th>
-                  <th>Quantity</th>
-                  <th>Total</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                <% userCart.items.forEach((item)=> { %>
-                <tr>
-                  <td>
-                    <div class="d-flex align-items-center">
-                      <img
-                        class="cart-item-img img-fluid img-thumbnail"
-                        style="width: 7rem"
-                        src="/uploads/cropped/<%= item.product_id.images.image1 %>"
-                        alt="..."
-                      />
-                      <div class="cart-title text-start">
-                        <a class="text-uppercase text-dark"
-                          ><strong>
-                            <%= item.product_id.product_name %>
-                          </strong></a
-                        >
-                      </div>
-                    </div>
-                  </td>
-                  <td class="align-middle">
-                    ₹<%= item.product_id.sellingPrice %>
-                  </td>
-
-                  <td class="align-middle">
-                    <div class="d-flex flex-row">
-                      <button
-                        onclick="updateQuantity('<%- item.product_id._id %>', 'false')"
-                        class="btn btn-link px-2"
-                        type="button"
-                      >
-                        <i class="fas fa-minus fa-sm"></i>
-                      </button>
-
-                      <input
-                        id="quantity-input-<%- item.product_id._id %>"
-                        min="0"
-                        name="quantity"
-                        value="<%-item.quantity %>"
-                        type="number"
-                        style="width: 65px"
-                        readonly
-                      />
-
-                      <button
-                        onclick="updateQuantity('<%- item.product_id._id %>', 'true')"
-                        class="btn btn-link px-2"
-                        type="button"
-                      >
-                        <i class="fas fa-plus fa-sm"></i>
-                      </button>
-                    </div>
-                  </td>
-
-                  <td
-                    class="align-middle"
-                    id="itemTotal-<%- item.product_id._id %>"
-                  >
-                    ₹<%= item.itemTotal %>
-                  </td>
-                  <td class="align-middle">
-                    <button
-                      onclick="removeFromCart('<%- item.product_id._id %>')"
-                      class="btn btn-light cart-remove"
-                    >
-                      <i class="delete bi bi-x-lg text-danger"></i>
-                    </button>
-                  </td>
-                </tr>
-                <% }) %>
-              </tbody>
-            </table>
-          </div>
-          <!-- Cart Summary -->
-          <aside class="col-lg-3">
-            <div class="summary summary-cart">
-              <h3 class="summary-title">Cart Total</h3>
-              <table class="table table-summary">
+  <% if (typeof userCart !=='undefined' && userCart) { %>
+    <!-- Cart Content -->
+    <div class="page-content">
+      <div class="cart">
+        <div class="container">
+          <div class="row">
+            <!-- Cart Items -->
+            <div class="col-lg-9">
+              <table class="table table-cart table-mobile">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th></th>
+                  </tr>
+                </thead>
                 <tbody>
-                  <tr class="summary-subtotal">
-                    <td>Subtotal:</td>
+                  <% userCart.items.forEach((item)=> { %>
+                  <tr>
                     <td>
-                      <span id="cartTotal">₹<%= userCart.totalPrice %></span>
-                    </td>
-                  </tr>
-                  <tr class="summary-shipping">
-                    <td>Shipping:</td>
-                    <td>&nbsp;</td>
-                  </tr>
-                  <!-- Shipping Options -->
-                  <tr class="summary-shipping-row">
-                    <td>
-                      <div class="custom-control custom-radio">
-                        <input
-                          type="radio"
-                          id="free-shipping"
-                          name="shipping"
-                          class="custom-control-input"
+                      <div class="d-flex align-items-center">
+                        <img
+                          class="cart-item-img img-fluid img-thumbnail"
+                          style="width: 7rem"
+                          src="/uploads/cropped/<%= item.product_id.images.image1 %>"
+                          alt="..."
                         />
-                        <label class="custom-control-label" for="free-shipping"
-                          >Free Shipping</label
-                        >
+                        <div class="cart-title text-start">
+                          <a class="text-uppercase text-dark"
+                            ><strong>
+                              <%= item.product_id.product_name %>
+                            </strong></a
+                          >
+                        </div>
                       </div>
                     </td>
-                    <td>₹0.00</td>
-                  </tr>
-                  <tr class="summary-shipping-row">
-                    <td>
-                      <div class="custom-control custom-radio">
-                        <input
-                          type="radio"
-                          id="standart-shipping"
-                          name="shipping"
-                          class="custom-control-input"
-                        />
-                        <label
-                          class="custom-control-label"
-                          for="standart-shipping"
-                          >Standard:</label
+                    <td class="align-middle">
+                      ₹<%= item.product_id.sellingPrice %>
+                    </td>
+  
+                    <td class="align-middle">
+                      <div class="d-flex flex-row">
+                        <button
+                          onclick="updateQuantity('<%- item.product_id._id %>', 'false')"
+                          class="btn btn-link px-2"
+                          type="button"
                         >
+                          <i class="fas fa-minus fa-sm"></i>
+                        </button>
+  
+                        <input
+                          id="quantity-input-<%- item.product_id._id %>"
+                          min="0"
+                          name="quantity"
+                          value="<%-item.quantity %>"
+                          type="number"
+                          style="width: 65px"
+                          readonly
+                        />
+  
+                        <button
+                          onclick="updateQuantity('<%- item.product_id._id %>', 'true')"
+                          class="btn btn-link px-2"
+                          type="button"
+                        >
+                          <i class="fas fa-plus fa-sm"></i>
+                        </button>
                       </div>
                     </td>
-                    <td>₹10.00</td>
-                  </tr>
-                  <tr class="summary-shipping-row">
-                    <td>
-                      <div class="custom-control custom-radio">
-                        <input
-                          type="radio"
-                          id="express-shipping"
-                          name="shipping"
-                          class="custom-control-input"
-                        />
-                        <label
-                          class="custom-control-label"
-                          for="express-shipping"
-                          >Express:</label
-                        >
-                      </div>
+  
+                    <td
+                      class="align-middle"
+                      id="itemTotal-<%- item.product_id._id %>"
+                    >
+                      ₹<%= item.itemTotal %>
                     </td>
-                    <td>₹20.00</td>
-                  </tr>
-                  <tr class="summary-shipping-estimate">
-                    <td>
-                      Estimate for Your Country<br />
-                      <a href="/address">Change address</a>
-                    </td>
-                    <td>&nbsp;</td>
-                  </tr>
-                  <tr class="summary-total">
-                    <td>Total:</td>
-                    <td>
-                      <strong id="grandTotal" class="order-summary-total"
-                        >₹<%= userCart.totalPrice %>
-                      </strong>
+                    <td class="align-middle">
+                      <button
+                        onclick="removeFromCart('<%- item.product_id._id %>')"
+                        class="btn btn-light cart-remove"
+                      >
+                        <i class="delete bi bi-x-lg text-danger"></i>
+                      </button>
                     </td>
                   </tr>
+                  <% }) %>
                 </tbody>
               </table>
-              <a
-                href="/checkout"
-                class="btn btn-outline-primary-2 btn-order btn-block"
-                >PROCEED TO CHECKOUT</a
-              >
-              <a href="/" class="btn btn-outline-dark-2 btn-block mb-3"
-                ><span>CONTINUE SHOPPING</span><i class="icon-refresh"></i
-              ></a>
             </div>
-          </aside>
+            <!-- Cart Summary -->
+            <aside class="col-lg-3">
+              <div class="summary summary-cart">
+                <h3 class="summary-title">Cart Total</h3>
+                <table class="table table-summary">
+                  <tbody>
+                    <tr class="summary-subtotal">
+                      <td>Subtotal:</td>
+                      <td>
+                        <span id="cartTotal">₹<%= userCart.totalPrice %></span>
+                      </td>
+                    </tr>
+                    <tr class="summary-shipping">
+                      <td>Shipping:</td>
+                      <td>&nbsp;</td>
+                    </tr>
+                    <!-- Shipping Options -->
+                    <tr class="summary-shipping-row">
+                      <td>
+                        <div class="custom-control custom-radio">
+                          <input
+                            type="radio"
+                            id="free-shipping"
+                            name="shipping"
+                            class="custom-control-input"
+                          />
+                          <label class="custom-control-label" for="free-shipping"
+                            >Free Shipping</label
+                          >
+                        </div>
+                      </td>
+                      <td>₹0.00</td>
+                    </tr>
+                    <tr class="summary-shipping-row">
+                      <td>
+                        <div class="custom-control custom-radio">
+                          <input
+                            type="radio"
+                            id="standart-shipping"
+                            name="shipping"
+                            class="custom-control-input"
+                          />
+                          <label
+                            class="custom-control-label"
+                            for="standart-shipping"
+                            >Standard:</label
+                          >
+                        </div>
+                      </td>
+                      <td>₹10.00</td>
+                    </tr>
+                    <tr class="summary-shipping-row">
+                      <td>
+                        <div class="custom-control custom-radio">
+                          <input
+                            type="radio"
+                            id="express-shipping"
+                            name="shipping"
+                            class="custom-control-input"
+                          />
+                          <label
+                            class="custom-control-label"
+                            for="express-shipping"
+                            >Express:</label
+                          >
+                        </div>
+                      </td>
+                      <td>₹20.00</td>
+                    </tr>
+                    <tr class="summary-shipping-estimate">
+                      <td>
+                        Estimate for Your Country<br />
+                        <a href="/address">Change address</a>
+                      </td>
+                      <td>&nbsp;</td>
+                    </tr>
+                    <tr class="summary-total">
+                      <td>Total:</td>
+                      <td>
+                        <strong id="grandTotal" class="order-summary-total"
+                          >₹<%= userCart.totalPrice %>
+                        </strong>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <a
+                  href="/user/checkout"
+                  class="btn btn-outline-primary-2 btn-order btn-block"
+                  >PROCEED TO CHECKOUT</a
+                >
+                <a href="/" class="btn btn-outline-dark-2 btn-block mb-3"
+                  ><span>CONTINUE SHOPPING</span><i class="icon-refresh"></i
+                ></a>
+              </div>
+            </aside>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+   
+    <% } else { %>
+      <!-- If cart is empty -->
+      <div class="container my-5 mb-6">
+        <div class="col my-5 text-center">
+          <h2 class="h1">
+            Cart is empty...
+          </h2>
+          <h3 class="my-5">
+            <a href="/">
+              <button class="btn btn-lg btn-primary">Shop Now</button>
+            </a>
+          </h3>
+        </div>
+      </div>
+      
+      <% } %>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

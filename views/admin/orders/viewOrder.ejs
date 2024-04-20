@@ -1,0 +1,160 @@
+<section class="container mt-5">
+  <div class="card border-secondary">
+    <div class="card-header bg-secondary text-white">
+      <h5 class="fw-bold mb-0">Order Details</h5>
+    </div>
+    <form id="editOrderForm" action="/admin/orders/manage-order/changeStatus/<%- orderDetails._id %>" method="POST" class="card py-3 my-3 text-capitalize">
+      <input type="hidden" name="product_id" value="<%- orderDetails.items[0].product_id._id %>">
+    <div class="card-body">
+      <div class="row mb-3">
+        <div class="col">
+          <h6 class="fw-bold">Order ID:</h6>
+          <span class="text-muted"><%- orderDetails._id %></span>
+        </div>
+        <div class="col">
+          <h6 class="fw-bold">Ordered On:</h6>
+          <span class="text-muted"><%- orderDetails.createdAt.toLocaleDateString() %></span>
+        </div>
+        <div class="col">
+          <h6 class="fw-bold">payment status:</h6>
+          <span class="text-muted"><%= orderDetails.payment_method %></span>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col">
+          <h6 class="fw-bold">Address:</h6>
+          <span class="text-muted"><%- orderDetails.address %></span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <img src="/uploads/cropped/<%- orderDetails.items[0].product_id.images.image1 %>" class="img-fluid img-thumbnail rounded p-3" alt="">
+        </div>
+        <div class="col-md-8">
+          <div class="card bg-light mb-3">
+            <div class="card-header bg-secondary text-white">
+              <h6 class="fw-bold mb-0">Product Details</h6>
+            </div>
+            <div class="card-body">
+              <p class="card-text mb-1"><span class="fw-bold">Product Name:</span> <span class="text-muted"><%- orderDetails.items[0].product_name %></span></p>
+              <p class="card-text mb-1"><span class="fw-bold">Price:</span> <span class="text-muted"><%- orderDetails.items[0].price %></span></p>
+              <p class="card-text mb-1"><span class="fw-bold">Quantity:</span> <span class="text-muted"><%- orderDetails.items[0].quantity %></span></p>
+              <p class="card-text mb-1"><span class="fw-bold">Current Status:</span> <span class="text-muted"><%- orderDetails.items[0].status %></span></p>
+              
+            </div>
+          </div>
+          <div class="card bg-light">
+            <div class="card-header bg-secondary text-white">
+              <h6 class="fw-bold mb-0">Update Status</h6>
+            </div>
+            <div class="card-body">
+              <div class="row mb-3">
+                <div class="col">
+                  <select name="status" id="item-status" class="form-select">
+                    <% if (orderDetails.items[0].status === 'pending') { %>
+                      <option value="Confirmed">Confirmed</option>
+                    <% } %>
+                    <% if (orderDetails.items[0].status === 'confirmed') { %>
+                      <option value="Shipped">Shipped</option>
+                    <% } %>
+                    <% if (orderDetails.items[0].status === 'Shipped') { %>
+                      <option value="Out for Delivery">Out for Delivery</option>
+                    <% } %>
+                    <% if (orderDetails.items[0].status === 'Out for Delivery' || orderDetails.items[0].status === 'Delivered') { %>
+                      <option value="Delivered">Delivered</option>
+                    <% } %>
+                    <% if (orderDetails.items[0].status === 'In-Return') { %>
+                      <option value="Returned">Returned</option>
+                    <% } %>
+                  </select>
+                </div>
+                <div class="col">
+                  <% if (orderDetails.items[0].status === 'Cancelled' || orderDetails.items[0].status === 'Pending' || orderDetails.items[0].status === 'Delivered' || orderDetails.items[0].status === 'Returned') { %>
+                    <a href="/admin/orders" class="btn btn-secondary">Return to Orders</a>
+                  <% } else { %>
+                    <button type="submit" class="btn <% if (orderDetails.items[0].status === 'Delivered') { %>
+                      btn-dark
+                      <% } else { %>
+                        btn-outline-warning
+                     <% } %>" <% if (orderDetails.items[0].status === 'Delivered') { %> disabled <% } %>>Update Status</button>
+                 
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+</section>
+
+
+
+
+<script defer>
+  const editOrderForm = document.querySelector('#editOrderForm');
+
+  editOrderForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(editOrderForm);
+    const data = Object.fromEntries(formData.entries());
+
+    Swal.fire({
+      title: 'Are you sure? You want to update this order',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, update it!'
+    }).then(async () => {
+
+      try {
+        const response = await fetch(editOrderForm.action, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+
+        if (!response.ok) {
+          throw new Error('Something went wrong');
+        }
+
+        const result = await response.json();
+
+        if (result.success) {
+          Swal.fire({
+            title: 'Success!',
+            text: result.message,
+            icon: 'success',
+            timer: 1500
+          }).then(() => {
+            location.reload();
+          })
+        } else {
+          Swal.fire({
+            title: 'Error!',
+            text: result.message,
+            icon: 'error',
+            timer: 1500
+          })
+        }
+      } catch (error) {
+        console.error(error);
+        Swal.fire({
+          title: 'Error!',
+          text: error.message || 'Something went wrong',
+          icon: 'error',
+          timer: 1500
+        })
+      }
+
+    })
+
+  })
+</script>

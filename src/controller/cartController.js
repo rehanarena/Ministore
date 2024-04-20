@@ -6,10 +6,10 @@ const User = require("../model/userSchema");
 
 module.exports = {
   getCart: async (req, res) => {
-    const userCart = await Cart.findOne({ user_id: req.user.id }).populate(
+    let userCart = await Cart.findOne({ user_id: req.user.id }).populate(
       "items.product_id"
     );
-    console.log(userCart.items);
+    console.log(userCart);
     res.render("shop/cart", {
       userCart,
     });
@@ -26,6 +26,15 @@ module.exports = {
           .status(404)
           .json({ success: false, message: "Product not Found" });
       }
+
+      const stock = product.stock;
+      if (stock === 0) {
+        return res
+          .status(409)
+          .json({ status: false, message: "Product Out Of Stock" });
+      }
+
+
       const userCart = await Cart.findOne({ user_id: req.user.id });
       if (!userCart) {
         const newCart = new Cart({

@@ -11,7 +11,10 @@ module.exports = {
    * User Side
    */
   // user place order
+
+
   placeOrder: async (req, res) => {
+    console.log(req.body);
     if (!req.body.address) {
       return res.json({ status: false, message: "Please add the address" });
     }
@@ -27,35 +30,33 @@ module.exports = {
       status = "pending";
     }
 
-    const userCart = await Cart.find({ user_id: req.user.id }).populate(
+    const userCart = await Cart.findOne({ user_id: req.user.id }).populate(
       "items.product_id"
     );
+    console.log(userCart);
 
     const address = await Address.findOne({ _id: req.body.address });
 
     if (address && userCart) {
-      let items = [];
-
-      for (let i = 0; i < userCart.length; i++) {
+      // let items = userCart.items;
+      let items = []
+      userCart.items.forEach((item)=>{
         items.push({
-          product_id: userCart[i].items.product_id, 
-          quantity: userCart[i].items.quantity, 
-          price: parseInt(userCart[i].items.product_id.sellingPrice),
-        });
-      }
+          product_id: item.product_id._id,
+          quantity: item.quantity,
+          price: item.product_id.sellingPrice,
+          status,
+          
+        })
+      })
 
-      let totalPrice = 0;
-      for (let prod of userCart) {
-        prod.price = prod.items.product_id.sellingPrice * prod.items.quantity; 
-        totalPrice += prod.price;
-      }
 
       let order = {
         customer_id: user._id,
         items: items,
         address: address,
         payment_method: req.body.paymentMethod,
-        total_amount: totalPrice,
+        total_amount: userCart.totalPrice,
         status: status,
       };
 
@@ -63,12 +64,12 @@ module.exports = {
         const createOrder = await Order.create(order);
         if (createOrder) {
           //empty the cart
-          await User.updateOne({ _id: user._id }, { $unset: { cart: "" } });
+          await Cart.deleteOne({user_id:req.user.id})
 
           //reduce the stock count
           for (let i = 0; i < items.length; i++) {
             await Product.updateOne(
-              { _id: items[i].product_id },
+              { _id: items[i].product_id._id },
               { $inc: { stock: -items[i].quantity } }
             );
           }
@@ -78,6 +79,7 @@ module.exports = {
           res.json({
             success: true,
           });
+          // console.log(req.body);
         }
       }
     }
@@ -90,218 +92,295 @@ module.exports = {
     let perPage = 6;
     let page = req.query.page || 1;
 
+    let orderDetails = await Order.find({ customer_id: user._id })
+        .select('_id items address payment_method status createdAt total_amount')
+        .populate({
+            path: 'items.product_id',
+            select: 'name' ,
+        })
+        .skip(perPage * page - perPage)
+        .limit(perPage)
+        .sort({ createdAt: -1 })
+        .exec();
+
+    const count = await Order.countDocuments({ customer_id: user._id });
+    const nextPage = parseInt(page) + 1;
+    const hasNextPage = nextPage <= Math.ceil(count / perPage);
+
+    res.render("user/orders", {
+        orderDetails,
+        current: page,
+        pages: Math.ceil(count / perPage),
+        nextPage: hasNextPage ? nextPage : null,
+        currentRoute: "/user/orders/",
+    });
+},
+
+  getUserOrder: async (req, res) => {
+    const locals = {
+      title: "ministore - Orders",
+    };
+  
+    try {
+      const orderDetails = await Order.findOne({ _id: req.params.id }).populate("items.product_id");
+      console.log(orderDetails.items);
+      if (!orderDetails) {
+        throw new Error("Order not found");
+      }
+  
+      res.render("user/order", {
+        locals,
+        orderDetails,
+        orderDetail: orderDetails, 
+        orderProducts: orderDetails.items,
+        address: orderDetails.address,
+        itemTotal: orderDetails.itemTotal,
+      });
+    } catch (error) {
+      console.error("Error fetching order:", error);
+      // Handle the error appropriately, for example:
+      res.status(404).send("Order not found");
+    }
+  },
+  
+/**
+   * Admin Side
+   */
+getOrders: async (req, res) => {
+  
+  const locals = {
+    title: "Order Management",
+  };
+
+  let perPage = 10;
+  let page = req.query.page || 1;
+
+  try {
     let orderDetails = await Order.aggregate([
       {
-        $match: {
-          customer_id: user._id,
+        $project: {
+          _id: 1,
+          customer_id: 1,
+          items: 1,
+          address: 1,
+          payment_method: 1,
+          total_amount: 1,
+          coupon: 1,
+          couponDiscount: 1,
+          // payable: 1,
+          categoryDiscount: 1,
+          paymentStatus: 1,
+          orderStatus: 1,
+          createdAt: 1,
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "customer_id",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      { $unwind: { path: "$items" } },
+      {
+        $lookup: {
+          from: "products",
+          localField: "items.product_id",
+          foreignField: "_id",
+          as: "product_detail",
+        },
+      },
+      {
+        $addFields: {
+          productDetails: { $arrayElemAt: ["$product_detail", 0] },
         },
       },
       {
         $project: {
           _id: 1,
+          user: 1,
           items: 1,
-          address: 1,
           payment_method: 1,
-          status: 1,
-          createdAt: 1,
           total_amount: 1,
+          coupon: 1,
+          couponDiscount: 1,
+          // payable: 1,
+          paymentStatus: 1,
+          orderStatus: 1,
+          createdAt: 1,
+          productDetails: 1,
         },
       },
-    ])
-      .skip(perPage * page - perPage)
-      .limit(perPage)
-      .exec();
+      { $sort: { createdAt: -1 } },
+      { $skip: perPage * page - perPage },
+      { $limit: perPage },
+    ]);
 
-    orderDetails = orderDetails.reverse();
-
-    
-
-    const count = await Order.countDocuments({ customer_id: user._id });
-    // const order = await Order.find({ customer_id: user._id });
+    const count = await Order.countDocuments();
     const nextPage = parseInt(page) + 1;
     const hasNextPage = nextPage <= Math.ceil(count / perPage);
 
-
-    res.render("user/orders", {
-      orderDetails,
+    res.render("admin/orders/orders", {
+      locals,
+      orders: orderDetails,
       current: page,
       pages: Math.ceil(count / perPage),
       nextPage: hasNextPage ? nextPage : null,
-      currentRoute: "/user/orders/",
-    });
-  },
-  getUserOrder: async (req, res) => {
-    const locals = {
-      title: "ministore - Orders",
-    };
-    const orderDetails = await Order.find({ _id: req.params.id }).populate(
-      "items.product_id"
-    );
-
-    orderDetails[0].items.forEach((item) => {
-      console.log(item);
-    });
-
-    res.render("user/orderDetail", {
-      locals,
-      user: req.user,
-      orderDetails,
-      orderDetail: orderDetails[0],
-      orderProducts: orderDetails[0].items,
-      address: orderDetails[0].address,
-    });
-  },
-  // Cancel and Return
-  cancelOrder: async (req, res) => {
-    try {
-      console.log(req.params);
-
-      const order = await Order.findById(req.params.id);
-
-      if (!order) {
-        return res.status(404).json({ message: "Order not found." });
-      }
-
-      if (order.status === "Cancelled") {
-        return res.status(400).json({ message: "Order is already cancelled." });
-      }
-
-      const updatedOrder = await Order.findByIdAndUpdate(
-        req.params.id,
-        {
-          $set: { status: "Cancelled", cancelled_on: new Date() },
-        },
-        { new: true }
-      ); // Use the { new: true } option to return the updated document
-
-      if (!updatedOrder) {
-        return res.status(500).json({ message: "Failed to cancel order." });
-      }
-
-      // Assuming you have a Product model and each product has a quantity field
-      for (const item of updatedOrder.items) {
-        const product = await Product.findById(item.product_id);
-        if (product) {
-          product.stock += item.quantity; // Increment the quantity of the product
-          await product.save(); // Save the updated product
-        }
-      }
-
-      res
-        .status(200)
-        .json({
-          message: "Order cancelled successfully.",
-          order: updatedOrder,
-        });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Server error." });
-    }
-  },
-  returnOrder: async (req, res) => {},
-
-  /**
-   * Admin Side
-   */
-
-  getOrders: async (req, res) => {
-    const locals = {
-      title: "Order Management",
-    };
-
-    let perPage = 10;
-    let page = req.query.page || 1;
-
-    // const orders = await Order.aggregate([
-    //   {
-    //     $sort: {
-    //       createdAt: -1,
-    //     },
-    //   },
-    //   {
-    //     $lookup: {
-    //       from: "users",
-    //       localField: "customer_id",
-    //       foreignField: "_id",
-    //       as: "customer",
-    //     },
-    //   },
-    //   {
-    //     $unwind: {
-    //       path: "$customer",
-    //     },
-    //   },
-    //   {
-    //     $lookup: {
-    //       from: "products",
-    //       localField: "items.product_id",
-    //       foreignField: "_id",
-    //       as: "item.product",
-    //     },
-    //   },
-    // ])
-    // .skip(perPage * page - perPage)
-    // .limit(perPage)
-    // .exec();
-
-    // console.log(orders);
-    // const count = await Order.countDocuments();
-    // const nextPage = parseInt(page) + 1;
-    // const hasNextPage = nextPage <= Math.ceil(count / perPage);
-
-    res.render("admin/orders", {
-      locals,
-      // orders,
-      // current: page,
-      // pages: Math.ceil(count / perPage),
-      // nextPage: hasNextPage ? nextPage : null,
       currentRoute: "/admin/orders/",
       layout,
     });
-  },
-  getOrderDetails: async (req, res) => {
-    const orderDetails = await Order.findOne({ _id: req.params.id })
-      .populate("customer_id")
-      .populate("items.product_id");
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+},
 
-    console.log(orderDetails.customer_id);
-    res.render("admin/orders/viewOrder", {
-      layout,
-      orderDetails,
-    });
-  },
+getOrderDetails: async (req, res) => {
+  const orderId = req.params.id;
 
-  changeOrderStatus: async (req, res) => {
-    const status = req.body.status;
-    const order_id = req.params.id;
-  
-    try {
-      // Check if the order exists
-      const order = await Order.findById(order_id);
-      if (!order) {
-        return res.status(404).json({ success: false, message: 'Order not found.' });
-      }
-  
-      // Check if the new status is valid
-      if (!['Cancelled', 'Pending', 'confirmed', 'Shipped', 'Out for Delivery', 'Delivered'].includes(status)) {
-        return res.status(400).json({ success: false, message: 'Invalid status.' });
-      }
-  
-      // Update the order status
-      const updateOrder = await Order.updateOne(
-        { _id: order_id },
-        { $set: { status: status } }
-      );
-  
-      // Check if the order was successfully updated
-      if (updateOrder) {
-        res.json({ success: true, message: 'Order status updated successfully.' });
-      } else {
-        res.status(400).json({ success: false, message: 'No changes were made.' });
-      }
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ success: false, message: 'Server error.' });
+  try {
+      const orderDetails = await Order.findById(orderId)
+          .populate('items.product_id')
+          .populate('customer_id')
+          .populate('address');
+
+      res.render("admin/orders/viewOrder", {
+          layout,
+          orderDetails,
+         
+      });
+  } catch (error) {
+      console.log(error);
+  }
+},
+cancelOrder: async (req, res) => {
+  try {
+    const  id = req.params;
+
+    const order = await Order.findOne({ _id: id });
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found." });
     }
-  },
+
+    const updatedOrder = await Order.updateOne(
+      { _id: id },
+      {
+        $set: {
+          "items.$.status": "Cancelled",
+          "items.$.cancelled_on": new Date(),
+        },
+      },
+      { new: true }
+    );
+
+    if (!updatedOrder) {
+      return res.status(500).json({ message: "Failed to cancel order." });
+    }
+
+    // Restore product stock
+    const updateOrder = await Order.findOne({
+      _id: id,
+     
+    });
+
+    for (const item of updateOrder.items) {
+      const product = await Product.findById(item.product_id);
+      if (product) {
+        product.stock += item.quantity;
+        await product.save(); // Save the updated product
+      }
+    }
+
+    res.status(200).json({
+      message: "Order cancelled successfully.",
+      order: updatedOrder,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error." });
+  }
+},
+
+
+cancelAllOrders: async (req, res) => {
+  try {
+    const { orderId } = req.params;
+
+    const updatedOrder = await Order.updateOne(
+      { _id: orderId },
+      {
+        $set: {
+          status: "Cancelled",
+          "items.$.status": "Cancelled",
+          "items.$[elem].cancelled_on": new Date(),
+        },
+      },
+      {
+        arrayFilters: [{ "elem.status": { $ne: "cancelled" } }],
+      },
+      { new: true }
+    );
+
+    if (updatedOrder) {
+      const updateOrder = await Order.findOne({ _id: orderId });
+      for (const item of updateOrder.items) {
+        const product = await Product.findById(item.product_id);
+        if (product) {
+          const variantIndex = product.variants.findIndex(
+            (variant) => variant._id.toString() === item.variant.toString()
+          );
+
+          if (variantIndex === -1) {
+            return res.status(404).json({ error: "Variant not found" });
+          }
+
+          product.variants[variantIndex].stock += item.quantity;
+
+          await product.save(); // Save the updated product
+        }
+      }
+    }
+
+    res.status(200).json({
+      message: "Orders cancelled successfully.",
+      order: updatedOrder,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Server error." });
+  }
+},
+
+changeOrderStatus: async (req, res) => {
+  const order_id = req.params.id;
+
+  const { product_id, status } = req.body;
+
+  console.log(req.body);
+ try {
+  let order = await Order.findOne({_id: order_id,"items.product_id": product_id})
+  if(!order){
+    return res.status(400).json({
+      success: false,
+      message: 'Order not Found',
+    })
+  }
+  console.log(order);
+  order.items[0].status = status
+  await order.save()
+  return res.status(200).json({
+    success: true,
+    message: 'orderStatus is Succefully Changed.'
+  })
+ } catch (error) {
+  console.error(error);
+  return res.status(500).json({
+    success: false,
+    message: error.message
+  })
+ }
+},
+
 };

@@ -24,6 +24,8 @@ const order_schema = new Schema(
           type: Number,
           required: true,
         },
+       
+       
         status: {
           type: String,
         },
@@ -42,9 +44,35 @@ const order_schema = new Schema(
       },
     ],
     address: {
-      type: mongoose.Schema.Types.Mixed,
-      required: true,
-    },
+      house_name: {
+          type: String,
+          required: true
+      },
+      area_street: {
+          type: String,
+          required: true
+      },
+      town: {
+          type: String,
+          required: true
+      },
+      state: {
+          type: String,
+          required: true
+      },
+      zipcode: {
+          type: Number,
+          required: true
+      },
+      locality: {
+          type: String,
+          required: true
+      },
+      landmark: {
+          type: String,
+          required: true
+      }
+  },
     payment_method: {
       type: String,
       required: true,
@@ -57,6 +85,9 @@ const order_schema = new Schema(
     status: {
       type: String,
       required: true,
+    },
+    payable: {
+      type: Number,
     },
   },
   {

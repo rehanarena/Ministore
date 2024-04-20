@@ -25,7 +25,7 @@ router.use((req, res, next) => {
 router.get("/", async function (req, res, next) {
   try {
     const categories = await Category.find({ isActive: true });
-    const products = await Product.find({}); 
+    const products = await Product.find({isActive:true}); 
     const userCart = await Cart.findOne({ 'items.product_id': { $exists: true } });
 
     res.render("index", {
@@ -45,6 +45,9 @@ router.get("/", async function (req, res, next) {
 // router
 //   .route("/productList")
 //   .get(shopController.getProductList)
+
+router.get("/shop", shopController.search);
+
 /* GET search page. */
 router.get("/search", shopController.search)
 

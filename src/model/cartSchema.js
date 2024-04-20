@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const Product = require("./productSchema");
+const Coupon = require("./couponSchema");
 const cartSchema = new mongoose.Schema(
   {
     user_id: {
@@ -27,6 +29,14 @@ const cartSchema = new mongoose.Schema(
     totalPrice: {
       type: Number,
       min: 0,
+    },
+    coupon: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Coupon",
+    },
+    couponDiscount: {
+      type: Number,
+      default: 0,
     },
   },
   {

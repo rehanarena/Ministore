@@ -1,177 +1,179 @@
-<section class="container-fluid mt-5">
+<section class="breadcrumb-option">
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb breadcrumb-chevron p-3 bg-body-tertiary rounded-2">
+        <li class="breadcrumb-item">
+          <a class="link-body-emphasis" href="/admin">
+            <svg class="bi" width="16" height="16">
+              <use xlink:href="#house-door-fill"></use>
+            </svg>
+            <span class="visually-hidden">Dashboard</span>
+          </a>
+          <!-- </li>
+            <li class="breadcrumb-item">
+              <a class="link-body-emphasis fw-semibold text-decoration-none" href="/category">Banners</a>
+            </li> -->
+        </li>
 
-    <div class="header d-flex justify-content-between">
-      <h3 class="h3 text-second fw-bold mb-3">Order Details - #<%- orderDetails._id %></h3>
-    </div>
-  
-    <form id="manageOrder" class="card px-3 py-3 <% if (orderDetails.status == 'Cancelled') {%> text-muted <% } %>">
-      <div class="row">
-        <div class="col-md-2">
-          <label for="form-control">username</label>
-          <input type="text" value="<%- orderDetails.customer_id.username %>" class="form-control <% if (orderDetails.status == 'Cancelled') {%> text-muted <% } %>" readonly>
-        </div>
-        <div class="col-md-2">
-          <label for="form-control">Customer Full Name</label>
-          <input type="text" value="<%- orderDetails.customer_id.firstName + ' ' + orderDetails.customer_id.lastName %>" class="form-control" readonly>
-        </div>
-        <div class="col-md-2">
-          <label for="form-control">Email</label>
-          <input type="email" value="<%- orderDetails.customer_id.email %>" class="form-control <% if (orderDetails.status == 'Cancelled') {%> text-muted <% } %>" readonly>
-        </div>
-        <div class="col-md-6">
-          <label for="form-control <% if (orderDetails.status == 'Cancelled') {%> text-muted <% } %>">Address</label>
-          <textarea readonly id="address" class="form-control text-capitalize <% if (orderDetails.status == 'Cancelled') {%> text-muted <% } %>"><%- orderDetails.address.name.toLowerCase() + ', ' + orderDetails.address.house_name + ', ' + orderDetails.address.town + ', ' + orderDetails.address.state + ', PIN: ' + orderDetails.address.zipcode + ', PH:' + orderDetails.address.phone %></textarea>
-        </div>
-  
-        <div class="col-md-6 form-group my-2">
-          <label for="form-control">Payment Method</label>
-          <input type="text" class="form-control text-uppercase <% if (orderDetails.status == 'Cancelled') {%> text-muted <% } %>" value="<%- orderDetails.payment_method %>" readonly>
-        </div>
-        <div class="col-md-6 form-group my-2">
-          <label for="form-control">Total Amount</label>
-          <input type="hidden" name="product_id" value="dummy-product-id">
-          <input type="text" class="form-control <% if (orderDetails.status == 'Cancelled') {%> text-muted <% } %>" value="$<%- orderDetails.total_amount %>" readonly>
-        </div>
-        <div class="col-md-12">
-          <label for="current-status" class="form-label">Current Status</label>
-          <input type="text" id="current-status" class="form-control text-uppercase <% if (orderDetails.status == 'Cancelled') {%> text-danger <% } %>"" readonly value=" <%- orderDetails.status %>">
-        </div>
-        <div class="col-md-6 my-2">
-          <% if (orderDetails.cancelled_on && orderDetails.status == 'Cancelled') { %>
-          <input type="text" value="<%= orderDetails.status %>" id="status" class="form-control" readonly>
-          <% } else if (orderDetails.status == 'Pending') { %>
-          <input type="text" value="<%= orderDetails.status %>" id="status" class="form-control" readonly>
-          <% } else { %>
-          <label for="form-control">Change Status to:</label>
-          <select name="status" class="form-select <% if (orderDetails.status == 'Cancelled') {%> text-danger text-uppercase <% } %>" id="status" <% if (orderDetails.status == 'Cancelled') {%> disabled <% } %>>
-            <% if (orderDetails.status == 'confirmed') { %>
-            <option value="Shipped">Shipped</option>
-            <% } %>
-            <% if (orderDetails.status == 'Cancelled') { %>
-            <option value="Cancelled">Cancelled</option>
-            <% } %>
-            <% if (orderDetails.status == 'Shipped') { %>
-            <option value="Out for Delivery">Out for Delivery</option>
-            <% } %>
-            <% if (orderDetails.status == 'Out for Delivery') { %>
-            <option value="Delivered">Delivered</option>
-            <% } %>
-          </select>
-          <% } %>
-        </div>
-  
-        <div class="col-md-6 form-group my-4">
-          <% if (orderDetails.status != 'Cancelled' ) { %>
-          <input type="button" value="Update Status" onclick="changeOrderStatus('<%= orderDetails._id %>')" class="form-control mt-2 btn btn-warning">
-          <% } %>
-        </div>
+        <li class="breadcrumb-item active" aria-current="page">Orders</li>
+      </ol>
+    </nav>
+  </div>
+</section>
+
+<div class="container d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2"><%= locals.title ? locals.title : 'Dashboard' %></h1>
+  <header class=" text-center mb-20">
+    <form action="/admin/orders/" method="get" class="d-inline">
+      <div class="input-group input-group-sm border bg-success rounded-pill" style="width: 500px;">
+        <input type="text" class="form-control border-0 bg-white rounded-pill" placeholder="Search orders..." name="search">
+        <button class="btn border-0 btn-outline-success text-white rounded-pill" type="submit">Search</button>
       </div>
     </form>
-  </section>
-  <% if (!orderDetails.cancelled_on && orderDetails.status != 'Cancelled') { %>
-  <section class="container-fluid mt-5">
-    <div class="header d-flex justify-content-between">
-      <h3 class="h3 text-second fw-bold mb-3">Ordered Products</h3>
+  </header>
+</div>
+
+<section class="container my-5">
+    <div class="container table-responsive text-capitalize">
+        <table class="table table-striped table-hover ">
+            <thead>
+                <tr class="text-center">
+                    <th scope="col">#</th>
+                    <th scope="col">Order Id</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">Product</th>
+                    <th scope="col">User</th>
+                    <th scope="col">Payment</th>
+                    
+                    <th scope="col">Order Status</th>
+                    <!-- <th>Payment Status</th> -->
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+              <% if (orders && orders.length > 0) { %>
+                <% orders?.forEach((order,index) => { %>
+                    <tr class="align-middle text-center">
+                        <td><%- index+1 %></td>
+                        <td>#<%- order._id %></td>
+                        <td><%- order.createdAt.toLocaleDateString('en-GB') %></td>
+                        <td><img src="/uploads/cropped/<%- order.productDetails.images.image1 %>" class="img-fluid img-thumbnail" width="90rem" ></td>
+                        <td class="mx-0"><%- order.productDetails.product_name %> <br> <span class="text-muted"> </td>
+                          <td><%- order.user[0].firstName + ' ' + order.user[0].lastName %></td>
+                        <td> <%= order.payment_method %></td>
+                        
+                        <td <% if (order.items.status == 'Placed') { %>
+                            class="text-uppercase text-primary"
+                            <% } else if (order.items.status == 'Pending') { %>
+                                class="text-uppercase text-secondary"
+                            <% } else if (order.items.status == 'Shipped') { %>
+                                class="text-uppercase text-success"
+                            <% } else if (order.items.status == 'Delivered') { %>
+                                class="text-uppercase text-success"
+                            <% } else if (order.items.status == 'Cancelled') { %>
+                                class="text-uppercase text-danger"
+                            <% } else { %>
+                                class="text-uppercase text-info"
+                            <% } %> 
+                        ><%- order.items.status %></td>
+                        <!-- <td <% if (order.paymentStatus == 'pending') { %>
+                            class="text-uppercase text-primary"
+                            <% } else if (order.paymentStatus == 'paid' ) { %>
+                                class="text-uppercase text-success"
+                            <% } else if (order.paymentStatus == 'refund') { %>
+                                class="text-uppercase text-danger"
+                            <% } else { %>
+                                class="text-uppercase text-warning"
+                            <% } %> 
+                        ><%- order.paymentStatus %></td> -->
+                        <td>
+                          <div class="d-flex justify-content-center">
+                            <% if (order.orderStatus != 'Cancelled') { %>
+                              <a href="/admin/orders/manage-order/<%- order._id %>/?productId=<%- order.items.product_id %>&variant=<%- order.items.variant %>">
+                                <button type="button" class="btn btn-sm btn-danger">
+                                  Manage
+                                </button>  
+                              </a>
+                                <!-- <a href="/admin/orders/manage-order/<%- order._id %>">
+                                </a> -->
+                                <% } else { %>
+                                  <button type="button" class="btn btn-sm btn-info">
+                                    View
+                                  </button>
+                            <% } %>
+                          </div>
+                        </td>
+                    </tr>
+                <% }) %>
+                <% } else { %>
+                  <td colspan="8" class="text-danger">No Orders Available</td>
+              <% } %>
+            </tbody>
+        </table>
     </div>
-    <div class="container table-responsive">
-      <table class="table table-hover table-striped table-sm">
-        <thead>
-          <tr class="text-center">
-            <th>#</th>
-            <th>Item</th>
-            <th>Price</th>
-            <th>Quantity</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-        <tbody class="cart-body table-body">
-          <% orderDetails.items.forEach((element,index) => { %>
-          <!-- Product-->
-          <tr class="cart-item align-middle text-center">
-            <td><%- index+1 %></td>
-            <div class="row d-flex align-items-center text-center">
-              <td class="d-flex justify-content-center">
-                <div class="d-flex align-items-center"><a href="/shop/product/<%- element.product_id._id %>"><img class="cart-item-img img-fluid img-thumbnail" width="100rem" src="/uploads/product-images/<%- element.product_id.primary_image.name %>" alt="..."></a>
-                  <div class="cart-title text-start"><a class="text-uppercase text-dark" href="detail.html"><strong><%- element.product_id.product_name %></strong></a><br><span class="text-muted text-sm">Size: <%- element.product_id.size %></span><br><span class="text-muted text-sm">Colour: <input type="color" readonly value="<%- element.product_id.color %>"></span>
-                  </div>
-                </div>
-              </td>
-              <td class="">$<%- element.product_id.sellingPrice %></td>
-              <td class=""><%- element.quantity %>
-              </td>
-              <td class=" text-center">$<%- element.price %></td>
-            </div>
-          </tr>
-          <% }) %>
-        </tbody>
-        </tr>
-        </tbody>
-      </table>
-    </div>
-    <hr>
-  </section>
-  <% } %>
-  
-  
-  <script defer>
-    async function changeOrderStatus(orderId) {
-      // Get the new status from the select element
-      const statusSelect = document.querySelector("#status");
-      const newStatus = statusSelect.value;
-  
-      // Show a confirmation dialog
-      const confirmation = await Swal.fire({
-        title: 'Are you sure?',
-        text: `Do you want to change the order status to ${newStatus}?`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, change it!',
-        cancelButtonText: 'No, keep the current status.',
-        reverseButtons: true
-      });
-  
-      // If the user confirmed the action, send a request to the server
-      if (confirmation.isConfirmed) {
-        try {
-          const response = await fetch(`/admin/orders/manage-order/changeStatus/${orderId}`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ status: newStatus })
-          });
-  
-          // Handle the server's response
-          if (response.ok) {
-            Swal.fire({
-              title: 'Success!',
-              text: 'Order status has been updated.',
-              icon: 'success',
-              timer:  1500
-            }).then(() => {
-              // Reload the page to reflect the changes
-              location.reload();
-            });
-          } else {
-            const errorData = await response.json();
-            Swal.fire({
-              title: 'Error!',
-              text: errorData.message || 'Something went wrong.',
-              icon: 'error',
-              timer:  1500
-            });
-          }
-        } catch (error) {
-          console.error('Error:', error);
-          Swal.fire({
-            title: 'Error!',
-            text: 'Something went wrong.',
-            icon: 'error',
-            timer:  1500
-          });
-        }
-      }
-    }
-  </script>
+    <!-- Pagination-->
+    <% if (orders.length > 0 && nextPage || current == pages) { %>
+      <nav aria-label="Product Pagination">
+        <ul class="pagination justify-content-center mt-5">
+          <% if (current == 1) { %>
+          <li class="page-item disabled">
+            <a href="#" class="page-link">First</a>
+          </li>
+      
+          <% } else { %>
+          <li class="page-item">
+            <a href="?page=1" class="page-link">First</a>
+          </li>
+          <% } %>
+      
+          <% var i = (Number(current)> 5 ? Number(current) - 4 : 1) %>
+          <% if (i !== 1) { %>
+          <li class="page-item disabled">
+            <a href="#" class="page-link">...</a>
+          </li>
+          <% } %>
+      
+          <% for( ; i < Number(current) + 4 && i <= pages ; i++ ) { %>
+          <% if (i == current) { %>
+          <li class="page-item disabled">
+            <a href="#" class="page-link"><%= i %> </a>
+          </li>
+          <% } else { %>
+          <li class="page-item">
+            <a href="/admin/orders?page=<%= i %>" class="page-link"><%= i %></a>
+          </li>
+      
+          <% } %>
+          <% if (i == Number(current)+ 4 && i < pages) { %>
+          <li class="page-item disabled">
+            <a href="#" class="page-link">...</a>
+          </li>
+          <% } %>
+      
+          <% } %>
+          <% if (current == pages) { %>
+          <li class="page-item disabled">
+            <a href="#" class="page-link">Last</a>
+          </li>
+          <% } else { %>
+          <li class="page-item">
+            <a href="/admin/orders?page=<%= pages %>" class="page-link">Last</a>
+          </li>
+      
+          <% } %>
+      
+        </ul>
+      </nav>
+      <% } %>
+</section>
+
+<script defer>
+
+  const getOrder = async (orderId, productId, variant) => {
+    console.log({orderId: orderId, productId: productId, variant: variant});
+
+  }
+
+
+</script>

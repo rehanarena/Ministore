@@ -4,24 +4,60 @@ const Cart = require("../model/cartSchema");
 const User = require("../model/userSchema");
 const Address = require("../model/addressSchema");
 const Order = require("../model/orderSchema");
+const Coupon = require("../model/couponSchema");
 
 module.exports = {
   getCheckout: async (req, res) => {
     const userCart = await Cart.findOne({ user_id: req.user.id }).populate(
       "items.product_id"
     );
-    const productId = req.params.productId;
+    if(!userCart){
+      return res.redirect('/user/cart')
+    }
+    if(!userCart.items.length>0){
+      return res.redirect('/user/cart')
+    }
     const address = await Address.find({
       customer_id: req.user.id,
     });
 
-
     let totalPrice = 0;
     // Correctly declare the variable before the loop
+    
     for (let prod of userCart.items) {
       prod.itemTotal += prod.product_id.sellingPrice * prod.quantity;
       totalPrice += prod.itemTotal;
     }
+    
+     // Apply coupon discount if applicable
+     let couponDiscount = 0;
+     if (userCart.coupon) {
+       const coupon = await Coupon.findById(userCart.coupon);
+       if (
+         coupon &&
+         coupon.isActive &&
+         new Date() <= coupon.expirationDate &&
+         totalPrice >= coupon.minPurchaseAmount
+       ) {
+         couponDiscount = totalPrice * (coupon.rateOfDiscount / 100);
+         totalPrice -= couponDiscount;
+       } else {
+         // If the total is less than the minimum purchase amount, remove the coupon
+         userCart.coupon = undefined;
+         userCart.couponDiscount = 0;
+         await userCart.save();
+       }
+     }
+      // Correctly calculate cartCount
+    let cartCount = userCart.items.length;
+
+    const coupons = await Coupon.find({
+      isActive: true,
+      minPurchaseAmount: { $lte: totalPrice },
+      expirationDate: { $gte: Date.now() },
+      // usedBy: [{ $not: req.user.id }],
+    });
+    // console.log(coupons);
 
     const locals = {
       title: "Ministore - Checkout",
@@ -31,6 +67,8 @@ module.exports = {
       locals,
       userCart,
       address,
+      coupons,
+      couponDiscount,
       totalPrice,
     });
   },
@@ -85,74 +123,91 @@ module.exports = {
       res.status(500).json({ message: "Internal server error" });
     }
   },
-  placeOrder : async (req, res) => {
-  try {
-      if (!req.body.address) {
-          return res.json({ success: false, message: "Please add the address" });
-      }
+  // placeOrder: async (req, res) => {
+  //   try {
+  //     if (!req.body.address) {
+  //       return res.json({ success: false, message: "Please add the address" });
+  //     }
 
-      const user = await User.findById(req.user.id);
-      let status;
-      if (req.body.paymentMethod === "COD" || req.body.paymentMethod === "wallet") {
-          status = "confirmed";
-      } else {
-          status = "pending";
-      }
+  //     const user = await User.findById(req.user.id);
+  //     let status;
+  //     if (
+  //       req.body.paymentMethod === "COD" ||
+  //       req.body.paymentMethod === "wallet"
+  //     ) {
+  //       status = "confirmed";
+  //     } else {
+  //       status = "pending";
+  //     }
 
-      const userCart = await Cart.findOne({ user_id: req.user.id }).populate("items.product_id");
+  //     const userCart = await Cart.findOne({ user_id: req.user.id }).populate(
+  //       "items.product_id"
+  //     );
 
-      const address = await Address.findById(req.body.address);
+  //     const address = await Address.findById(req.body.address);
 
-      if (address && userCart) {
-          let items = [];
+  //     if (address && userCart) {
+  //       let items = [];
 
-          for (let item of userCart.items) {
-              items.push({
-                  product_id: item.product_id._id,
-                  quantity: item.quantity,
-                  price: parseInt(item.product_id.sellingPrice),
-              });
-          }
+  //       for (let item of userCart.items) {
+  //         items.push({
+  //           product_id: item.product_id._id,
+  //           quantity: item.quantity,
+  //           price: parseInt(item.product_id.sellingPrice),
+  //         });
+  //       }
 
-          let totalPrice = 0;
-          for (let item of items) {
-              item.price = item.price * item.quantity;
-              totalPrice += item.price;
-          }
+  //       let totalPrice = 0;
+  //       for (let item of items) {
+  //         item.price = item.price * item.quantity;
+  //         totalPrice += item.price;
+  //       }
 
-          let order = {
-              customer_id: user._id,
-              items: items,
-              address: address,
-              payment_method: req.body.paymentMethod,
-              total_amount: totalPrice,
-              status: status,
-          };
+  //       let order = {
+  //         customer_id: user._id,
+  //         items: items,
+  //         address: address,
+  //         payment_method: req.body.paymentMethod,
+  //         total_amount: totalPrice,
+  //         status: status,
+  //       };
 
-          if (req.body.paymentMethod === "COD") {
-              const createOrder = await Order.create(order);
-              if (createOrder) {
-                  // Empty the cart
-                  await Cart.updateOne({ user_id: user._id }, { $unset: { items: "" } });
+  //       if (req.body.paymentMethod === "COD") {
+  //         const createOrder = await Order.create(order);
+  //         if (createOrder) {
+  //           // Empty the cart
+  //           await Cart.updateOne(
+  //             { user_id: user._id },
+  //             { $unset: { items: "" } }
+  //           );
 
-                  // Reduce the stock count
-                  for (let item of items) {
-                      await Product.updateOne({ _id: item.product_id }, { $inc: { stock: -item.quantity } });
-                  }
-                  req.session.order = { status: true };
-                  return res.json({ success: true });
-              }
-          } else {
-              return res.json({ success: false, message: "Invalid payment method" });
-          }
-      } else {
-          return res.json({ success: false, message: "Address or cart not found" });
-      }
-  } catch (error) {
-      console.error("Error placing order:", error);
-      return res.status(500).json({ success: false, message: "Error placing order" });
-  }
-},
-
-
+  //           // Reduce the stock count
+  //           for (let item of items) {
+  //             await Product.updateOne(
+  //               { _id: item.product_id },
+  //               { $inc: { stock: -item.quantity } }
+  //             );
+  //           }
+  //           req.session.order = { status: true };
+  //           return res.json({ success: true });
+  //         }
+  //       } else {
+  //         return res.json({
+  //           success: false,
+  //           message: "Invalid payment method",
+  //         });
+  //       }
+  //     } else {
+  //       return res.json({
+  //         success: false,
+  //         message: "Address or cart not found",
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error placing order:", error);
+  //     return res
+  //       .status(500)
+  //       .json({ success: false, message: "Error placing order" });
+  //   }
+  // },
 };

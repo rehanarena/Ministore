@@ -51,6 +51,9 @@ const checkStock = () => {
   return valid;
 };
 
+
+
+
 const checkActualPrice = () => {
   let valid = false;
   const actualPrice = actualPriceEl.value;
@@ -176,22 +179,7 @@ document
         if (result.isConfirmed) {
           const form = document.getElementById("addProductForm");
           try {
-            // const formData = new FormData(form);
-            // const base64String = document.getElementById("result").value;
-            // const base64Data = base64String.split(",")[1];
-            // const binaryData = atob(base64Data);
-            // const uint8Array = new Uint8Array(binaryData.length);
-            // for (let i = 0; i < binaryData.length; i++) {
-            //   uint8Array[i] = binaryData.charCodeAt(i);
-            // }
-            // const blob = new Blob([uint8Array], { type: "image/png" });
-            // const file = new File([blob], "image.png", { type: "image/png" });
-            // formData.append("primaryImage", file);
-
-            // let res = await fetch("/admin/products/add-product", {
-            //   method: "POST",
-            //   body: formData,
-            // });
+            
             let data = await res.json();
             if (data.success) {
               Swal.fire(

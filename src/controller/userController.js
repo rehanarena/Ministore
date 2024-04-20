@@ -1,8 +1,19 @@
 const User = require("../model/userSchema");
-// const Product = require("../model/productSchema");
+const Product = require("../model/productSchema");
 const Address = require("../model/addressSchema");
+const WishList = require("../model/wishlistSchema");
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
+
+
+function generateRefferalCode(length) {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let referralCode = '';
+  for (let i = 0; i < length; i++) {
+      referralCode += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return referralCode;
+}
 
 
 module.exports = {
@@ -38,6 +49,75 @@ module.exports = {
           return res.status(500).json({ error: "Internal server error" });
         }
       },
+
+      /***
+   * User Wishlist Mangement
+   */
+
+  getWishlist: async (req, res) => {
+    const locals = {
+      title: "Ministore - Wishlist",
+    };
+    let user = await User.findById(req.user.id);
+    let wishlist = await WishList.findById(user.wishlist).populate({
+      path: "products",
+     
+    });
+    // console.log(wishlist);
+    let products;
+
+    if (!wishlist) {
+      products = [];
+    } else {
+      products = wishlist.products;
+    }
+
+    res.render("user/wishlist", {
+      locals,
+      wishlist,
+      products,
+    });
+  },
+
+  addToWishlist: async (req, res) => {
+    console.log(req.body,req.params);
+    try {
+      const product_id = req.body.productId
+      
+    } catch (error) {
+      
+    }
+
+  },
+  removeFromWishlist: async (req, res) => {
+    try {
+      const { productId } = req.body;
+      const user = await User.findById(req.user.id);
+
+      const updatedWishList = await WishList.findByIdAndUpdate(user.wishlist, {
+        $pull: { products: productId },
+      });
+
+      if (updatedWishList) {
+        return res.status(201).json({
+          success: true,
+          message: "Removed item from wishlist",
+        });
+      } else {
+        return res.status(500).json({
+          success: true,
+          message: "failed to remove product from wishlist try again",
+        });
+      }
+    } catch (error) {
+      return res.status(500).json({
+        success: true,
+        message: "failed to remove product from wishlist try again",
+      });
+    }
+  },
+
+
      // Password Reset From Profile
   resetPass: async (req, res) => {
     try {
@@ -169,5 +249,29 @@ module.exports = {
         req.flash("error", "Failed to delete address");
         return res.redirect("/user/address");
     }
-}
+},
+getRefferals: async(req, res) => {
+  const locals = {
+    title: "SoloStride - User Refferals"
+  }
+
+  const user = await User.findOne({ _id: req.user.id });
+
+  if(!user.referralCode){
+    const refferalCode = generateRefferalCode(8);
+
+    user.referralCode = refferalCode;
+    await user.save();
+  }
+
+  console.log(user);
+
+  // successfullRefferals = user.successfullRefferals.reverse();
+
+  res.render("user/refferals", {
+    locals,
+    refferalCode: user.referralCode,
+    // successfullRefferals
+  })
+},
 };

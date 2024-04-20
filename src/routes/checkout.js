@@ -4,7 +4,10 @@ const router = express.Router();
 
 const { isLoggedIn } = require("../middlewares/authMiddleware");
 const checkoutController = require("../controller/checkoutController");
+const cartController = require("../controller/cartController");
 const userController = require("../controller/userController");
+const couponController = require("../controller/couponController");
+const shopController = require("../controller/shopController");
 
 router.use(isLoggedIn);
 
@@ -26,15 +29,23 @@ router
   router.delete('/checkout/edit-address/:id', checkoutController.deleteAddress);
 
 
+  router.get('/orderConfirm',shopController.getOrderSuccess)
   /**
  * User Order Management
  */
 
-router.post("/place-order", checkoutController.placeOrder);
+// router.post("/place-order", checkoutController.placeOrder);
 
 
 
 
+
+/**
+ * User Coupon Management
+ */
+
+router.post("/verify-coupon", couponController.applyCoupon);
+router.post("/remove-coupon", couponController.removeCoupon);
 
 
 module.exports = router;

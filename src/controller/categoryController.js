@@ -3,6 +3,7 @@ const Category = require("../model/categorySchema");
 
 module.exports = {
   getAllCategory: async (req, res) => {
+    
     const locals = {
       title: "Category Management",
     };
@@ -12,6 +13,25 @@ module.exports = {
       categories,
       layout,
     });
+  },
+  getCategoryDetails: async (req, res) => {
+    const categoryId = req.params.id
+    try {
+      const category = await Category.findOne({_id: categoryId});
+      
+      if (!category) {
+        return res.status(404).json({ error: "Category not found" });
+      }
+
+      return res.status(200).json({
+        success: true,
+        category
+      });
+    } catch (error) {
+      console.log("Error:", error);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+    
   },
   getAddCategory: async (req, res) => {
     res.render("admin/categories/addCategory", {

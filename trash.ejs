@@ -1,258 +1,652 @@
-<main class="main">
-    <div class="page-content">
-        <div class="product-details-top">
-            <div class="bg-light pb-5 mb-4">
-                <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
-                    <div class="container d-flex align-items-center">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="/">Home</a></li>
-                            <li class="breadcrumb-item"><a href="#">Products</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Gallery</li>
-                        </ol>
 
-                        <nav class="product-pager ml-auto" aria-label="Product">
-                            <a class="product-pager-link product-pager-prev" href="#" aria-label="Previous"
-                                tabindex="-1">
-                                <i class="icon-angle-left"></i>
-                                <span>Prev</span>
-                            </a>
 
-                            <a class="product-pager-link product-pager-next" href="#" aria-label="Next" tabindex="-1">
-                                <span>Next</span>
-                                <i class="icon-angle-right"></i>
-                            </a>
-                        </nav><!-- End .pager-nav -->
-                    </div><!-- End .container -->
-                </nav><!-- End .breadcrumb-nav -->
-               
+
+
+<section>
+  <div class="container">
+    <!-- Breadcrumbs -->
+    <ol class="breadcrumb justify-content-center">
+      <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+      <li class="breadcrumb-item"><a href="index.html">Account</a></li>
+      <li class="breadcrumb-item active">Orders</li>
+    </ol>
+    <!-- Hero Content-->
+    <div class="hero-content pb-5 text-center">
+      <h1 class="hero-heading">Your Orders</h1>
+    </div>
+  </div>
+</section>
+
+<div class="container mb-5">
+  <div class="row">
+    <%- include('../partials/user/sidebar.ejs') %>
+    <!-- Content  -->
+    <section class="col-lg-8">
+      <% if (orderDetails && orderDetails.length > 0 && orderDetails != 'undefined') { %>
+      <div class="container table-responsive">
+       
+              <% if (typeof orderDetails !== 'undefined' && orderDetails.length > 0) { %>
+                <% orderDetails.forEach(element => { %>
+                <tr>
+                  <th class="py-4 align-middle">#<%- element._id %></th>
+                  <td class="py-4 align-middle">
+                    <%= element.createdAt.toLocaleDateString('en-GB') %>
+                  </td>
+                  <td class="py-4 align-middle">$<%- element.payable %></td>
+                  <td class="py-4 align-middle">
+                    <span class="badge p-2 text-uppercase <% if (element.orderStatus == 'Placed') { %> badge-primary-light <% } else if (element.orderStatus == 'Shipped') { %> badge-info-light <% } else if (element.orderStatus == 'Delivered') { %> badge-success-light <% } else if (element.orderStatus == 'Cancelled') { %> badge-danger-light <% } else { %> badge-warning-light <% } %>"><%- element.orderStatus %></span>
+                  </td>
+                  <td class="py-4 align-middle">
+                    <% if (element.orderStatus != 'Cancelled' ) { %>
+                    <a href="/user/order/<%- element._id %>">
+                      <button class="btn btn-outline-dark btn-sm">View</button>
+                    </a>
+                    <% } %>
+                  </td>
+                </tr>
+                <% }) %>
+  
+              <% } else { %>
+                <tr class="align-middle text-center text-uppercase">
+                  <td colspan="5"  class="text-bg-danger">No orders found</td>
+                </tr>
+              <% } %>
+            
+        <div class="row col-md-12">
+          <% orderDetails.forEach(function(order) { %>
+          <a class="text-decoration-none text-capitalize" href="/user/order/<%= order._id %>">
+            <div role="button" class=" <% if (order.status == 'Delivered') { %>
+             bg-success-light <% } else if (order.status == 'Cancelled' || order.status == 'Failed') { %>
+              bg-danger-light <% } else if(order.status == 'Returned') { %>
+              bg-warning-light <% } else if(order.status == 'Confirmed') { %>
+              bg-primary-light <% } else  { %>
+                bg-secondary-subtle
+            <% } %> orders px-3 py-2 mb-4  card">
+              <div class="d-flex flex-row justify-content-between">
+                <div class="orde-details pt-2">
+                  <div class="h5 text-muted">Order: <%= new Date(order.createdAt).toLocaleString() %></div>
+                  <span class="">
+                    <span class="fw-bold">payment:</span> <%= order.paymentMethod %><br>
+                   
+                    <p class="text-normal">
+                      <%= order.shippingAddress?.house_name %>(H),
+                      <%= order.shippingAddress?.locality %>,
+                      <%= order.shippingAddress?.area_street %>,<br>
+                      <%= order.shippingAddress?.landmark %>,
+                      <%= order.shippingAddress?.state %>
+                      <span class="fw-bold">
+                        -<%= order.shippingAddress?.pincode %>
+                      </span>
+                    </p>
+                  </span>
                 </div>
-            </div>
-            <div class="mb-3 d-flex align-items-center">
-                <span class="d-inline-block me-2">Sort by</span>
-                <select class="form-select w-auto border-0">
-                    <option value="orderby_0">Default</option>
-                    <option value="orderby_1">Popularity</option>
-                    <option value="orderby_2">Rating</option>
-                    <option value="orderby_3">Newest first</option>
-                </select>
-        </div>
-
-
-
-
-        <div class="container justify-content-center">
-            <div class="row justify-content-center py-3 my-3">
-        <% products?.forEach(element=> { %>
-            <div class="col-md-3  p-2 m-2  text-capitalize card border rounded">
-                <img src="/uploads/cropped/<%- element.images.image1 %>" alt="<%- element.product_name %>"
-                    class="img-fluid">
-
-                </button>
-                <a class="btn btn-dark btn-buy" href="/productDetails">
-                  <i class="bi bi-search"></i>
-                  <span class="btn-buy-label ms-2">View</span>
-                </a>
-                <button id="wishlist-<%- element._id %>" class="btn btn-outline-danger btn-product-right d-none d-sm-inline-block justify-content-center" onclick="addToWishlist('<%- element._id %>')">
-                  <i class="bi bi-heart fs-5"></i>
-                </button>
-                <div class="py-2">
-                <p class="h4 card-title"><%- element.product_name %></p>
-                <div class="card-body">
-                    <p class="lead card-text">₹ <%- element.sellingPrice %></p>
-                    <p class="lead card-text"><del><%- element.actualPrice %></del></p>
-                    </div>
+                <% if (order.coupon) { %>
+                  <div class="coupendetails">
+                    Offer Applied
+                    <div class="bg-warning rounded px-1 text-uppercase"><%= order.coupon.code %> </div>
+                    <div class="fw-bold px-1"><%= order.coupon.rateOfDiscount %>%off</div>
+                  </div>
+                  <% } %>
+                <div class="status fw-bold lead text-uppercase text-success">
+                  <%= order.status %>
                 </div>
-                <div class="card-footer justify-content-center">
-                    <button onclick="addToCart('<%- element._id %>')" class="btn btn-outline-primary"
-                        type="button">Add To Cart</button>
-                </div>
-            </div>
-            <% }) %>
-            </div>
-    </div>  <!-- / Grid End-->
-    <!-- Sidebar-->
-    <div class="sidebar col-xl-3 col-lg-4 order-lg-1">
-      <div class="sidebar-block px-3 px-lg-0 me-lg-4">
-        <a class="d-lg-none block-toggler" data-bs-toggle="collapse" href="#categoryFilterMenu" aria-expanded="false" aria-controls="categoryFilterMenu">Filter by Categories</a>
-        <!-- Category filter menu-->
-        <div class="expand-lg collapse" id="categoryFilterMenu">
-          <h6 class="sidebar-heading d-none d-lg-block">Categories</h6>
-
-          <div class="mt-4 mt-lg-0" id="categories">
-            <% categories.forEach((element,i) => { %>
-            <div class="mb-1">
-              <div class="form-check">
-                <input class="form-check-input" id="category-<%- i %>" type="radio" name="category" value="<%- element._id %>" <%- element._id.toString() === categoryID ? 'checked' : '' %> />
-                <label class="form-check-label text-capitalize" for="category-<%- i %>"><%- element.name %></label>
+                
               </div>
             </div>
-            <% }) %>
-          </div>
+          </a>
+          <% }); %>
+        </div>
+
+        <!-- Pagination-->
+        <% if (orderDetails.length > 0 && nextPage || current == pages) { %>
+        <nav aria-label="Product Pagination">
+          <ul class="pagination justify-content-center mt-5">
+            <% if (current == 1) { %>
+            <li class="page-item disabled">
+              <a href="#" class="page-link">First</a>
+            </li>
+
+            <% } else { %>
+            <li class="page-item">
+              <a href="/user/orders/?page=1" class="page-link">First</a>
+            </li>
+            <% } %>
+
+            <% var i = (Number(current)> 5 ? Number(current) - 4 : 1) %>
+            <% if (i !== 1) { %>
+            <li class="page-item disabled">
+              <a href="#" class="page-link">...</a>
+            </li>
+            <% } %>
+
+            <% for( ; i < Number(current) + 4 && i <= pages ; i++ ) { %>
+            <% if (i == current) { %>
+            <li class="page-item disabled">
+              <a href="#" class="page-link"><%= i %> </a>
+            </li>
+            <% } else { %>
+            <li class="page-item">
+              <a href="/user/orders?page=<%= i %>" class="page-link text-primary fw-bold"><%= i %></a>
+            </li>
+
+            <% } %>
+            <% if (i == Number(current)+ 4 && i < pages) { %>
+            <li class="page-item disabled">
+              <a href="#" class="page-link">...</a>
+            </li>
+            <% } %>
+
+            <% } %>
+            <% if (current == pages) { %>
+            <li class="page-item disabled">
+              <a href="#" class="page-link">Last</a>
+            </li>
+            <% } else { %>
+            <li class="page-item">
+              <a href="/user/orders?page=<%= pages %>" class="page-link">Last</a>
+            </li>
+
+            <% } %>
+
+          </ul>
+        </nav>
+        <% } %>
+      </div>
+      <% } else { %>
+      <!-- If orders is empty -->
+      <div class="container my-5 mb-6">
+        <div class="col my-5 text-center">
+          <h2 class="h1">No Orders Found</h2>
+          <h3 class="my-5">
+            <a href="/shop">
+              <button class="btn btn-lg btn-primary">Shop Now</button>
+            </a>
+          </h3>
         </div>
       </div>
+      <% } %>
 
-      <div class="sidebar-block px-3 px-lg-0 me-lg-4">
-        <a class="d-lg-none block-toggler" data-bs-toggle="collapse" href="#sortSelect" aria-expanded="false" aria-controls="priceFilterMenu">Sort by price</a>
-        <div class="expand-lg collapse" id="sortSelect">
-          <h6 class="sidebar-heading d-none d-lg-block">Price</h6>
-          <div class="mt-4 mt-lg-0" id="slider-snap"></div>
-
-          <div class="mb-1">
-            <div class="form-check">
-              <input class="form-check-input" id="sortPriceLow" type="radio" name="sortPrice" value="lowPrice" <% if (sortBy==='lowPrice' ) { %> checked <% } %> />
-              <label class="form-check-label text-capitalize" for="sortPriceLow">Price Low to High</label>
-            </div>
-          </div>
-
-          <div class="mb-1">
-            <div class="form-check">
-              <input class="form-check-input" id="sortPriceHigh" type="radio" name="sortPrice" value="highPrice" <% if (sortBy==='highPrice' ) { %> checked <% } %> />
-              <label class="form-check-label text-capitalize" for="sortPriceHigh">Price High to Low</label>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      
-
-    </div>
-    <!-- /Sidebar end-->
-
+    </section>
 
   </div>
-  <!-- Pagination-->
-  <% if (products.length > 0 && nextPage || current == pages) { %>
-  <nav aria-label="Product Pagination">
-    <ul class="pagination justify-content-center mt-5">
-      <% if (current == 1) { %>
-      <li class="page-item disabled">
-        <a href="#" class="page-link">First</a>
-      </li>
-
-      <% } else { %>
-      <li class="page-item">
-        <a href="?page=1" class="page-link">First</a>
-      </li>
-      <% } %> <% var i = (Number(current)> 5 ? Number(current) - 4 : 1) %>
-      <% if (i !== 1) { %>
-      <li class="page-item disabled">
-        <a href="#" class="page-link">...</a>
-      </li>
-      <% } %> <% for( ; i < Number(current) + 4 && i <= pages ; i++ ) { %>
-      <% if (i == current) { %>
-      <li class="page-item disabled">
-        <a href="#" class="page-link"><%= i %> </a>
-      </li>
-      <% } else { %>
-      <li class="page-item">
-        <a href="/shop/?page=<%= i %>" class="page-link"><%= i %></a>
-      </li>
-
-      <% } %> <% if (i == Number(current)+ 4 && i < pages) { %>
-      <li class="page-item disabled">
-        <a href="#" class="page-link">...</a>
-      </li>
-      <% } %> <% } %> <% if (current == pages) { %>
-      <li class="page-item disabled">
-        <a href="#" class="page-link">Last</a>
-      </li>
-      <% } else { %>
-      <li class="page-item">
-        <a href="/shop/?page=<%= pages %>" class="page-link">Last</a>
-      </li>
-
-      <% } %>
-    </ul>
-  </nav>
-  <% } %>
-
 </div>
-</main>
-<script defer>
-  const searchProduct = document.getElementById('search');
-  const sortSelect = document.getElementById('sortPriceLow') || document.getElementById('sortPriceHigh'); // Assuming 'sortby' is the correct ID for the sort select element
-
-  // Function to handle the change event for categories
-  function handleCategoryChange() {
-    const categoryId = this.value; // Use 'this' to refer to the radio button that triggered the event
-    const sortValue = sortSelect.value;
-    const searchValue = searchProduct.value;
-    const url = `/search/?category=${categoryId || ''}&sortBy=${sortValue}&search=${searchValue}`;
-    window.location.href = url;
-  }
-
-  // Attach the event listener to each category radio button
-  document.querySelectorAll('#categories .form-check-input').forEach(radioButton => {
-    radioButton.addEventListener('change', handleCategoryChange);
-  });
-
-  // Function to handle the change event for brands
-  function handleBrandChange() {
-    const brandId = this.value; // Use 'this' to refer to the radio button that triggered the event
-    const sortValue = sortSelect.value;
-    const searchValue = searchProduct.value;
-    const url = `/search/?brand=${brandId || ''}&sortBy=${sortValue}&search=${searchValue}`;
-    window.location.href = url;
-  }
-
-  // Attach the event listener to each brand radio button
-  document.querySelectorAll('#brands .form-check-input').forEach(radioButton => {
-    radioButton.addEventListener('change', handleBrandChange);
-  });
-
-  // Function to handle the change event for sort options
-  function handleSortChange() {
-    const sortValue = this.value; // Use 'this' to refer to the radio button that triggered the event
-    const categoryId = document.querySelector('#categories .form-check-input:checked')?.value;
-    const searchValue = searchProduct.value;
-    const url = `/search/?category=${categoryId || ''}&sortBy=${sortValue}&search=${searchValue}`;
-    window.location.href = url;
-  }
-
-  // Attach the event listener to each sort radio button
-  document.querySelectorAll('#sortSelect .form-check-input').forEach(radioButton => {
-    radioButton.addEventListener('change', handleSortChange);
-  });
 
 
 
 
- 
-</script>
 
 
 
 
-<script defer>
-    const addToCart = async (productId) => {
-        console.log(productId);
-        try {
-            const response = await fetch(`/user/add-to-cart/${productId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
 
-            const data = await response.json()
 
-            if (!response.ok) {
-                throw new Error(data.message);
-            }
 
-            Swal.fire({
-                title: 'Success!',
-                text: 'Product added to cart successfully.',
-                icon: 'success',
-                confirmButtonText: 'OK'
-            });
-        } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: error.message,
-                icon: 'error',
-                confirmButtonText: 'OK'
-            });
-        }
-    }
-</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<main class="main">
+  <div class="page-header text-center " style="background-image: url('/public/userAssets/assets/images/page-header-bg.jpg')">
+      <div class="container">
+          <h1 class="page-title text-dark">My Account</h1>
+      </div><!-- End .container -->
+  </div><!-- End .page-header -->
+  <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+      <div class="container">
+          <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="/profile">Your Account</a></li>
+              <li class="breadcrumb-item active" aria-current="page">all Orders</li>
+
+          </ol>
+      </div><!-- End .container -->
+  </nav><!-- End .breadcrumb-nav -->
+
+  <%if(products){%>
+      <div class="container-fluid d-flex flex-column justify-content-center py-5">
+          <%for(i=products.length-1;i>=0;i--){%>
+
+              <div>
+                  <!-- model start  -->
+                  <div class="modal fade" id="modCancel<%=products[i].orderId%><%=products[i].productDetails._id%>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered">
+                          <div class="modal-content">
+                              <div class="modal-header">
+                                  <!-- <h1 class="modal-title fs-5" id="exampleModalLabel">
+                                      Modal title</h1> -->
+                                  <p class="modal-title text-danger mx-auto"> <b class="mdi mdi-comment-alert text-warning"></b>
+                                      Are you sure to
+                                      Cancel this order</p>
+                                  <!-- <button type="button" class=" btn mdi mdi-close" data-bs-dismiss="modal"
+                                      aria-label="Close">x</button> -->
+                              </div>
+                              <div class="" style="border: 1px solid #e2e2e2; border-radius: 10px; background: #F3F3F9;">
+
+                                  <div class="card mx-auto mb-3 py-5" style="max-width: 540px; border: 1px solid #e2e2e2; border-radius: 10px; background: #F3F3F9;">
+                                      <div class="row g-0 ">
+                                          <div class="col-md-5  d-flex align-items-center">
+                                              <img style="width: 170px; height: 170px; border-radius: 7px;" src="/public/products/images/<%=products[i].productDetails.images.image1%>" class="card-img-start mx-2" alt="...">
+                                          </div>
+                                          <div class="col-md-7">
+                                              <div class="card-body d-flexmy-auto">
+                                                  <h5 class="card-title" >
+                                                      <%= products[i].productDetails.product_name %>
+                                                  </h5>
+                                                  
+                                                  </p>
+                                                  <p class="card-text"><small class="text-body-secondary">
+                                                          Quantity :
+                                                          <b>
+                                                              <%=products[i].quantity %>
+                                                          </b>
+                                                      </small></p>
+
+                                                  <h6 class=" mb-2">Delivery Expect on : <br> <b>
+                                                          <%= products[i].deliveryDate %>
+                                                      </b></h6>
+                                                  <h5 class="card-title mb-2">₹ <%= Math.floor(products[i].price) * products[i].quantity %> ONLY
+                                                  </h5>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                                      <!-- model return  -->
+                  <div class="modal fade" id="modreturn<%=products[i].orderId%><%=products[i].productDetails._id%>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered">
+                          <div class="modal-content">
+                              <div class="modal-header py-4">
+                                  <!-- <h1 class="modal-title fs-5" id="exampleModalLabel">
+Modal title</h1> -->
+                                  <p class="modal-title text-danger mx-auto"> <b class="mdi mdi-comment-alert text-warning"></b>
+                                      <b>Are you sure to
+                                          Return this order </b> <i class="fa-sharp fa-light fa-truck-fast fa-bounce"></i>
+                                  </p>
+                                  <!-- <button type="button" class=" btn mdi mdi-close" data-bs-dismiss="modal"
+aria-label="Close">x</button> -->
+                              </div>
+                              <div class="" style="border: 1px solid #e2e2e2; border-radius: 0px; background: #F3F3F9;">
+
+                                  <div class=" mx-auto mb-3 py-5"  style="max-width: 540px; border: 1px solid #e2e2e2; border-radius: 0px; background: #F3F3F9;">
+                                      <div class="row g-0 " style="border: none;">
+                                          <div class="col-md-5  d-flex align-items-center">
+                                              <img style="width: 170px; height: 170px; border-radius: 7px;" src="/public/products/images/<%=products[i].productDetails.images.image1%>" class="card-img-start mx-2" alt="...">
+                                          </div>
+                                          <div class="col-md-7">
+                                              <div class="card-body d-flexmy-auto">
+                                                  <h5 class="card-title">
+                                                      <%= products[i].productDetails.product_name %>
+                                                  </h5>
+
+                                                  </p>
+                                                  <p class="card-text"><small class="text-body-secondary">
+                                                          Quantity :
+                                                          <b>
+                                                              <%=products[i].quantity %>
+                                                          </b>
+                                                      </small></p>
+
+                                                  <h6 class=" mb-2">Delivery Expect on : <br> <b>
+                                                          <%= products[i].deliveryDate %>
+                                                      </b></h6>
+                                                  <h5 class="card-title mb-2">₹ <%= products[i].price * products[i].quantity %>
+                                                          ONLY
+                                                  </h5>
+                                              </div>
+
+                                          </div>
+                                      </div>
+                                      <div class="card ordercard col-md-6 col-10 my-3 mx-auto p-3" style="border: 1px solid #e2e2e2; border-radius: 10px; background: #F3F3F9;">
+                                          <%if(products[i].OrderStatus!="Returned"){ %>
+                                              <div class="card-header d-flex justify-content-between w-100">
+                                                  <div class="d-flex flex-column col-9">
+                                                      <%if(products[i].OrderStatus!="canceled"&& products[i].OrderStatus!="pending"){%>
+                                                          <p>ORDER PLACED</p>
+                                                          <p>
+                                                              <%= products[i].placeOrderDate%>
+                                                          </p>
+                                                      <%}%>
+                                                  </div>
+                                                  <hr class="m-0 mb-1">
+                                                  <div>
+                                                      <%if(products[i].OrderStatus!="canceled" && products[i].OrderStatus!="Delivered"&& products[i].OrderStatus!="pending"){%>
+                                                          <h6 class="mx-5 mb-2">Delivery Expect on : <b>
+                                                                  <%= products[i].deliveryDate %>
+                                                              </b></h6>
+                      
+                                                          <%}else if(products[i].OrderStatus=="Delivered"){%>
+                                                              <h6 class="mx-5 mb-2">Delivered on : <b>
+                                                                  <%= products[i].updatedAt %>
+                                                              </b></h6>
+                                                          <%}%>    
+                                                  </div>
+                                                  <div class="card-body  row col-12 d-flex ">
+                                                      
+                                                      <div class="col-4 ">
+                                                          
+                                                          <img src="/public/products/images/<%=products[i].productDetails.images.image1%>" style="width: 150px;" alt=""> 
+                                                      
+                                                          <p class="card-text">
+                                                          </p>
+                                                          <!-- <a href="#" class="btn btn-dark">Go somewhere</a> -->
+                                                      </div>
+                                                 
+                                                      <div class="col-8">
+                                                          <a href="/product/?id=<%= products[i].productDetails._id %>">
+                                                          <h5 class="card-title">
+                                                              <%= products[i].productDetails.product_name %>
+                                                          </h5>
+                                                          </a
+                                                          <p class="card-text">
+                                                          <p>Quantity : <b>
+                                                                  <%=products[i].quantity %>
+                                                              </b></p><i class="fa-solid fa-file-invoice-dollar"></i>
+                                                          <%=products[i].paymentMethod %>
+                                                              </p>
+                                                              <h5 class="card-title mb-2">
+                                                                  
+                                                                      ₹ <%= Math.floor(products[i].price)*products[i].quantity %>
+                                                                  
+                                                              </h5>
+                      
+                      
+                                                              <%if(products[i].returnOrderStatus!="none"){%>
+                                                                  <%if(products[i].OrderStatus!="canceled"&& products[i].OrderStatus!="pending" ){%>
+                      
+                                                                      <div class="col-12 row d-flex justify-content-start">
+                                                                          <!-- <a href="#" class="btn btn-dark col-2 mb-1">Track your Order</a> -->
+                                                                          <%if(products[i].OrderStatus!="Delivered" ){%>
+                                                                              <button data-bs-toggle="modal" data-bs-target="#modCancel<%=products[i].orderId%><%=products[i].productDetails._id%>" class="btn btn-dark col-2 mb-1">Cancel Order </button>
+                                                                              <%}else{%> 
+                      
+                                                                                  <!-- return periad checking -->
+                                                                                  <% 
+                                                                                  function isWithinLast7Days(dateToCheck) {
+                                                                                      const currentDate = new Date();
+                                                                                      const sevenDaysAgo = new Date(currentDate);
+                                                                                      sevenDaysAgo.setDate(currentDate.getDate() - 7);
+                                                                                      const date = new Date(dateToCheck);
+                                                                                      return date >= sevenDaysAgo && date <= currentDate;
+                                                                                  }
+                                                                                  
+                                                                                  const dateToCheck = products[i].updatedAt;
+                                                                                  const isWithinLast7DaysResult = isWithinLast7Days(dateToCheck);
+                                                                                  %>
+                                                                                  <%if(isWithinLast7DaysResult){%>
+                                                                                     <button data-bs-toggle="modal" data-bs-target="#modreturn<%=products[i].orderId%><%=products[i].productDetails._id%>" class="btn btn-dark col-2 mb-1">Return Item </button>
+                                                                                     <p><i class="fa-regular fa-clipboard-list-check text-danger"></i>
+                                                                                         &nbsp; </i> <span style="font-size: 12px;"> Free
+                                                                                             replacement will be provided within <b> 7
+                                                                                                 days</b>
+                                                                                             if the product is delivered in
+                                                                                             defective/damaged
+                                                                                             condition or different from the ordered
+                                                                                             item.</span>
+                                                                                     </p>
+                                                                                   <%}%>  
+                      
+                      
+                                                                              <%}%>
+                      
+                                                                      </div>
+                                                                      <%}else{%>
+                                                                          <h6 class="text-danger text-center mr-5"><%=products[i].OrderStatus%> Order</h6>
+                                                                          <div class="progress-track  col-12">
+                                                                              <ul id="progressbar">
+                                                                                  <li class="step0 active " style="width: 50%; font-size: 1rem;"  id="step1">
+                                                                                      Order placed</li>
+                                                                                  <li class="step0 active text-right text-danger" style="width: 50%; font-size: 1rem;" id="step4">
+                                                                                      <%=products[i].OrderStatus%></li>
+                                                                              </ul>
+                                                                          </div>
+                      
+                                                                          <%}%>
+                                                                              <%}else{%>
+                                                                                  <!-- products[i].returnOrderStatus!="none" else case -->
+                                                                                  <h1>returned item</h1>
+                                                                                  <%}%>
+                      
+                      
+                      
+                      
+                                                      </div>
+                      
+                                                  </div>
+                                                  <div class="w-75">
+                              
+                                                  </div>
+                      
+                                                  <%if(products[i].OrderStatus!="canceled" && products[i].OrderStatus!="pending"){%>
+                      
+                                                      <div class="card-footer" style="background: #F3F3F9;">
+                                                          <h6 class="text-center">Order status</h6>
+                                                          <div class="progress-track">
+                                                              <ul id="progressbar">
+                                                                  <li style="font-size: 12px;" class="step0 active " id="step1">Order
+                                                                      placed
+                                                                  </li>
+                                                                  <li style="font-size: 12px;" class="step0 text-center <%= products[i].StatusLevel >= 2 ? 'active' : '' %>"  id="step2">
+                                                                      Shipped</li>
+                                                                  <li style="font-size: 12px;" class="step0  text-right <%= products[i].StatusLevel >= 3 ? 'active' : '' %>"   id="step3">
+                                                                      Out for Delivery</li>
+                                                                  <li style="font-size: 12px;" class="step0 text-right <%= products[i].StatusLevel >= 4 ? 'active' : '' %>"  id="step4">
+                                                                      Delivered</li>
+                      
+                                                              </ul>
+                                                          </div>
+                                                      </div>
+                                                      <%}%>
+                      
+                      
+                      
+                      
+                      
+                      
+                                                      <%}else{%>
+                                                          <!-- returned product else case  -->
+                                                          <div class="card-header d-flex justify-content-between w-100">
+                                                              <div class="d-flex flex-column w-100">   
+                                                                  <p>RETURN DATE</p>
+                                                                  <p> <%= products[i].updatedAt%></p>
+                                                          </div>
+                                                          </div>
+                                                            <hr class="m-0 mb-1">
+                                                            <div class="card-body row col-12 d-flex mb-0">
+                      
+                                                              <div class="col-4 ">
+                                                                  <img src="/public/products/images/<%=products[i].productDetails.images.image1%>" style="width: 150px;"    alt="">
+                                                                  <p class="card-text">
+                                                                  </p>
+                                                              </div>
+                                                              <div class="col-8">
+                                                                  <h5 class="card-title">
+                                                                      <%= products[i].productDetails.product_name %>
+                                                                  </h5>
+                                                                  <p class="card-text">
+                                                                  <p>Quantity : <b>
+                                                                          <%=products[i].quantity %>
+                                                                      </b></p><i class="fa-solid fa-file-invoice-dollar"></i>
+                                                                  <%=products[i].paymentMethod %>
+                                                                      </p>
+                                                                      <h5 class="card-title mb-2">₹ <%= products[i].productDetails.price %> </h5>
+                                                                      <p class=" mb-2"><i class="fa-light text-danger fa-truck-bolt fa-flip-horizontal"></i><b> You returned this order </b> because 
+                                                                          <%= products[i].returnOrderStatus.reason === "disappoint" ? "Your expectations were not met by the product" : " received damaged product" %> on <%= products[i].updatedAt%></p>
+                      
+                                                              </div>
+                      
+                                                            </div>
+                                                            <%}%>
+                                                            <%}else{%>
+                                                              <div class="container-fluid d-flex flex-column justify-content-center py-5">
+                                          
+                                                                  <div class="card  col-md-6 col-10 my-3 mx-auto p-3" style="border: 1px solid #e2e2e2; border-radius: 7px; background: #F3F3F9;">
+                                          
+                                                                      <div class="card-body row col-12 d-flex justify-content-center py-5">
+                                                                          <h4 class="text-center text-light">You have No orders</h4>
+                                                                      </div>
+                                                                  </div>
+                                          
+                                          
+                                                              </div>
+                                                              <%}%>
+                                                              <%}%>
+                                                          </main>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                          <aside class="col-lg-4">
+                                                            <div class="summary">
+                                                              <h3 class="summary-title">Your Order</h3><!-- End .summary-title -->
+                                          
+                                                              <table class="table table-summary">
+                                                                <thead>
+                                                                  <tr>
+                                                                    <th>Product</th>
+                                                                    <th>Total</th>
+                                                                  </tr>
+                                                                </thead>
+                                          
+                                                                <tbody>
+                                                                  <tr>
+                                                                    <% userCart.items.forEach((item)=> { %>
+                                                                      <td><a href="#"><strong>
+                                                                            <%= item.product_id.product_name %>
+                                                                          </strong></a></td>
+                                                                      <td>₹<%= item.product_id.sellingPrice %>
+                                                                      </td>
+                                                                  </tr>
+                                          
+                                                                  <% }) %>
+                                                                  <tr class="summary-subtotal">
+                                                                    <td>Subtotal:</td>
+                                                                    <td>₹<%= userCart.totalPrice %>
+                                                                    </td>
+                                                                  </tr><!-- End .summary-subtotal -->
+                                                                  <tr>
+                                                                    <td>Shipping:</td>
+                                                                    <td>Free shipping</td>
+                                                                  </tr>
+                                                                  <tr class="summary-total">
+                                                                    <td>Total:</td>
+                                                                    <td>₹<%= userCart.totalPrice %>
+                                                                    </td>
+                                                                  </tr><!-- End .summary-total -->
+                                                                  
+                                                                </tbody>
+                                                              </table><!-- End .table table-summary -->
+                                          
+                                                              <!-- <li class="list-group-item d-flex justify-content-between bg-body-tertiary d-none" id="appliedCoupon">
+                                                                <div class="text-success">
+                                                                  <h6 class="my-0">Coupon code</h6>
+                                                                  <small class="text-uppercase" id="coupon"></small>
+                                                                </div>
+                                                                <span class="text-success" id="discountAmount">−$</span>
+                                                                </li>
+                                                                <% if (typeof userCart.coupon !== 'undefined' && userCart.coupon) { %>
+                                                                <li class="list-group-item d-flex justify-content-between bg-body-tertiary" id="appliedCoupon">
+                                                                <div class="text-success">
+                                                                  <h6 class="my-0">Coupon code</h6>
+                                                                  <small class="text-uppercase" id="coupon"><%- userCart.coupon.code %></small>
+                                                                </div>
+                                                                <span class="text-success" id="discountAmount">−$<%- userCart.couponDiscount %></span>
+                                                                </li>
+                                                                <% } %>
+                                                          
+                                                          
+                                                              <form class="card p-2" id="applyCoupon">
+                                                                <label class="form-label text-dark" for="couponCode">Apply Coupon Code</label>
+                                                                <fieldset>
+                                                                <div class="input-group">
+                                                                  <input  <% if (typeof userCart.coupon !== 'undefined' && userCart.coupon ) { %> disabled="disabled" <% } %> id="couponCode" name="code" type="text" class="form-control text-uppercase" placeholder="Coupon code" <% if (typeof userCart.coupon !== 'undefined' && userCart.coupon ) { %> value="<%- userCart.coupon.code %>" <% } %>>
+                                                                  <button <% if (typeof userCart.coupon !== 'undefined' && userCart.coupon ) { %> disabled="disabled" <% } %> type="submit" class="btn btn-outline-primary <%- (typeof userCart.coupon !== 'undefined' && userCart.coupon ) ? 'd-none' : ''  %>">Apply</button>
+                                                                  <button onclick="removeCoupon()" type="button" class="btn btn-outline-warning <%- (typeof userCart.coupon !== 'undefined' && userCart.coupon ) ? '' : 'd-none'  %>">Remove Coupon</button>
+                                                                </div>
+                                                                </fieldset>
+                                                              </form>
+                                                          
+                                                              <div id="couponsAccordion" class="text-capitalize accordion mt-4">
+                                                                <h6 class="mb-3">Available Coupons</h6>
+                                                                <% if (typeof coupons !== 'undefined' && coupons.length > 0) { %>
+                                                                <% coupons.forEach(function(coupon, index) { %>
+                                                                  <div class="accordion-item">
+                                                                  <h2 class="accordion-header" id="heading<%= index %>">
+                                                                    <button class="accordion-button collapsed text-uppercase text-success" type="button" data-bs-toggle="collapse"
+                                                                    data-bs-target="#collapse<%= index %>" aria-expanded="false"
+                                                                    aria-controls="collapse<%= index %>">
+                                                                    <%= coupon.code %>
+                                                                    </button>
+                                                                  </h2>
+                                                                  <div id="collapse<%= index %>" class="accordion-collapse collapse"
+                                                                    aria-labelledby="heading<%= index %>" data-bs-parent="#couponsAccordion">
+                                                                    <div class="accordion-body">
+                                                                    
+                                                            
+                                                                    </div>
+                                                                    </div>
+                                                                  </div>
+                                                                  </div>
+                                                                <% }); %> -->
+                                                                <% } else { %>
+                                                                <p class="lead text-warning">No Coupons Available</p>
+                                                                <% } %>
+                                                                
+                                          
+                                                              <div class="my-3">
+                                                                <div class="form-check">
+                                                                  <div class="block-header bg-secondary-light"><strong class="text-uppercase">Payment</strong></div>
+                                                                  <br>
+                                                                  <input id="credit" name="paymentMethod" type="radio" class="form-check-input" value="COD" checked required>
+                                                                  <label class="form-check-label" for="credit">Cash On Delivery</label>
+                                                                </div>
+                                                                <div class="form-check">
+                                                                  <input id="debit" name="paymentMethod" type="radio" class="form-check-input" value="Online" required>
+                                                                  <label class="form-check-label" for="debit">RazorPay</label>
+                                                                </div>
+                                                                <div class="form-check">
+                                                                  <input id="paypal" name="paymentMethod" type="radio" value="Wallet" class="form-check-input" required>
+                                                                  <label class="form-check-label" for="paypal">Wallet</label>
+                                                                </div>
+                                                                </div>
+                                                          
+                                          
+                                                                <button type="submit" class="btn btn-outline-primary-2 btn-order btn-block" id="submitOrder">
+                                                                <span class="btn-text">Place Order</span>
+                                                                <span class="btn-hover-text">Proceed to Checkout</span>
+                                                              </button>
+                                                            </div><!-- End .summary -->
+                                                          </aside><!-- End .col-lg-3 -->
