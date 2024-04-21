@@ -254,104 +254,43 @@ getOrderDetails: async (req, res) => {
       console.log(error);
   }
 },
+// Cancel 
 cancelOrder: async (req, res) => {
+  console.log(req.params)
+
+  const {id,itemId} = req.params;
   try {
-    const  id = req.params;
+   const order = await Order.findOne({_id: id,"items.product_id":itemId});
+   if(!order){
+     return res.status(400).json({success:false,message:"order is not found"})
+   }
+   console.log(order)
 
-    const order = await Order.findOne({ _id: id });
-
-    if (!order) {
-      return res.status(404).json({ message: "Order not found." });
-    }
-
-    const updatedOrder = await Order.updateOne(
-      { _id: id },
-      {
-        $set: {
-          "items.$.status": "Cancelled",
-          "items.$.cancelled_on": new Date(),
-        },
-      },
-      { new: true }
-    );
-
-    if (!updatedOrder) {
-      return res.status(500).json({ message: "Failed to cancel order." });
-    }
-
-    // Restore product stock
-    const updateOrder = await Order.findOne({
-      _id: id,
-     
-    });
-
-    for (const item of updateOrder.items) {
-      const product = await Product.findById(item.product_id);
-      if (product) {
-        product.stock += item.quantity;
-        await product.save(); // Save the updated product
-      }
-    }
-
-    res.status(200).json({
-      message: "Order cancelled successfully.",
-      order: updatedOrder,
-    });
+   const updateOrder = await Order.updateOne(
+     {
+       _id : id,
+       "items.product_id": itemId,
+     },
+     {
+       $set : {
+         "items.$.status" : "Cancelled",
+         "items.$.cancelled_on" : new Date()
+       },
+     },
+     {new : true}
+   )
+   
+   
+   return res.status(200).json({success:true,message:"order cancelled",order})
+   
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error." });
+   console.error(error);
+   return res.status(500).json({success:false,message:"internal server error",error})
   }
-},
+ },
 
 
-cancelAllOrders: async (req, res) => {
-  try {
-    const { orderId } = req.params;
 
-    const updatedOrder = await Order.updateOne(
-      { _id: orderId },
-      {
-        $set: {
-          status: "Cancelled",
-          "items.$.status": "Cancelled",
-          "items.$[elem].cancelled_on": new Date(),
-        },
-      },
-      {
-        arrayFilters: [{ "elem.status": { $ne: "cancelled" } }],
-      },
-      { new: true }
-    );
-
-    if (updatedOrder) {
-      const updateOrder = await Order.findOne({ _id: orderId });
-      for (const item of updateOrder.items) {
-        const product = await Product.findById(item.product_id);
-        if (product) {
-          const variantIndex = product.variants.findIndex(
-            (variant) => variant._id.toString() === item.variant.toString()
-          );
-
-          if (variantIndex === -1) {
-            return res.status(404).json({ error: "Variant not found" });
-          }
-
-          product.variants[variantIndex].stock += item.quantity;
-
-          await product.save(); // Save the updated product
-        }
-      }
-    }
-
-    res.status(200).json({
-      message: "Orders cancelled successfully.",
-      order: updatedOrder,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Server error." });
-  }
-},
 
 changeOrderStatus: async (req, res) => {
   const order_id = req.params.id;
