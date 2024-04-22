@@ -7,6 +7,7 @@ const WishList = require("../model/wishlistSchema");
 const { isLoggedIn } = require("../middlewares/authMiddleware");
 const userController = require("../controller/userController");
 const orderController = require("../controller/orderController");
+const checkoutController = require("../controller/checkoutController");
 
 
     /**
@@ -50,7 +51,9 @@ router
 
 router.get("/wishlist", userController.getWishlist);
 router.post("/add-to-wishlist", userController.addToWishlist);
-router.delete("/remove-from-wishlist", userController.removeFromWishlist);
+router.delete("/remove-from-wishlist/:id", userController.removeFromWishlist);
+
+// router.delete("/remove-from-wishlist", userController.removeFromWishlist);
 
 
 
@@ -58,18 +61,22 @@ router.delete("/remove-from-wishlist", userController.removeFromWishlist);
 /**
  * User Order Management
  */
-
+router.post("/apply-coupon",checkoutController.applyCoupon)
 router.post("/place-order", orderController.placeOrder);
 
 router.route("/orders").get(orderController.getUserOrders);
 router.get("/order/:id", orderController.getUserOrder);
-router.post("/cancel-order/:id", orderController.cancelOrder);
+router.post("/cancel-order/:id/:itemId", orderController.cancelOrder);
+
+/**
+ * User Wallet
+ */
+
+router.get("/wallet", userController.getWallet);
+router.post('/add-to-wallet', userController.addToWallet)
 
 
-// router.route("/cancel-order/:id").post(orderController.cancelOrder)
-
-
-
+// router.post('/verify-wallet-payment', userController.verifyPayment)
 
 
 /**
