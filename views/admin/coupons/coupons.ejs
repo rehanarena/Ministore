@@ -184,18 +184,22 @@
                   <div class="col mb-3">
                     <label for="editMinPurchaseAmount" class="form-label">Minimum Purchase Amount</label>
                     <input name="minPurchaseAmount" type="number" class="form-control" id="editMinPurchaseAmount">
+                    <small></small>
                   </div>
                   <div class="col mb-3">
                     <label for="editRateOfDiscount" class="form-label">Discount Rate</label>
                     <input name="rateOfDiscount" type="number" class="form-control" id="editRateOfDiscount">
+                    <small></small>
                   </div>
 
                   <div class="col mb-3">
                     <label for="editExpirationDate" class="form-label">Coupon Expiry</label>
                     <input name="expirationDate" type="date" class="form-control" id="editExpirationDate">
+                    <small></small>
                   </div>
                 </div>
                 <div class="form-group mb-3">
+                  <small></small>
                   <label class="form-label" for="">Status</label>
                   <select class="form-select" name="isActive" aria-label="Activate or Deactivate the Coupon">
                     <option value="true">Active</option>
@@ -457,16 +461,16 @@ const showError = (input,message) =>{
       const checkRateofDiscount =() => {
         let valid = true;
 
-        const rateOfDiscount  = document.getElementById('editRateofDiscount').value;
+        const rateOfDiscount  = document.getElementById('editRateOfDiscount').value;
 
         if(parseInt(rateOfDiscount) <= 0 || rateOfDiscount > 95){
           valid = false;
-          showError(document.getElementById('editRateofDiscount'),"Rate of discount should be between 1 and 95.");
-        }else if(rateOfDiscount = ''){
+          showError(document.getElementById('editRateOfDiscount'),"Rate of discount should be between 1 and 95.");
+        }else if(rateOfDiscount == ''){
           valid = false;
-          showError(document.getElementById('editRateofDiscount'),"Rate of discount is required");
+          showError(document.getElementById('editRateOfDiscount'),"Rate of discount is required");
         } else{
-          showSuccess(document.getElementById('editRateofDiscount'));
+          showSuccess(document.getElementById('editRateOfDiscount'));
         }
         return valid;
       }

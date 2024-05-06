@@ -10,7 +10,17 @@ const  { sendOtpEmail } = require("../helpers/userVerificationHelper")
 const adminLayout = "./layouts/adminLayout";
 
 
-
+function generateRefferalCode(length) {
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let referralCode = "";
+  for (let i = 0; i < length; i++) {
+    referralCode += characters.charAt(
+      Math.floor(Math.random() * characters.length)
+    );
+  }
+  return referralCode;
+}
 
 
      

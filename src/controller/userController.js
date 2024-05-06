@@ -1,7 +1,8 @@
 const User = require("../model/userSchema");
 const Product = require("../model/productSchema");
 const Address = require("../model/addressSchema");
-const WishList = require("../model/wishlistSchema");
+const Wallet = require("../model/walletSchema");
+const Wishlist = require("../model/wishlistSchema");
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 
@@ -59,7 +60,7 @@ module.exports = {
       title: "Ministore - Wishlist",
     };
     let user = await User.findById(req.user.id);
-    let wishlist = await WishList.findById(user.wishlist).populate({
+    let wishlist = await Wishlist.findOne({userId: user._id}).populate({
       path: "products",
      
     });
@@ -80,43 +81,151 @@ module.exports = {
   },
 
   addToWishlist: async (req, res) => {
-    console.log(req.body,req.params);
+    console.log(req.body, req.params);
+
+    const productId = req.body.productId;
+
     try {
-      const product_id = req.body.productId
-      
-    } catch (error) {
-      
-    }
+        // Find the product
+        const product = await Product.findById(productId);
+        if (!product) {
+            console.log("Product not found");
+            return res.status(404).json({ success: false, message: "Product not found" });
+        }
 
-  },
-  removeFromWishlist: async (req, res) => {
-    try {
-      const { productId } = req.body;
-      const user = await User.findById(req.user.id);
+        // Find the user
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            console.log("User not found");
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
 
-      const updatedWishList = await WishList.findByIdAndUpdate(user.wishlist, {
-        $pull: { products: productId },
-      });
+        // Check if user has a wishlist, if not, create one
+        let wishlist = await Wishlist.findOne({userId: user._id})
+        if(!wishlist){
+          let items = []
+          items.push(product._id)
+          wishlist = new Wishlist({
+            userId: user._id,
+            products: items,
+          })
+          await wishlist.save()
+          return res.status(200).json({
+            success:true,
+            message: 'Product added to Wishlist.'
+          })
+        }
 
-      if (updatedWishList) {
-        return res.status(201).json({
-          success: true,
-          message: "Removed item from wishlist",
-        });
-      } else {
-        return res.status(500).json({
-          success: true,
-          message: "failed to remove product from wishlist try again",
-        });
-      }
-    } catch (error) {
-      return res.status(500).json({
+        // Check if the product already exists in the wishlist
+        const productExistInWishlist = wishlist.products.find(
+          (item)=> item.toString() === product._id.toString()
+        )
+        if(productExistInWishlist){
+          return res.status(400).json({
+            success: false,
+            message:'product already exists in the wishlist.'
+          })
+        }
+
+        // Add the product to the wishlist
+      wishlist.products.push(product._id)
+      await wishlist.save()
+      return res.status(200).json({
         success: true,
-        message: "failed to remove product from wishlist try again",
+        message: 'product Added to Wishlist.'
+      })
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "An error occurred, server facing issues!",
+        });
+    }
+},
+
+
+  
+removeFromWishlist: async (req, res) => {
+  try {
+    const { productId } = req.body;
+
+    // Assuming User and WishList models are properly imported
+    const user = await User.findById(req.user.id);
+    const updatedWishList = await Wishlist.findOneAndUpdate(
+      { userId: user._id },
+      { $pull: { products: productId } },
+      { new: true }
+    );
+
+    if (updatedWishList) {
+      return res.status(201).json({
+        success: true,
+        message: "Removed item from wishlist",
+      });
+    } else {
+      return res.status(500).json({
+        success: false,
+        message: "Failed to remove product from wishlist. Please try again.",
       });
     }
-  },
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to remove product from wishlist. Please try again.",
+    });
+  }
+},
 
+
+
+  getWallet: async (req, res) => {
+    const locals = {
+      title: "Ministore - User Wallet",
+    };
+
+
+    
+
+    let userWallet = await Wallet.findOne({ userId: req.user.id });
+
+    if (userWallet) {
+      userWallet.transactions.reverse();
+    }
+
+    if(!userWallet){
+      userWallet = {
+        balance: 0,
+        transactions: [],
+      }
+    }
+
+    console.log(userWallet);
+    res.render("user/wallet", {
+      locals,
+      userWallet,
+    });
+  },
+  addToWallet: async (req, res) => {
+    try {
+      const { amount, notes } = req.body;
+      const id = crypto.randomBytes(8).toString("hex");
+      const payment = await createRazorpayOrder(id, amount);
+
+      const user = await User.findOne({ _id: req.user.id });
+
+      if (!payment) {
+        return res
+          .status(500)
+          .json({ success: false, message: "Failed to create payment" });
+      }
+
+      res.json({ success: true, payment, user });
+    } catch (error) {
+      const { message } = error;
+      res.status(500).json({ success: false, message });
+    }
+  },
 
      // Password Reset From Profile
   resetPass: async (req, res) => {
@@ -252,26 +361,29 @@ module.exports = {
 },
 getRefferals: async(req, res) => {
   const locals = {
-    title: "SoloStride - User Refferals"
+     title: "Ministore - User Refferals"
   }
-
+ 
   const user = await User.findOne({ _id: req.user.id });
-
+ 
   if(!user.referralCode){
-    const refferalCode = generateRefferalCode(8);
-
-    user.referralCode = refferalCode;
-    await user.save();
+     const refferalCode = generateRefferalCode(8);
+ 
+     user.referralCode = refferalCode;
+     await user.save();
   }
-
+ 
   console.log(user);
-
-  // successfullRefferals = user.successfullRefferals.reverse();
-
+ 
+  // Ensure successfullRefferals is an array before reversing it
+  let successfullRefferals = user.successfullRefferals || [];
+  successfullRefferals = successfullRefferals.reverse();
+ 
   res.render("user/refferals", {
-    locals,
-    refferalCode: user.referralCode,
-    // successfullRefferals
+     locals,
+     refferalCode: user.referralCode,
+     successfullRefferals
   })
-},
+ },
+ 
 };

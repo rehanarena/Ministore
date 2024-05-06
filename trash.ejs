@@ -1,173 +1,77 @@
-
-
-
-
-<section>
-  <div class="container">
-    <!-- Breadcrumbs -->
-    <ol class="breadcrumb justify-content-center">
-      <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-      <li class="breadcrumb-item"><a href="index.html">Account</a></li>
-      <li class="breadcrumb-item active">Orders</li>
-    </ol>
-    <!-- Hero Content-->
-    <div class="hero-content pb-5 text-center">
-      <h1 class="hero-heading">Your Orders</h1>
-    </div>
+<div class="row">
+  <!-- Update Profile Form -->
+  <div class="col-md-6">
+    <form id="update-form" action="/user/profile" method="POST">
+      <div class="card bg-light rounded-3 p-4 mb-4">
+        <h4 class="card-title mb-4">Update Profile</h4>
+        <div class="mb-3">
+          <label class="form-label" for="account-fn">First Name</label>
+          <input name="firstName" class="form-control" type="text" id="account-fn" value="<%- user.firstName %>">
+          <small></small>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="account-ln">Last Name</label>
+          <input name="lastName" class="form-control" type="text" id="account-ln" value="<%- user.lastName %>">
+          <small></small>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="account-email">Email Address</label>
+          <input class="form-control" type="email" id="account-email" value="<%- user.email %>" disabled>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="account-phone">Phone Number</label>
+          <input name="phone" class="form-control" type="text" id="account-phone" value="<%- user.phone %>" placeholder="9778877665" required>
+          <small></small>
+        </div>
+        <hr class="mt-4 mb-3">
+        <div class="d-grid">
+          <button class="btn btn-success" type="submit">Save Profile</button>
+        </div>
+      </div>
+    </form>
   </div>
-</section>
 
-<div class="container mb-5">
-  <div class="row">
-    <%- include('../partials/user/sidebar.ejs') %>
-    <!-- Content  -->
-    <section class="col-lg-8">
-      <% if (orderDetails && orderDetails.length > 0 && orderDetails != 'undefined') { %>
-      <div class="container table-responsive">
-       
-              <% if (typeof orderDetails !== 'undefined' && orderDetails.length > 0) { %>
-                <% orderDetails.forEach(element => { %>
-                <tr>
-                  <th class="py-4 align-middle">#<%- element._id %></th>
-                  <td class="py-4 align-middle">
-                    <%= element.createdAt.toLocaleDateString('en-GB') %>
-                  </td>
-                  <td class="py-4 align-middle">$<%- element.payable %></td>
-                  <td class="py-4 align-middle">
-                    <span class="badge p-2 text-uppercase <% if (element.orderStatus == 'Placed') { %> badge-primary-light <% } else if (element.orderStatus == 'Shipped') { %> badge-info-light <% } else if (element.orderStatus == 'Delivered') { %> badge-success-light <% } else if (element.orderStatus == 'Cancelled') { %> badge-danger-light <% } else { %> badge-warning-light <% } %>"><%- element.orderStatus %></span>
-                  </td>
-                  <td class="py-4 align-middle">
-                    <% if (element.orderStatus != 'Cancelled' ) { %>
-                    <a href="/user/order/<%- element._id %>">
-                      <button class="btn btn-outline-dark btn-sm">View</button>
-                    </a>
-                    <% } %>
-                  </td>
-                </tr>
-                <% }) %>
-  
-              <% } else { %>
-                <tr class="align-middle text-center text-uppercase">
-                  <td colspan="5"  class="text-bg-danger">No orders found</td>
-                </tr>
-              <% } %>
-            
-        <div class="row col-md-12">
-          <% orderDetails.forEach(function(order) { %>
-          <a class="text-decoration-none text-capitalize" href="/user/order/<%= order._id %>">
-            <div role="button" class=" <% if (order.status == 'Delivered') { %>
-             bg-success-light <% } else if (order.status == 'Cancelled' || order.status == 'Failed') { %>
-              bg-danger-light <% } else if(order.status == 'Returned') { %>
-              bg-warning-light <% } else if(order.status == 'Confirmed') { %>
-              bg-primary-light <% } else  { %>
-                bg-secondary-subtle
-            <% } %> orders px-3 py-2 mb-4  card">
-              <div class="d-flex flex-row justify-content-between">
-                <div class="orde-details pt-2">
-                  <div class="h5 text-muted">Order: <%= new Date(order.createdAt).toLocaleString() %></div>
-                  <span class="">
-                    <span class="fw-bold">payment:</span> <%= order.paymentMethod %><br>
-                   
-                    <p class="text-normal">
-                      <%= order.shippingAddress?.house_name %>(H),
-                      <%= order.shippingAddress?.locality %>,
-                      <%= order.shippingAddress?.area_street %>,<br>
-                      <%= order.shippingAddress?.landmark %>,
-                      <%= order.shippingAddress?.state %>
-                      <span class="fw-bold">
-                        -<%= order.shippingAddress?.pincode %>
-                      </span>
-                    </p>
-                  </span>
-                </div>
-                <% if (order.coupon) { %>
-                  <div class="coupendetails">
-                    Offer Applied
-                    <div class="bg-warning rounded px-1 text-uppercase"><%= order.coupon.code %> </div>
-                    <div class="fw-bold px-1"><%= order.coupon.rateOfDiscount %>%off</div>
-                  </div>
-                  <% } %>
-                <div class="status fw-bold lead text-uppercase text-success">
-                  <%= order.status %>
-                </div>
-                
-              </div>
-            </div>
-          </a>
-          <% }); %>
+  <!-- Change Password Form -->
+  <div class="col-md-6">
+    <form action="/user/reset-password" method="POST" id="reset-password-form">
+      <div class="card bg-light rounded-3 p-4 mb-4">
+        <h4 class="card-title mb-4">Change Password</h4>
+        <div class="mb-3">
+          <label class="form-label" for="oldPassword">Old Password</label>
+          <div class="input-group">
+            <input type="password" class="form-control" id="oldPassword" name="oldPassword" placeholder="Old Password">
+            <button class="btn btn-outline-secondary" type="button" id="toggleOldPassword">
+              <i class="bi bi-eye-slash"></i>
+            </button>
+          </div>
+          <small></small>
         </div>
-
-        <!-- Pagination-->
-        <% if (orderDetails.length > 0 && nextPage || current == pages) { %>
-        <nav aria-label="Product Pagination">
-          <ul class="pagination justify-content-center mt-5">
-            <% if (current == 1) { %>
-            <li class="page-item disabled">
-              <a href="#" class="page-link">First</a>
-            </li>
-
-            <% } else { %>
-            <li class="page-item">
-              <a href="/user/orders/?page=1" class="page-link">First</a>
-            </li>
-            <% } %>
-
-            <% var i = (Number(current)> 5 ? Number(current) - 4 : 1) %>
-            <% if (i !== 1) { %>
-            <li class="page-item disabled">
-              <a href="#" class="page-link">...</a>
-            </li>
-            <% } %>
-
-            <% for( ; i < Number(current) + 4 && i <= pages ; i++ ) { %>
-            <% if (i == current) { %>
-            <li class="page-item disabled">
-              <a href="#" class="page-link"><%= i %> </a>
-            </li>
-            <% } else { %>
-            <li class="page-item">
-              <a href="/user/orders?page=<%= i %>" class="page-link text-primary fw-bold"><%= i %></a>
-            </li>
-
-            <% } %>
-            <% if (i == Number(current)+ 4 && i < pages) { %>
-            <li class="page-item disabled">
-              <a href="#" class="page-link">...</a>
-            </li>
-            <% } %>
-
-            <% } %>
-            <% if (current == pages) { %>
-            <li class="page-item disabled">
-              <a href="#" class="page-link">Last</a>
-            </li>
-            <% } else { %>
-            <li class="page-item">
-              <a href="/user/orders?page=<%= pages %>" class="page-link">Last</a>
-            </li>
-
-            <% } %>
-
-          </ul>
-        </nav>
-        <% } %>
-      </div>
-      <% } else { %>
-      <!-- If orders is empty -->
-      <div class="container my-5 mb-6">
-        <div class="col my-5 text-center">
-          <h2 class="h1">No Orders Found</h2>
-          <h3 class="my-5">
-            <a href="/shop">
-              <button class="btn btn-lg btn-primary">Shop Now</button>
-            </a>
-          </h3>
+        <div class="mb-3">
+          <label class="form-label" for="newPassword">New Password</label>
+          <div class="input-group">
+            <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="New Password">
+            <button class="btn btn-outline-secondary" type="button" id="toggleNewPassword">
+              <i class="bi bi-eye-slash"></i>
+            </button>
+          </div>
+          <small></small>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="confirmNewPassword">Confirm New Password</label>
+          <div class="input-group">
+            <input type="password" class="form-control" id="confirmNewPassword" name="confirmNewPassword" placeholder="Confirm New Password">
+            <button class="btn btn-outline-secondary" type="button" id="toggleNewPasswordConfirm">
+              <i class="bi bi-eye-slash"></i>
+            </button>
+          </div>
+          <small></small>
+        </div>
+        <hr class="mt-4 mb-3">
+        <div class="d-grid">
+          <button class="btn btn-success" type="submit">Change Password</button>
         </div>
       </div>
-      <% } %>
-
-    </section>
-
+    </form>
   </div>
 </div>
 
@@ -200,315 +104,181 @@
 
 
 
+<!-- Hero Section-->
+<section class="hero">
+  <div class="container">
+    <div class="row">
+      <%- include('../partials/user/sidebar.ejs') %>
+        <div class="col-lg-8">
+          <div class="d-flex flex-column">
+            <% orderProducts.forEach(item=> { %>
+              <div class="card mb-3" style="max-width: 540px;">
+                <div class="row g-0">
+                  <div class="col-md-4">
+                    <img src="/uploads/cropped/<%- item.product_id.images.image1 %>"
+                      class="img-fluid img-thumbnail rounded-start" alt="Product Image">
+                  </div>
+                  <div class="col-md-8">
+                    <div class="card-body">
+                      <h5 class="card-title"><%- item.product_id.product_name %></h5>
+                      <p class="card-text"><span class="fw-bold">Price: <span class="text-muted"><%- item.price
+                              %></span></span></p>
+                      <p class="card-text"><span class="fw-bold">Quantity: <span class="text-muted"><%-
+                              item.quantity %></span></span></p>
+                      <p class="card-text"><span class="fw-bold">Item Total: <span class="text-muted"><%-
+                              item.total_amount %></span></span></p>
+                      <p class="card-text"><small class="text-body-secondary">Last updated <%-
+                            orderDetails.updatedAt.toDateString() %></small></p>
+                      <p class="card-text"><small class="text-body-secondary fs-2"><span
+                            class="badge bg-success"><%- item.status %></span></small></p>
+                    </div>
+                    <div class="d-grid gap-2 flex-row mx-auto">
+
+                      <button type="button" class="btn btn-outline-warning"
+                        onclick="cancelOrder('<%- orderDetails._id %>', '<%- item.product_id._id%>')">Cancel
+                        Order</button>
+
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+              <% }) %>
+          </div>
+        </div>
+    </div>
+  </div>
+</section>
+cancelOrder js function (script tag wasn't closed)
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+<script defer>
+const cancelOrder = async (orderId, itemId) => {
+const confirmed = await Swal.fire({
+  title: "Are you sure?",
+  text: "You want to cancel this order.",
+  icon: "warning",
+  showCancelButton: true,
+  confirmButtonText: "Yes, cancel!",
+  cancelButtonText: "No, keep it!",
+  reverseButtons: true,
+});
+
+if (confirmed.isConfirmed) {
+  try {
+    const response = await fetch(`/user/cancel-order/${orderId}/${itemId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    console.log(response);
+    const data = await response.json(); // Parse the response as JSON
+    console.log(data);
+    if (response.ok) {
+      Swal.fire({
+        title: "Success!",
+        text: data.message, // Use the message from the backend
+        icon: "success",
+        timer: 1500,
+      }).then(() => {
+        location.reload();
+      });
+    } else {
+      Swal.fire({
+        title: "Error!",
+        text: data.message || "Something went wrong.", // Use the message from the backend if available
+        icon: "error",
+        timer: 1500,
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    Swal.fire({
+      title: "Error!",
+      text: "Something went wrong.",
+      icon: "error",
+      timer: 1500,
+    });
+  }
+}
+}
+</script>
 
 
 
 
 
-<main class="main">
-  <div class="page-header text-center " style="background-image: url('/public/userAssets/assets/images/page-header-bg.jpg')">
-      <div class="container">
-          <h1 class="page-title text-dark">My Account</h1>
-      </div><!-- End .container -->
-  </div><!-- End .page-header -->
-  <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
-      <div class="container">
-          <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="/profile">Your Account</a></li>
-              <li class="breadcrumb-item active" aria-current="page">all Orders</li>
+getOrderDetails: async (req, res) => {
+  const orderId = req.params.id;
 
-          </ol>
-      </div><!-- End .container -->
-  </nav><!-- End .breadcrumb-nav -->
+  try {
 
-  <%if(products){%>
-      <div class="container-fluid d-flex flex-column justify-content-center py-5">
-          <%for(i=products.length-1;i>=0;i--){%>
+    const orderDetails = await Order.findById(orderId)
+      .populate("items.product_id")
+      .populate("customer_id")
+      .populate("address");
 
-              <div>
-                  <!-- model start  -->
-                  <div class="modal fade" id="modCancel<%=products[i].orderId%><%=products[i].productDetails._id%>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                      <div class="modal-dialog modal-dialog-centered">
-                          <div class="modal-content">
-                              <div class="modal-header">
-                                  <!-- <h1 class="modal-title fs-5" id="exampleModalLabel">
-                                      Modal title</h1> -->
-                                  <p class="modal-title text-danger mx-auto"> <b class="mdi mdi-comment-alert text-warning"></b>
-                                      Are you sure to
-                                      Cancel this order</p>
-                                  <!-- <button type="button" class=" btn mdi mdi-close" data-bs-dismiss="modal"
-                                      aria-label="Close">x</button> -->
-                              </div>
-                              <div class="" style="border: 1px solid #e2e2e2; border-radius: 10px; background: #F3F3F9;">
-
-                                  <div class="card mx-auto mb-3 py-5" style="max-width: 540px; border: 1px solid #e2e2e2; border-radius: 10px; background: #F3F3F9;">
-                                      <div class="row g-0 ">
-                                          <div class="col-md-5  d-flex align-items-center">
-                                              <img style="width: 170px; height: 170px; border-radius: 7px;" src="/public/products/images/<%=products[i].productDetails.images.image1%>" class="card-img-start mx-2" alt="...">
-                                          </div>
-                                          <div class="col-md-7">
-                                              <div class="card-body d-flexmy-auto">
-                                                  <h5 class="card-title" >
-                                                      <%= products[i].productDetails.product_name %>
-                                                  </h5>
-                                                  
-                                                  </p>
-                                                  <p class="card-text"><small class="text-body-secondary">
-                                                          Quantity :
-                                                          <b>
-                                                              <%=products[i].quantity %>
-                                                          </b>
-                                                      </small></p>
-
-                                                  <h6 class=" mb-2">Delivery Expect on : <br> <b>
-                                                          <%= products[i].deliveryDate %>
-                                                      </b></h6>
-                                                  <h5 class="card-title mb-2">₹ <%= Math.floor(products[i].price) * products[i].quantity %> ONLY
-                                                  </h5>
-                                              </div>
-                                          </div>
-                                      </div>
-                                  </div>
-                                      <!-- model return  -->
-                  <div class="modal fade" id="modreturn<%=products[i].orderId%><%=products[i].productDetails._id%>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                      <div class="modal-dialog modal-dialog-centered">
-                          <div class="modal-content">
-                              <div class="modal-header py-4">
-                                  <!-- <h1 class="modal-title fs-5" id="exampleModalLabel">
-Modal title</h1> -->
-                                  <p class="modal-title text-danger mx-auto"> <b class="mdi mdi-comment-alert text-warning"></b>
-                                      <b>Are you sure to
-                                          Return this order </b> <i class="fa-sharp fa-light fa-truck-fast fa-bounce"></i>
-                                  </p>
-                                  <!-- <button type="button" class=" btn mdi mdi-close" data-bs-dismiss="modal"
-aria-label="Close">x</button> -->
-                              </div>
-                              <div class="" style="border: 1px solid #e2e2e2; border-radius: 0px; background: #F3F3F9;">
-
-                                  <div class=" mx-auto mb-3 py-5"  style="max-width: 540px; border: 1px solid #e2e2e2; border-radius: 0px; background: #F3F3F9;">
-                                      <div class="row g-0 " style="border: none;">
-                                          <div class="col-md-5  d-flex align-items-center">
-                                              <img style="width: 170px; height: 170px; border-radius: 7px;" src="/public/products/images/<%=products[i].productDetails.images.image1%>" class="card-img-start mx-2" alt="...">
-                                          </div>
-                                          <div class="col-md-7">
-                                              <div class="card-body d-flexmy-auto">
-                                                  <h5 class="card-title">
-                                                      <%= products[i].productDetails.product_name %>
-                                                  </h5>
-
-                                                  </p>
-                                                  <p class="card-text"><small class="text-body-secondary">
-                                                          Quantity :
-                                                          <b>
-                                                              <%=products[i].quantity %>
-                                                          </b>
-                                                      </small></p>
-
-                                                  <h6 class=" mb-2">Delivery Expect on : <br> <b>
-                                                          <%= products[i].deliveryDate %>
-                                                      </b></h6>
-                                                  <h5 class="card-title mb-2">₹ <%= products[i].price * products[i].quantity %>
-                                                          ONLY
-                                                  </h5>
-                                              </div>
-
-                                          </div>
-                                      </div>
-                                      <div class="card ordercard col-md-6 col-10 my-3 mx-auto p-3" style="border: 1px solid #e2e2e2; border-radius: 10px; background: #F3F3F9;">
-                                          <%if(products[i].OrderStatus!="Returned"){ %>
-                                              <div class="card-header d-flex justify-content-between w-100">
-                                                  <div class="d-flex flex-column col-9">
-                                                      <%if(products[i].OrderStatus!="canceled"&& products[i].OrderStatus!="pending"){%>
-                                                          <p>ORDER PLACED</p>
-                                                          <p>
-                                                              <%= products[i].placeOrderDate%>
-                                                          </p>
-                                                      <%}%>
-                                                  </div>
-                                                  <hr class="m-0 mb-1">
-                                                  <div>
-                                                      <%if(products[i].OrderStatus!="canceled" && products[i].OrderStatus!="Delivered"&& products[i].OrderStatus!="pending"){%>
-                                                          <h6 class="mx-5 mb-2">Delivery Expect on : <b>
-                                                                  <%= products[i].deliveryDate %>
-                                                              </b></h6>
-                      
-                                                          <%}else if(products[i].OrderStatus=="Delivered"){%>
-                                                              <h6 class="mx-5 mb-2">Delivered on : <b>
-                                                                  <%= products[i].updatedAt %>
-                                                              </b></h6>
-                                                          <%}%>    
-                                                  </div>
-                                                  <div class="card-body  row col-12 d-flex ">
-                                                      
-                                                      <div class="col-4 ">
-                                                          
-                                                          <img src="/public/products/images/<%=products[i].productDetails.images.image1%>" style="width: 150px;" alt=""> 
-                                                      
-                                                          <p class="card-text">
-                                                          </p>
-                                                          <!-- <a href="#" class="btn btn-dark">Go somewhere</a> -->
-                                                      </div>
-                                                 
-                                                      <div class="col-8">
-                                                          <a href="/product/?id=<%= products[i].productDetails._id %>">
-                                                          <h5 class="card-title">
-                                                              <%= products[i].productDetails.product_name %>
-                                                          </h5>
-                                                          </a
-                                                          <p class="card-text">
-                                                          <p>Quantity : <b>
-                                                                  <%=products[i].quantity %>
-                                                              </b></p><i class="fa-solid fa-file-invoice-dollar"></i>
-                                                          <%=products[i].paymentMethod %>
-                                                              </p>
-                                                              <h5 class="card-title mb-2">
-                                                                  
-                                                                      ₹ <%= Math.floor(products[i].price)*products[i].quantity %>
-                                                                  
-                                                              </h5>
-                      
-                      
-                                                              <%if(products[i].returnOrderStatus!="none"){%>
-                                                                  <%if(products[i].OrderStatus!="canceled"&& products[i].OrderStatus!="pending" ){%>
-                      
-                                                                      <div class="col-12 row d-flex justify-content-start">
-                                                                          <!-- <a href="#" class="btn btn-dark col-2 mb-1">Track your Order</a> -->
-                                                                          <%if(products[i].OrderStatus!="Delivered" ){%>
-                                                                              <button data-bs-toggle="modal" data-bs-target="#modCancel<%=products[i].orderId%><%=products[i].productDetails._id%>" class="btn btn-dark col-2 mb-1">Cancel Order </button>
-                                                                              <%}else{%> 
-                      
-                                                                                  <!-- return periad checking -->
-                                                                                  <% 
-                                                                                  function isWithinLast7Days(dateToCheck) {
-                                                                                      const currentDate = new Date();
-                                                                                      const sevenDaysAgo = new Date(currentDate);
-                                                                                      sevenDaysAgo.setDate(currentDate.getDate() - 7);
-                                                                                      const date = new Date(dateToCheck);
-                                                                                      return date >= sevenDaysAgo && date <= currentDate;
-                                                                                  }
-                                                                                  
-                                                                                  const dateToCheck = products[i].updatedAt;
-                                                                                  const isWithinLast7DaysResult = isWithinLast7Days(dateToCheck);
-                                                                                  %>
-                                                                                  <%if(isWithinLast7DaysResult){%>
-                                                                                     <button data-bs-toggle="modal" data-bs-target="#modreturn<%=products[i].orderId%><%=products[i].productDetails._id%>" class="btn btn-dark col-2 mb-1">Return Item </button>
-                                                                                     <p><i class="fa-regular fa-clipboard-list-check text-danger"></i>
-                                                                                         &nbsp; </i> <span style="font-size: 12px;"> Free
-                                                                                             replacement will be provided within <b> 7
-                                                                                                 days</b>
-                                                                                             if the product is delivered in
-                                                                                             defective/damaged
-                                                                                             condition or different from the ordered
-                                                                                             item.</span>
-                                                                                     </p>
-                                                                                   <%}%>  
-                      
-                      
-                                                                              <%}%>
-                      
-                                                                      </div>
-                                                                      <%}else{%>
-                                                                          <h6 class="text-danger text-center mr-5"><%=products[i].OrderStatus%> Order</h6>
-                                                                          <div class="progress-track  col-12">
-                                                                              <ul id="progressbar">
-                                                                                  <li class="step0 active " style="width: 50%; font-size: 1rem;"  id="step1">
-                                                                                      Order placed</li>
-                                                                                  <li class="step0 active text-right text-danger" style="width: 50%; font-size: 1rem;" id="step4">
-                                                                                      <%=products[i].OrderStatus%></li>
-                                                                              </ul>
-                                                                          </div>
-                      
-                                                                          <%}%>
-                                                                              <%}else{%>
-                                                                                  <!-- products[i].returnOrderStatus!="none" else case -->
-                                                                                  <h1>returned item</h1>
-                                                                                  <%}%>
-                      
-                      
-                      
-                      
-                                                      </div>
-                      
-                                                  </div>
-                                                  <div class="w-75">
-                              
-                                                  </div>
-                      
-                                                  <%if(products[i].OrderStatus!="canceled" && products[i].OrderStatus!="pending"){%>
-                      
-                                                      <div class="card-footer" style="background: #F3F3F9;">
-                                                          <h6 class="text-center">Order status</h6>
-                                                          <div class="progress-track">
-                                                              <ul id="progressbar">
-                                                                  <li style="font-size: 12px;" class="step0 active " id="step1">Order
-                                                                      placed
-                                                                  </li>
-                                                                  <li style="font-size: 12px;" class="step0 text-center <%= products[i].StatusLevel >= 2 ? 'active' : '' %>"  id="step2">
-                                                                      Shipped</li>
-                                                                  <li style="font-size: 12px;" class="step0  text-right <%= products[i].StatusLevel >= 3 ? 'active' : '' %>"   id="step3">
-                                                                      Out for Delivery</li>
-                                                                  <li style="font-size: 12px;" class="step0 text-right <%= products[i].StatusLevel >= 4 ? 'active' : '' %>"  id="step4">
-                                                                      Delivered</li>
-                      
-                                                              </ul>
-                                                          </div>
-                                                      </div>
-                                                      <%}%>
-                      
-                      
-                      
-                      
-                      
-                      
-                                                      <%}else{%>
-                                                          <!-- returned product else case  -->
-                                                          <div class="card-header d-flex justify-content-between w-100">
-                                                              <div class="d-flex flex-column w-100">   
-                                                                  <p>RETURN DATE</p>
-                                                                  <p> <%= products[i].updatedAt%></p>
-                                                          </div>
-                                                          </div>
-                                                            <hr class="m-0 mb-1">
-                                                            <div class="card-body row col-12 d-flex mb-0">
-                      
-                                                              <div class="col-4 ">
-                                                                  <img src="/public/products/images/<%=products[i].productDetails.images.image1%>" style="width: 150px;"    alt="">
-                                                                  <p class="card-text">
-                                                                  </p>
-                                                              </div>
-                                                              <div class="col-8">
-                                                                  <h5 class="card-title">
-                                                                      <%= products[i].productDetails.product_name %>
-                                                                  </h5>
-                                                                  <p class="card-text">
-                                                                  <p>Quantity : <b>
-                                                                          <%=products[i].quantity %>
-                                                                      </b></p><i class="fa-solid fa-file-invoice-dollar"></i>
-                                                                  <%=products[i].paymentMethod %>
-                                                                      </p>
-                                                                      <h5 class="card-title mb-2">₹ <%= products[i].productDetails.price %> </h5>
-                                                                      <p class=" mb-2"><i class="fa-light text-danger fa-truck-bolt fa-flip-horizontal"></i><b> You returned this order </b> because 
-                                                                          <%= products[i].returnOrderStatus.reason === "disappoint" ? "Your expectations were not met by the product" : " received damaged product" %> on <%= products[i].updatedAt%></p>
-                      
-                                                              </div>
-                      
-                                                            </div>
-                                                            <%}%>
-                                                            <%}else{%>
-                                                              <div class="container-fluid d-flex flex-column justify-content-center py-5">
-                                          
-                                                                  <div class="card  col-md-6 col-10 my-3 mx-auto p-3" style="border: 1px solid #e2e2e2; border-radius: 7px; background: #F3F3F9;">
-                                          
-                                                                      <div class="card-body row col-12 d-flex justify-content-center py-5">
-                                                                          <h4 class="text-center text-light">You have No orders</h4>
-                                                                      </div>
-                                                                  </div>
-                                          
-                                          
-                                                              </div>
-                                                              <%}%>
-                                                              <%}%>
-                                                          </main>
+    res.render("admin/orders/viewOrder", {
+      layout,
+      orderDetails,
+      
+    });
+  } catch (error) {
+    console.log(error);
+  }
+},
 
 
 
@@ -529,124 +299,85 @@ aria-label="Close">x</button> -->
 
 
 
-                                                          <aside class="col-lg-4">
-                                                            <div class="summary">
-                                                              <h3 class="summary-title">Your Order</h3><!-- End .summary-title -->
-                                          
-                                                              <table class="table table-summary">
-                                                                <thead>
-                                                                  <tr>
-                                                                    <th>Product</th>
-                                                                    <th>Total</th>
-                                                                  </tr>
-                                                                </thead>
-                                          
-                                                                <tbody>
-                                                                  <tr>
-                                                                    <% userCart.items.forEach((item)=> { %>
-                                                                      <td><a href="#"><strong>
-                                                                            <%= item.product_id.product_name %>
-                                                                          </strong></a></td>
-                                                                      <td>₹<%= item.product_id.sellingPrice %>
-                                                                      </td>
-                                                                  </tr>
-                                          
-                                                                  <% }) %>
-                                                                  <tr class="summary-subtotal">
-                                                                    <td>Subtotal:</td>
-                                                                    <td>₹<%= userCart.totalPrice %>
-                                                                    </td>
-                                                                  </tr><!-- End .summary-subtotal -->
-                                                                  <tr>
-                                                                    <td>Shipping:</td>
-                                                                    <td>Free shipping</td>
-                                                                  </tr>
-                                                                  <tr class="summary-total">
-                                                                    <td>Total:</td>
-                                                                    <td>₹<%= userCart.totalPrice %>
-                                                                    </td>
-                                                                  </tr><!-- End .summary-total -->
-                                                                  
-                                                                </tbody>
-                                                              </table><!-- End .table table-summary -->
-                                          
-                                                              <!-- <li class="list-group-item d-flex justify-content-between bg-body-tertiary d-none" id="appliedCoupon">
-                                                                <div class="text-success">
-                                                                  <h6 class="my-0">Coupon code</h6>
-                                                                  <small class="text-uppercase" id="coupon"></small>
-                                                                </div>
-                                                                <span class="text-success" id="discountAmount">−$</span>
-                                                                </li>
-                                                                <% if (typeof userCart.coupon !== 'undefined' && userCart.coupon) { %>
-                                                                <li class="list-group-item d-flex justify-content-between bg-body-tertiary" id="appliedCoupon">
-                                                                <div class="text-success">
-                                                                  <h6 class="my-0">Coupon code</h6>
-                                                                  <small class="text-uppercase" id="coupon"><%- userCart.coupon.code %></small>
-                                                                </div>
-                                                                <span class="text-success" id="discountAmount">−$<%- userCart.couponDiscount %></span>
-                                                                </li>
-                                                                <% } %>
-                                                          
-                                                          
-                                                              <form class="card p-2" id="applyCoupon">
-                                                                <label class="form-label text-dark" for="couponCode">Apply Coupon Code</label>
-                                                                <fieldset>
-                                                                <div class="input-group">
-                                                                  <input  <% if (typeof userCart.coupon !== 'undefined' && userCart.coupon ) { %> disabled="disabled" <% } %> id="couponCode" name="code" type="text" class="form-control text-uppercase" placeholder="Coupon code" <% if (typeof userCart.coupon !== 'undefined' && userCart.coupon ) { %> value="<%- userCart.coupon.code %>" <% } %>>
-                                                                  <button <% if (typeof userCart.coupon !== 'undefined' && userCart.coupon ) { %> disabled="disabled" <% } %> type="submit" class="btn btn-outline-primary <%- (typeof userCart.coupon !== 'undefined' && userCart.coupon ) ? 'd-none' : ''  %>">Apply</button>
-                                                                  <button onclick="removeCoupon()" type="button" class="btn btn-outline-warning <%- (typeof userCart.coupon !== 'undefined' && userCart.coupon ) ? '' : 'd-none'  %>">Remove Coupon</button>
-                                                                </div>
-                                                                </fieldset>
-                                                              </form>
-                                                          
-                                                              <div id="couponsAccordion" class="text-capitalize accordion mt-4">
-                                                                <h6 class="mb-3">Available Coupons</h6>
-                                                                <% if (typeof coupons !== 'undefined' && coupons.length > 0) { %>
-                                                                <% coupons.forEach(function(coupon, index) { %>
-                                                                  <div class="accordion-item">
-                                                                  <h2 class="accordion-header" id="heading<%= index %>">
-                                                                    <button class="accordion-button collapsed text-uppercase text-success" type="button" data-bs-toggle="collapse"
-                                                                    data-bs-target="#collapse<%= index %>" aria-expanded="false"
-                                                                    aria-controls="collapse<%= index %>">
-                                                                    <%= coupon.code %>
-                                                                    </button>
-                                                                  </h2>
-                                                                  <div id="collapse<%= index %>" class="accordion-collapse collapse"
-                                                                    aria-labelledby="heading<%= index %>" data-bs-parent="#couponsAccordion">
-                                                                    <div class="accordion-body">
-                                                                    
-                                                            
-                                                                    </div>
-                                                                    </div>
-                                                                  </div>
-                                                                  </div>
-                                                                <% }); %> -->
-                                                                <% } else { %>
-                                                                <p class="lead text-warning">No Coupons Available</p>
-                                                                <% } %>
-                                                                
-                                          
-                                                              <div class="my-3">
-                                                                <div class="form-check">
-                                                                  <div class="block-header bg-secondary-light"><strong class="text-uppercase">Payment</strong></div>
-                                                                  <br>
-                                                                  <input id="credit" name="paymentMethod" type="radio" class="form-check-input" value="COD" checked required>
-                                                                  <label class="form-check-label" for="credit">Cash On Delivery</label>
-                                                                </div>
-                                                                <div class="form-check">
-                                                                  <input id="debit" name="paymentMethod" type="radio" class="form-check-input" value="Online" required>
-                                                                  <label class="form-check-label" for="debit">RazorPay</label>
-                                                                </div>
-                                                                <div class="form-check">
-                                                                  <input id="paypal" name="paymentMethod" type="radio" value="Wallet" class="form-check-input" required>
-                                                                  <label class="form-check-label" for="paypal">Wallet</label>
-                                                                </div>
-                                                                </div>
-                                                          
-                                          
-                                                                <button type="submit" class="btn btn-outline-primary-2 btn-order btn-block" id="submitOrder">
-                                                                <span class="btn-text">Place Order</span>
-                                                                <span class="btn-hover-text">Proceed to Checkout</span>
-                                                              </button>
-                                                            </div><!-- End .summary -->
-                                                          </aside><!-- End .col-lg-3 -->
+
+
+
+
+
+
+
+
+
+
+
+<div class="row">
+  <!-- product-->
+  <% if ( products !== 'undefined' && products?.length > 0) { %>
+    <% products?.forEach(element => { %>
+
+    <div class="col-xl-4 col-6">
+      <div class="product">
+        <div class="product-image">
+          <% if (element.onOffer) { %>
+            <div class="ribbon ribbon-info">On offer <%- element.offerDiscountRate %>%</div>
+          <% } %>
+          <!-- <div class="ribbon ribbon-info">Fresh</div> -->
+          <img class="img-fluid" src="/uploads/product-images/<%- element.primary_image.name %>" alt="product" />
+          <div class="product-hover-overlay">
+            <a class="product-hover-overlay-link" href="/shop/product/<%- element._id %>"></a>
+            <div class="product-hover-overlay-buttons">
+              <!-- <button class="btn btn-outline-primary btn-product-left d-none d-sm-inline-block" <% if (element.variants && element.variants.length >0) { %> onclick="addToCart('<%- element?._id %>','<%- element.variants[0]._id %>','<%- element.variants[0].color %>', '<%- element.variants[0].size %>')" <% } %>>
+                <i class="bi bi-cart-fill fs-5"></i>
+              </button> -->
+              <a class="btn btn-dark btn-buy" href="/shop/product/<%- element._id %>">
+                <i class="bi bi-search"></i>
+                <span class="btn-buy-label ms-2">View</span>
+              </a>
+              <button id="wishlist-<%- element._id %>" class="btn btn-outline-danger btn-product-right d-none d-sm-inline-block justify-content-center" onclick="addToWishlist('<%- element._id %>')">
+                <i class="bi bi-heart fs-5"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="py-2">
+          <p class="text-muted text-sm mb-1"><%- element.brand_name %></p>
+          <h3 class="h6 text-uppercase mb-1">
+            <a class="text-dark" href="#"><%- element.product_name %></a>
+          </h3>
+          <div class="row g-2">
+            <% if (!element.onOffer) { %>
+              <span class="text-muted col">₹<%- element.sellingPrice %></span>
+              <span class="text-muted col"><del>₹<%- element.actualPrice %></del></span>
+            <% } else { %>   
+                <span class="text-muted col">₹<%- element.offerDiscountPrice %></span>
+                <span class="text-muted col"><del>₹<%- element.sellingPrice %></del></span>
+            <% } %>
+            <br />
+            <!-- <span class="fw-bold h5 col">Size:
+              <span class="fw-normal text-muted"><%- element.variants[0].size.value %></span></span> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+
+  <% } else { %>
+    
+    <div class="col-xl-4 col-6">
+      <div class="product">
+        <!-- <div class="product-image">
+          <div class="ribbon ribbon-info">No products found</div>
+        </div> -->
+        <div class="py-2">
+          <p class="text-muted display-3 text-warning text-sm mb-1">No products found</p>
+        </div>
+      </div>
+    </div>
+
+  <% } %>
+  <!-- /product-->
+</div>
+
+</div>
+
+/uploads/cropped/<%- element.images.image1 %>

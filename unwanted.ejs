@@ -1,309 +1,137 @@
-<section class="container mt-5">
-    <div class="header d-flex justify-content-between">
-      <h3 class="h3 text-secondary fw-bold mb-3 text-uppercase">Order Details</h3>
-    </div>
-  
-    <div class="card my-3 text-uppercase">
-      <div class="card-header">
-        <div class="row">
-          <div class="col">
-            <span class="h5 fw-bold">Order ID:</span>
-            <span class="text-muted"> <%- orderDetails._id %> </span>
+<div class="wrapper">
+    
+  <main class="main my-5">
+      <h1>Dashboard</h1>
+      <div class="d-column d-lg-flex justify-content-center m-0">
+          <div class="col-lg-6 d-flex flex-column flex-sm-row justify-content-around mt-3">
+              <div id="usersList" class="col-sm-5 card" style="background-color: rgba(62, 15, 180, 0.377);">
+                  <div style="font-size: 2rem; color: rgb(0, 0, 0)"></div>
+                  <div class="text-center mt-3 font-weight-bold h4">Total Users</div>
+              </div>
+              <div id="productsList" class="col-sm-5 card" style="background-color: rgba(251, 144, 5, 0.377);">
+                  <div style="font-size: 2rem; color: rgb(0, 0, 0)"></div>
+                  <div class="text-center mt-3 font-weight-bold h4">Total Products</div>
+              </div>
           </div>
-          <div class="col">
-            <span class="h5 fw-bold">Ordered On:</span>
-            <span class="text-muted"><%- orderDetails.createdAt.toLocaleDateString() %></span>
-          </div><br><br>
-          <div class="row">
-            <span class="h6 ">
-              Address: <span class="text-muted"><%- orderDetails.address %></span>
-            </span>
+          <div class="col-lg-6 d-flex flex-column flex-sm-row justify-content-around mt-3">
+              <div id="ordersList" class="col-sm-5 card" style="background-color: rgba(15, 180, 89, 0.377);">
+                  <div style="font-size: 2rem; color: rgb(0, 0, 0)"></div>
+                  <div class="text-center mt-3 font-weight-bold h4">Total Orders</div>
+              </div>
+              <div id="salesList" class="col-sm-5 card" style="background-color: rgba(14, 125, 244, 0.377);">
+                  <div style="font-size: 2rem"></div>
+                  <div class="text-center mt-3 font-weight-bold h4">Total Revenue (rs)</div>
+              </div>
           </div>
-        </div>
       </div>
-  
-      <div class="row g-0 mt-3">
-        <div class="col-md-4">
-          <img src="/uploads/cropped/<%- orderDetails.items[0].product_id.images.image1 %>" class="img-fluid img-thumbnail rounded-start p-3" alt="">
-        </div>
-        <div class="col-md-8">
-          <div class="card-body">
-            <fieldset class="card p-3 mb-3">
-              <legend class="card-title h5 text-decoration-underline">Product Details</legend> 
-              <p class="card-text mb-0"><span class="fw-bold">Product Name</span> <span class="text-muted"> <%- orderDetails.items[0].product_name %></span></p>
-              <p class="card-text mb-0"><span class="fw-bold">Price:</span> <span class="text-muted"><%- orderDetails.items[0].price %></span></p>
-              <p class="card-text mb-0"><span class="fw-bold">Quantity:</span> <span class="text-muted"><%- orderDetails.items[0].quantity %></span></p>
-            </fieldset>
-            <p class="card-text mb-0"><span class="fw-bold">Payment Status:</span> <span class="text-muted text-uppercase"><%- orderDetails.items.paymentStatus %></span></p>
-            <fieldset class="card p-3 mb-3">
-              <legend class="card-title h5 text-decoration-underline">Update Status</legend>
-              <div class="row">
-                <div class="col-md-6">
-                  <select name="status" id="item-status" class="form-select">
-                    <% if (orderDetails.items.status === 'Pending') { %>
-                      <option value="Confirmed">Confirmed</option>
-                    <% } %>
-                    <% if (orderDetails.items.status === 'Confirmed') { %>
-                      <option value="Shipped">Shipped</option>
-                    <% } %>
-                    <% if (orderDetails.items.status === 'Shipped') { %>
-                      <option value="Out for Delivery">Out for Delivery</option>
-                    <% } %>
-                    <% if (orderDetails.items.status === 'Out for Delivery' || orderDetails.items.status === 'Delivered') { %>
-                      <option value="Delivered">Delivered</option>
-                    <% } %>
-                    <% if (orderDetails.items.status === 'In-Return') { %>
-                      <option value="Returned">Returned</option>
-                    <% } %>
-                  </select>
-                </div>
-                <div class="col-md-6">
-                  <% if (orderDetails.items.status === 'Cancelled' || orderDetails.items.status === 'Pending') { %>
-                    <a href="/admin/orders" class="btn btn-secondary">Return to Orders</a>
-                  <% } else { %>
-                    <button type="submit" class="btn btn-warning">Update Status</button>
-                  <% } %>
-                </div>
-              </div>
-            </fieldset>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  
-
-
-  <section class="breadcrumb-option">
-    <div class="container">
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb breadcrumb-chevron p-3 bg-body-tertiary rounded-2">
-          <li class="breadcrumb-item">
-            <a class="link-body-emphasis" href="/admin">
-              <svg class="bi" width="16" height="16">
-                <use xlink:href="#house-door-fill"></use>
-              </svg>
-              <span class="visually-hidden">Dashboard</span>
-            </a>
-            <!-- </li>
-              <li class="breadcrumb-item">
-                <a class="link-body-emphasis fw-semibold text-decoration-none" href="/category">Banners</a>
-              </li> -->
-          </li>
-  
-          <li class="breadcrumb-item active" aria-current="page">Orders</li>
-        </ol>
-      </nav>
-    </div>
-  </section>
-  
-  <div
-    class="container d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">
-      <%= locals.title ? locals.title : 'Dashboard' %>
-    </h1>
-    <header class=" text-center mb-20">
-      <form action="/admin/orders/" method="get" class="d-inline">
-        <div class="input-group input-group-sm border bg-success rounded-pill" style="width: 500px;">
-          <input type="text" class="form-control border-0 bg-white rounded-pill" placeholder="Search orders..."
-            name="search">
-          <button class="btn border-0 btn-outline-success text-white rounded-pill" type="submit">Search</button>
-        </div>
-      </form>
-    </header>
-  
-  </div>
-  
-  <section class="container my-5">
-    <div class="container table-responsive text-capitalize">
-      <table class="table table-striped table-hover ">
-        <thead>
-          <tr class="text-center">
-            <th scope="col">#</th>
-            <th scope="col">OrderID</th>
-            <th scope="col">Date</th>
-            <th scope="col">Image</th>
-            <th scope="col">Product</th>
-            <th scope="col">User</th>
-  
-            <th scope="col">Amount</th>
-            <th scope="col">Order Status</th>
-            <!-- <th>Payment Status</th> -->
-            <th scope="col">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% if (orders && orders.length> 0) { %>
-            <% orders?.forEach((order,index)=> { %>
-              <tr class="align-middle text-center">
-                <td><%- index+1 %></td>
-               
-                <td><%- order.createdAt.toLocaleDateString('en-GB') %></td>
-               
-                  
-               
-                        </td>
-                
-                <td>$<%- order.payable %></td>
-                <td <% if (order.items.status=='Placed' ) { %>
-                  class="text-uppercase text-primary"
-                  <% } else if (order.items.status=='Pending' ) { %>
-                    class="text-uppercase text-secondary"
-                    <% } else if (order.items.status=='Shipped' ) { %>
-                      class="text-uppercase text-success"
-                      <% } else if (order.items.status=='Delivered' ) { %>
-                        class="text-uppercase text-success"
-                        <% } else if (order.items.status=='Cancelled' ) { %>
-                          class="text-uppercase text-danger"
-                          <% } else { %>
-                            class="text-uppercase text-info"
-                            <% } %>
-                              >
-                <td>
-                  <div class="d-flex justify-content-center">
-                    <% if (order.orderStatus !='Cancelled' ) { %>
-                      <a
-                        href="/admin/orders/manage-order/<%- order._id %>/?productId=<%- order.items.product_id %>">
-                        <button type="button" class="btn btn-sm btn-danger">
-                          Manage
-                        </button>
-                      </a>
-                      
-                      <% } else { %>
-                        <button type="button" class="btn btn-sm btn-info">
-                          View
-                        </button>
-                        <% } %>
-                  </div>
-                </td>
-              </tr>
-              <% }) %>
-                <% } else { %>
-                  <td colspan="8" class="text-danger">No Orders Available</td>
-                  <% } %>
-        </tbody>
-      </table>
-    </div>
-    <!-- Pagination-->
-    <% if (orders.length> 0 && nextPage || current == pages) { %>
-      <nav aria-label="Product Pagination">
-        <ul class="pagination justify-content-center mt-5">
-          <% if (current==1) { %>
-            <li class="page-item disabled">
-              <a href="#" class="page-link">First</a>
-            </li>
-  
-            <% } else { %>
-              <li class="page-item">
-                <a href="?page=1" class="page-link">First</a>
-              </li>
-              <% } %>
-  
-                <% var i=(Number(current)> 5 ? Number(current) - 4 : 1) %>
-                  <% if (i !==1) { %>
-                    <li class="page-item disabled">
-                      <a href="#" class="page-link">...</a>
-                    </li>
-                    <% } %>
-  
-                      <% for( ; i < Number(current) + 4 && i <=pages ; i++ ) { %>
-                        <% if (i==current) { %>
-                          <li class="page-item disabled">
-                            <a href="#" class="page-link">
-                              <%= i %>
-                            </a>
-                          </li>
-                          <% } else { %>
-                            <li class="page-item">
-                              <a href="/admin/orders?page=<%= i %>" class="page-link">
-                                <%= i %>
-                              </a>
-                            </li>
-  
-                            <% } %>
-                              <% if (i==Number(current)+ 4 && i < pages) { %>
-                                <li class="page-item disabled">
-                                  <a href="#" class="page-link">...</a>
-                                </li>
-                                <% } %>
-  
-                                  <% } %>
-                                    <% if (current==pages) { %>
-                                      <li class="page-item disabled">
-                                        <a href="#" class="page-link">Last</a>
-                                      </li>
-                                      <% } else { %>
-                                        <li class="page-item">
-                                          <a href="/admin/orders?page=<%= pages %>" class="page-link">Last</a>
-                                        </li>
-  
-                                        <% } %>
-  
-        </ul>
-      </nav>
-      <% } %>
-  </section>
-  
-  <script defer>
-  
-    const getOrder = async (orderId, productId,) => {
-      console.log({ orderId: orderId, productId: productId });
-  
-    }
-  
-  
-  </script>
-
-
-
-
-
-
-
-
-
-
-
-
-<div class="modal fade" id="addCouponModal" tabindex="-1" aria-labelledby="addCouponModalLabel">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title" id="addCouponModalLabel">Add New Coupon</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="card">
-          <form id="addCouponForm" class="card-body">
-            <div class="mb-3">
-              <label for="couponCode" class="form-label">Coupon Code</label>
-              <input name="code" type="text" class="form-control" id="couponCode">
-            </div>
-            <div class="mb-3">
-              <label for="description" class="form-label">Coupon Description</label>
-              <textarea name="description" id="description" cols="30" rows="5" class="form-control"></textarea>
-            </div>
-            <div class="row g-3">
-              <div class="col-md-4">
-                <label for="minPurchaseAmount" class="form-label">Minimum Purchase Amount</label>
-                <input name="minPurchaseAmount" type="number" class="form-control" id="minPurchaseAmount">
-              </div>
-              <div class="col-md-4">
-                <label for="rateOfDiscount" class="form-label">Discount Rate (%)</label>
-                <input name="rateOfDiscount" type="number" class="form-control" id="rateOfDiscount">
-              </div>
-              <div class="col-md-4">
-                <label for="expirationDate" class="form-label">Coupon Expiry</label>
-                <input name="expirationDate" type="date" class="form-control" id="expirationDate">
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="submit" form="addCouponForm" class="btn btn-primary">Add Coupon</button>
-      </div>
-    </div>
-  </div>
+  </main>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%- locals.filename %></title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Your Brand</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <div class="row">
+            <div class="col">
+                <%- body %>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5+2yY0vaP5sYfPtfRv6P5t4z+FlKksxnhEZ5iskh" crossorigin="anonymous"></script>
+
+    <script>
+        window.onload = function () {
+            // pdf download with orientation landscape and page size A3
+            // print();
+            // Dynamically add CSS for print media to set landscape orientation and A3 size
+            var css = '@page { size: A3 landscape; }',
+                head = document.head || document.getElementsByTagName('head')[0],
+                style = document.createElement('style');
+
+            style.type = 'text/css';
+            style.media = 'print';
+
+            if (style.styleSheet) {
+                style.styleSheet.cssText = css;
+            } else {
+                style.appendChild(document.createTextNode(css));
+            }
+
+            head.appendChild(style);
+
+            // Trigger the print dialog
+            window.print();
+
+            // Optionally, remove the style element after printing to avoid affecting other print operations
+            head.removeChild(style);
+
+            // Redirect to the previous page after printing
+            window.onafterprint = function () {
+                history.back();
+            }
+        };
+    </script>
+
+</body>
+
+</html>

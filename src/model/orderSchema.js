@@ -73,6 +73,18 @@ const order_schema = new Schema(
           required: true
       }
   },
+
+
+  paymentMethod: {
+    type: String,
+    required: true,
+  },
+  totalPrice: {
+    type: Number,
+    required: true,
+    min: 0,
+  },
+
     payment_method: {
       type: String,
       required: true,
@@ -82,12 +94,29 @@ const order_schema = new Schema(
       required: true,
     },
     
-    status: {
-      type: String,
-      required: true,
+    coupon: {
+      type: ObjectId,
+      ref: "Coupon",
+    },
+    couponDiscount: {
+      type: Number,
+      default: 0,
     },
     payable: {
       type: Number,
+    },
+    categoryDiscount: {
+      type: Number,
+      default: 0,
+    },
+    paymentStatus: {
+      type: String,
+      enum: ["paid", "pending", "cod", "failed", "refunded", "cancelled"],
+      // required: true,
+    },
+    status: {
+      type: String,
+      required: true,
     },
   },
   {

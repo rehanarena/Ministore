@@ -1,0 +1,289 @@
+<section class="breadcrumb-option">
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb breadcrumb-chevron">
+        <li class="breadcrumb-item">
+          <a href="/admin" class="text-decoration-none">Dashboard</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Sales Report</li>
+      </ol>
+    </nav>
+  </div>
+</section>
+
+<div class="container py-4">
+  <div class="row justify-content-between align-items-center">
+    <div class="col-md-6">
+      <h1 class="page-title"><%= locals.title ? locals.title : 'Product Offers' %></h1>
+    </div>
+    <div class="col-md-6">
+      <form class="d-flex">
+        <div class="input-group me-3">
+          <label for="startDate" class="visually-hidden">From</label>
+          <input type="date" name="startDate" id="startDate" class="form-control" value="<%- startDate %>">
+        </div>
+        <div class="input-group me-3">
+          <label for="endDate" class="visually-hidden">To</label>
+          <input type="date" id="endDate" name="endDate" class="form-control" value="<%- endDate %>">
+        </div>
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-search"></i> Get Report
+        </button>
+      </form>
+      <button onclick="getExcel()" type="button" class="btn btn-outline-success me-2">
+        <i class="bi bi-file-earmark-spreadsheet"></i> Excel
+      </button>
+      <button id="exportToButton" onclick="getPDF()" type="button" class="btn btn-outline-danger">
+        <i class="bi bi-file-earmark-pdf"></i> PDF
+      </button>
+    </div>
+  </div>
+</div>
+
+<main class="main my-4">
+  <div class="container">
+    <% if(orders && orders.length > 0) { %>
+    <div class="table-responsive">
+      <table class="table table-striped align-middle">
+        <thead class="text-center">
+          <tr>
+            <th>#</th>
+            <th>Order Id</th>
+            <th>Order Date</th>
+            <th>User</th>
+            <th>Products</th>
+            <th>Shipping Address</th>
+            <th>Payment Method</th>
+            <th>Status</th>
+            <th>Total Amount</th>
+            <th>Coupon</th>
+            <th>Coupon Discount</th>
+            <th>Payable</th>
+            <th>Category Discount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% orders.forEach((order, index) => { %>
+          <tr>
+            <td class="text-center"><%= index + 1 %></td>
+            <td class="text-center"><%= order._id.toString().slice(-7).toUpperCase() %></td>
+            <td class="text-center"><%= order.createdAt.toDateString() %></td>
+            <td><%= order.userID[0].username %></td>
+            <td>
+              <ul class="list-unstyled">
+                <% if(order.orderedItems && order.orderedItems.length > 0) { %>
+                <% order.orderedItems.forEach(item => { %>
+                <li class="text-uppercase mt-3">
+                  <%= item.productDetails.product_name %> (<%= item.quantity %>)
+                </li>
+                <% }) %>
+                <% } %>
+              </ul>
+            </td>
+            <td class="text-center"><%= order.shippingAddress?.address %></td>
+            <td><%= order.paymentMethod %></td>
+            <td><%= order.status %></td>
+            <td><%= order.totalAmount %></td>
+            <td class="text-uppercase"><%= order.coupon[0]?.code ? order.coupon[0].code : "No Coupon" %></td>
+            <td><%= order.couponDiscount %></td>
+            <td><%= order.payable.toFixed(2) %></td>
+            <td class="text-center"><%= order.categoryDiscount.toFixed(2) %></td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    <% } else { %>
+    <div class="text-center no-orders">No Orders Found</div>
+    <% } %>
+  </div>
+</main>
+  
+  
+  
+  <!-- data tables -->
+  <!-- <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css" /> -->
+    
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.css" />
+  <!-- <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script> -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.js"></script>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.3/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.4/purify.min.js"></script>
+  
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="https://www.shieldui.com/shared/components/latest/js/shieldui-all.min.js"></script>
+  <script type="text/javascript" src="https://www.shieldui.com/shared/components/latest/js/jszip.min.js"></script>
+  
+  
+  
+  <script defer>
+  
+  let table = new DataTable('#salesReportTable', { pageLength: 10, responsive: true });
+  
+  const startDate = document.getElementById("startDate").value; 
+  const endDate = document.getElementById("endDate").value; 
+  const getExcel = () => {
+    console.log(startDate, endDate);
+  
+    let url = `/admin/sales-report/excel?startDate=${startDate}&endDate=${endDate}`;
+    window.location.href = url;
+  }
+  
+  const getPDF = async () => {
+    const start = document.getElementById("startDate").value;
+    const end = document.getElementById("endDate").value;
+  
+    try {
+      Swal.fire({
+        icon: 'info',
+        title: 'Generating PDF...',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+        timer: 1200,
+      }).then(() => {
+        let url = `/admin/sales-report/pdf-download?startDate=${start}&endDate=${end}`;
+        window.location.href = url;
+      })
+  
+    } catch (error) {
+      console.error('Error fetching content or generating PDF:', error);
+    
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: error.message || 'Something went wrong!',
+      })
+    }
+  }
+  
+  </script>
+  
+  <!-- <script>
+    //pdf download
+    document.getElementById("exportToButton").addEventListener("click", function() {
+      Swal.fire({
+        title: 'Are you sure',
+        text: "Are you want to download sales Report",
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#D3DBEE',
+        confirmButtonText: 'Download'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire(
+            'Downloading..',
+            'Your file is being downloadig.',
+            'success'
+          ).then(async () => {
+  
+            const dataSource = shield.DataSource.create({
+              data: "#salesReportTable",
+              schema: {
+                type: "table",
+                fields: {
+                  User: {
+                    type: String
+                  },
+                  Products: {
+                    type: String
+                  },
+                  Ordered_Date: {
+                    type: String
+                  },
+                  Delivered_Date: {
+                    type: String
+                  },
+                  Quantity: {
+                    type: String
+                  },
+                  Category: {
+                    type: String
+                  },
+                  Payment: {
+                    type: String
+                  },
+                  Amount: {
+                    type: Number
+                  }
+                }
+              }
+            });
+  
+            dataSource.read().then(function(data) {
+              var pdf = new shield.exp.PDFDocument({
+                author: "TimesCart",
+                created: new Date()
+              });
+              pdf.addPage("a4", "landscape");
+              pdf.table(
+                50,
+                50,
+                data,
+                [{
+                    field: "User",
+                    title: "User",
+                    width: 70
+                  },
+                  {
+                    field: "Products",
+                    title: "Product Name",
+                    width: 100
+                  },
+                  {
+                    field: "Order Date",
+                    title: "Ordered Date",
+                    width: 100
+                  },
+                  {
+                    field: "Delivered_Date",
+                    title: "Delivered Date",
+                    width: 100
+                  },
+                  {
+                    field: "Quantity",
+                    title: "Quantity",
+                    width: 70
+                  },
+                  {
+                    field: "Category",
+                    title: "Category",
+                    width: 100
+                  },
+                  {
+                    field: "Payment",
+                    title: "Payment",
+                    width: 100
+                  },
+                  {
+                    field: "Amount",
+                    title: "Amount",
+                    width: 70
+                  },
+  
+                ], {
+                  margins: {
+                    top: 50
+                  }
+                }
+              );
+  
+              pdf.saveAs({
+                fileName: "SalesReport"
+              });
+            });
+  
+  
+          })
+        }
+  
+      })
+    });
+  </script> -->

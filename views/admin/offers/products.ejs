@@ -101,9 +101,9 @@
   
   
   
-  <!-- Add or Edit Offer Modal -->
+   <!-- Add or Edit Offer Modal -->
   
-  <div class="modal fade" id="offerModal" tabindex="-1" aria-labelledby="offerModalLabel">
+   <div class="modal fade" id="offerModal" tabindex="-1" aria-labelledby="offerModalLabel">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -208,11 +208,11 @@
     });
   
   
-    const toggleActive = async (productId, productName, onOffer) => {
+    const toggleActive = async (productId, product_name, onOffer) => {
       try {
         const confirmed = await Swal.fire({
           title: 'Are you sure?',
-          text: onOffer === 'true' ? `You want to activate the offer for ${productName}` : `You want to deactivate the offer for ${productName}`,
+          text: onOffer === 'true' ? `You want to activate the offer for ${product_name}` : `You want to deactivate the offer for ${product_name}`,
           icon: 'warning',
           showCancelButton: true,
           confirmButtonText: onOffer === 'true' ? 'Yes, activate!' : 'Yes, deactivate!',
@@ -234,7 +234,7 @@
   
           if (response.ok) {
             const title = onOffer ? 'Success!' : 'Error!';
-            const text = onOffer ? `Offer for ${productName} is activated` : `Offer for ${productName} is deactivated`;
+            const text = onOffer ? `Offer for ${product_name} is activated` : `Offer for ${product_name} is deactivated`;
             const icon = 'success';
             Swal.fire({
               title,

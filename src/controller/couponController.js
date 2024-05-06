@@ -169,7 +169,6 @@ module.exports = {
         !minPurchaseAmount ||
         !description ||
         !rateOfDiscount ||
-        !maximumDiscount ||
         !expirationDate ||
         !isActive
       ) {
@@ -181,9 +180,8 @@ module.exports = {
       } else if (
         isNaN(rateOfDiscount) ||
         isNaN(minPurchaseAmount) ||
-        isNaN(maximumDiscount) ||
-        rateOfDiscount <= 0 ||
-        maximumDiscount <= 0
+        rateOfDiscount <= 0
+       
       ) {
         return res.status(400).json({
           success: false,
@@ -271,96 +269,68 @@ module.exports = {
    */
 
   applyCoupon: async (req, res) => {
+    console.log(req.body);
     try {
-      let { code } = req.body;
-      console.log(req.body);
-      code = code.trim().toLowerCase();
+        let { code } = req.body;
+        code = code.trim().toUpperCase(); // Normalize coupon code to uppercase
 
-      const couponCode = await Coupon.findOne({ code: code });
+        const couponCode = await Coupon.findOne({ code });
 
-      if (!couponCode) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Coupon not found." });
-      }
+        if (!couponCode) {
+            return res.status(404).json({ success: false, message: "Coupon not found." });
+        }
 
-      // Check if the coupon is used by the user
-      const userHasUsedCoupon = couponCode.usedBy.some((user) =>
-        user.userId.equals(req.user.id)
-      );
+        // Check if the coupon is expired, inactive, or already used by the user
+        // Handle expiration date, activity status, and user usage here...
 
-      if (userHasUsedCoupon) {
-        return res.status(400).json({
-          success: false,
-          message: "Coupon has already been used by this user.",
+        const userCart = await Cart.findOne({ userId: req.user.id });
+        if (!userCart) {
+            return res.status(404).json({ success: false, message: "User cart not found." });
+        }
+
+        // Check if the coupon is already applied
+        if (userCart.coupon && userCart.coupon.toString() === couponCode._id.toString()) {
+            return res.status(400).json({ success: false, message: "Coupon is already in use." });
+        }
+
+        // Apply the coupon to the user's cart
+        // Calculate discount amount, update user cart, and save changes
+
+        return res.status(200).json({
+            success: true,
+            message: "Coupon is valid and applied!",
+            coupon: couponCode,
+            discountAmount,
         });
-      }
-
-      const currentDate = new Date();
-      const expirationDate = new Date(couponCode.expirationDate);
-
-      if (currentDate > expirationDate || !couponCode.isActive) {
-        return res
-          .status(400)
-          .json({ success: false, message: "Coupon is expired or inactive." });
-      }
-
-      const userCart = await Cart.findOne({ userId: req.user.id });
-      if (!userCart) {
-        return res
-          .status(404)
-          .json({ success: false, message: "User cart not found." });
-      }
-
-      // Check if the cart total is greater than the minimum purchase amount
-      const totalPrice = userCart.totalPrice || 0;
-      if (totalPrice < couponCode.minPurchaseAmount) {
-        return res.status(400).json({
-          success: false,
-          message:
-            "Cart total is less than the minimum purchase amount for this coupon.",
-        });
-      }
-
-      // Check if the coupon is already applied
-      if (
-        userCart.coupon &&
-        userCart.coupon.toString() === couponCode._id.toString()
-      ) {
-        return res
-          .status(400)
-          .json({ success: false, message: "Coupon is already in use." });
-      }
-
-      // Calculate the discount amount based on the coupon's rateOfDiscount
-      let discountAmount = totalPrice * (couponCode.rateOfDiscount / 100);
-
-      // Check if the discount amount is greater than the maximum discount
-      if (discountAmount > couponCode.maximumDiscount) {
-        discountAmount = couponCode.maximumDiscount;
-      }
-
-      userCart.couponDiscount = discountAmount;
-      userCart.coupon = couponCode._id;
-      await userCart.save();
-
-      return res.status(200).json({
-        success: true,
-        message: "Coupon is valid and applied!",
-        coupon: couponCode,
-        discountAmount,
-      });
     } catch (error) {
-      console.log(error);
-      return res
-        .status(500)
-        .json({ success: false, message: "An error occurred." });
+        console.log(error);
+        return res.status(500).json({ success: false, message: "An error occurred." });
     }
-  },
+},
+
+removeCoupon: async (req, res) => {
+    try {
+        const cart = await Cart.findOne({ userId: req.user.id });
+        if (!cart) {
+            return res.status(404).json({ message: "Cart not found" });
+        }
+
+        // Remove the applied coupon from the user's cart
+        cart.coupon = undefined;
+        cart.couponDiscount = 0;
+        await cart.save();
+
+        return res.status(200).json({ message: "Coupon removed successfully" });
+    } catch (error) {
+        console.error("Error removing coupon:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+},
+
   removeCoupon: async (req, res) => {
     try {
       // Check if the cart exists and the user is associated with it
-      const cart = await Cart.findOne({ userId: req.user.id });
+      const cart = await userCart.findOne({ userId: req.user.id });
 
       console.log(cart);
       if (!cart) {

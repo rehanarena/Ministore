@@ -7,6 +7,8 @@ const productController = require("../controller/productController");
 const orderController = require("../controller/orderController");
 const couponController = require("../controller/couponController");
 const offerController = require("../controller/offerController");
+const reportsController = require("../controller/reportsController");
+
 
 const { isAdmin } = require("../middlewares/authMiddleware");
 
@@ -19,6 +21,9 @@ router.use(isAdmin, (req, res, next) => {
   next();
 });
 router.get("/", adminController.getDashboard);
+
+router.get("/chart", adminController.getChartData);
+
 
 /**
  * Customer Management
@@ -118,16 +123,26 @@ router.patch("/coupon/toggleStatus/:id", couponController.toggleStatus)
 
 // Category Offer
 router.get('/category-offers', offerController.getCategoryOffers)
-router.get('/category-details/:id', categoryController.getCategoryDetails)
-router.patch('/category-offer/:id', offerController.addCatOffer)
-router.patch('/toggle-active-category/:id', offerController.toggleActiveCatOffer)
-
+ router.get('/category-details/:id', categoryController.getCategoryDetails)
+ router.patch('/category-offer/:id', offerController.addCatOffer)
+ router.patch('/toggle-active-category/:id', offerController.toggleActiveCatOffer)
 
 // Product Offer
 router.get('/product-offers', offerController.getProductOffers)
-router.get('/product-details/:id', productController.getProductDetails)
-router.post('/product-offer/:id', offerController.addProdOffer)
-// router.patch('/toggle-active-product/:id', offerController.toggleActiveProdOffer)
+ router.get('/product-details/:id', productController.getProdDetails)
+ router.patch('/product-offer/:id', offerController.addProdOffer)
+ router.patch('/toggle-active-product/:id', offerController.toggleActiveProdOffer)
+
+
+
+/**
+ * Sales Report
+ */
+
+router.get('/sales-report', reportsController.getSalesReport)
+router.get('/sales-report/excel', reportsController.salesReportExcel)
+router.get('/sales-report/pdf-download', reportsController.getSalesReportPdf)
+
 
 
 module.exports = router;

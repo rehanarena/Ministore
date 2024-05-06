@@ -55,7 +55,7 @@
                   <div class="ribbon ribbon-info">On offer <%- element.offerDiscountRate %>%</div>
                 <% } %>
                 <!-- <div class="ribbon ribbon-info">Fresh</div> -->
-                <img class="img-fluid" src="/uploads/product-images/<%- element.primary_image.name %>" alt="product" />
+                <img class="img-fluid" src="/uploads/cropped/<%- element.images.image1 %>" alt="product" />
                 <div class="product-hover-overlay">
                   <a class="product-hover-overlay-link" href="/shop/product/<%- element._id %>"></a>
                   <div class="product-hover-overlay-buttons">
@@ -85,8 +85,7 @@
                       <span class="text-muted col"><del>$<%- element.sellingPrice %></del></span>
                   <% } %>
                   <br />
-                  <!-- <span class="fw-bold h5 col">Size:
-                    <span class="fw-normal text-muted"><%- element.variants[0].size.value %></span></span> -->
+                 
                 </div>
               </div>
             </div>
@@ -145,28 +144,7 @@
           </div>
         </div>
   
-        <div class="sidebar-block px-3 px-lg-0 me-lg-4">
-          <a class="d-lg-none block-toggler" data-bs-toggle="collapse" href="#brandFilterMenu" aria-expanded="false" aria-controls="brandFilterMenu">Filter by brand</a>
-          <!-- Brand filter menu - this menu has .show class, so is expanded by default-->
-          <div class="expand-lg collapse" id="brandFilterMenu">
-            <h6 class="sidebar-heading d-none d-lg-block">Brands</h6>
-            <div class="mt-4 mt-lg-0" id="brands">
-              <% brands.forEach((element,i) => { %>
-              <div class="mb-1">
-                <div class="form-check">
-                  <input class="form-check-input" id="brand-<%- i %>" type="radio" name="brand" value="<%- element._id %>" <%- element._id.toString() === brandID ? 'checked' : '' %> />
-                  <label class="form-check-label text-capitalize" for="brand-<%- i %>"><%- element.name %></label>
-                </div>
-              </div>
-              <% }) %>
-            </div>
-          </div>
-  
-          <div class="sidebar-block px-lg-0 me-lg-4">
-            <button type="button" id="clearFiltersButton" class="btn btn-outline-primary">Clear All Filters</button>
-          </div>  
-        </div>
-  
+    
       </div>
       <!-- /Sidebar end-->
   

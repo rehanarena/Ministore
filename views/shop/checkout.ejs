@@ -14,207 +14,335 @@
 		</div><!-- End .container -->
 	</nav><!-- End .breadcrumb-nav -->
 
-	<!-- <div class="page-content">
-		<div class="checkout">
-			<div class="container">
-				<div class="checkout-discount">
-					 -->
-				</div><!-- End .checkout-discount -->
-				<div class="container">
-					<div class="row">
-						<div class="col-lg-12">
-							<h1 class="checkout-title"><strong> Billing Details</h1>
-							</strong><!-- End .checkout-title -->
-							
-						<form class="needs-validation" id="orderForm">
-							<div class="d-flex">
-								<div class="row">
-									<div class="col-sm-9">
-										<% if (address.length> 0) { %>
-											<!-- Toolbar-->
-											<div
-												class="d-none d-lg-flex justify-content-between align-items-center pt-lg-3 pb-3">
-												<h6 class="fs-base  mb-0">Select Billing Address:</h6>
-											</div>
 
-											<!-- Addresses list-->
-											<div class="table table-responsive table-striped mt-0">
-												<table class="table table-hover mb-0">
-													<thead>
-														<tr>
-															<th>Address</th>
-															<th>Actions</th>
-														</tr>
-													</thead>
-													<tbody>
-														<% address.forEach((item,index)=> { %>
-															<tr>
 
-																<td class="py-3 align-middle text-capitalize">
-																	<div class="d-flex align-items-center">
-																		<input autocomplete="false" required
-																			class="mx-2 form-check-input" type="radio"
-																			id="address-<%= index %>" name="address"
-																			value="<%= item._id %>">
-																		<label class="fw-semibold"
-																			for="address-<%= index %>">
-																			<%- item.name.toLowerCase() + ', ' +
-																				item.house_name + ', ' + item.town
-																				+ ', ' + item.state + ', PIN: ' +
-																				item.zipcode + ', PH:' + item.phone %>
-																		</label>
-																	</div>
-																</td>
-																<td
-																	class="py-3 btn-group align-middle align-items-center">
-																	<div class="">
-																		<button type="button"
-																			class="btn btn-sm btn-outline-warning"
-																			id="edit-button"
-																			data-address-id="<%- item._id %>"
-																			href="#edit-address-modal"
-																			data-bs-toggle="modal">
-																			<i class="bi bi-pencil fs-6"></i>
-																		</button>
-																	</div>
-																	<button type="button" class="btn btn-sm btn-danger"
-																		id="deleteAddressButton"
-																		data-bs-toggle="tooltip" title="Remove"
-																		onclick="deleteAddress('<%- item._id %>')">
-																		<i class="bi bi-trash fs-6"></i>
-																	</button>
-																</td>
-															</tr>
-															<% }) %>
-													</tbody>
-												</table>
-											</div>
-											<% } else { %>
-												<!-- Toolbar-->
-												<div
-													class="d-none d-lg-flex justify-content-between align-items-center pt-lg-3 pb-3">
-													<h6 class="fs-base  mb-0">Add Address</h6>
-												</div>
-												<% } %>
+	<!-- Apply Coupon Section -->
+	<div class="col-lg-12">
+		<form class="card p-3" id="applyCoupon">
+			<label class="form-label text-dark" for="couponCode">Apply Coupon Code</label>
+			<fieldset>
+				<div class="card ml-5 p-3">
+					<input <% if (typeof userCart.coupon !=='undefined' && userCart.coupon ) { %> disabled="disabled" <%
+						} %> id="couponCode" name="code" type="text" class="form-control text-uppercase "
+						placeholder="Coupon code" <% if (typeof userCart.coupon !=='undefined' && userCart.coupon ) { %>
+							value="<%- userCart.coupon.code %>" <% } %>>
+									<button <% if (typeof userCart.coupon !=='undefined' && userCart.coupon ) { %>
+										disabled="disabled" <% } %> type="submit" class="btn btn-outline-success <%-
+												(typeof userCart.coupon !=='undefined' && userCart.coupon ) ? 'd-none'
+												: '' %>">Apply</button>
+									<button onclick="removeCoupon()" type="button"
+										class="btn btn-outline-warning <%- (typeof userCart.coupon !== 'undefined' && userCart.coupon ) ? '' : 'd-none'  %>">Remove
+										Coupon</button>
+				</div>
+			</fieldset>
+		</form>
 
-													<div class="text-sm-start pt-4">
-														<a class="btn btn-outline-success" href="#add-address"
-															data-bs-toggle="modal">
-															Add new address
-														</a>
-													</div>
-													<!-- </section> -->
+		<div id="couponsAccordion" class="text-capitalize accordion mt-4 mb-4 ml-5">
+			<h6 class="mb-3 fs-5">Available Coupons</h6>
+			<% if (typeof coupons !=='undefined' && coupons.length> 0) { %>
+				<% coupons.forEach(function(coupon, index) { %>
+					<div class="accordion-item">
+						<h2 class="accordion-header" id="heading<%= index %>">
+							<button class="accordion-button collapsed text-uppercase text-success" type="button"
+								data-bs-toggle="collapse" data-bs-target="#collapse<%= index %>" aria-expanded="false"
+								aria-controls="collapse<%= index %>">
+								<%= coupon.code %>
+							</button>
+						</h2>
+						<div id="collapse<%= index %>" class="accordion-collapse collapse"
+							aria-labelledby="heading<%= index %>" data-bs-parent="#couponsAccordion">
+							<div class="accordion-body">
+								<!-- Coupon Card -->
+								<div class="coupon-card">
+									<h4 class="coupon-title">
+										<%= coupon.Description %>
+									</h4>
+									<p>Discount:
+										<%= coupon.rateOfDiscount + '%' %>
+									</p>
+									<p>Min Order Amount: <%= coupon.minPurchaseAmount %>
+									</p>
+									<p>Expiry Date: <%= coupon.expirationDate.toDateString() %>
+									</p>
+									<button type="button" onclick="copyCode('<%= coupon.code %>')"
+										class="btn btn-primary btn-sm">Copy Code</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<% }); %>
+						<% } else { %>
+							<p class="lead text-warning">No Coupons Available</p>
+							<% } %>
+		</div>
+	</div>
+	<!-- End Apply Coupon Section -->
+
+
+
+
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-12">
+				<h1 class="checkout-title"><strong> Billing Details</h1>
+				</strong><!-- End .checkout-title -->
+
+				<form class="needs-validation" id="orderForm">
+					<div class="d-flex">
+						<div class="row">
+							<div class="col-sm-9">
+
+								<% if (address.length> 0) { %>
+									<!-- Toolbar-->
+									<div
+										class="d-none d-lg-flex justify-content-between align-items-center pt-lg-3 pb-3">
+										<h6 class="fs-base  mb-0">Select Billing Address:</h6>
 									</div>
 
-								</div>
-								<aside class="col-lg-4">
-									<div class="summary">
-										<h3 class="summary-title">Your Order</h3><!-- End .summary-title -->
-
-										<table class="table table-summary">
+									<!-- Addresses list-->
+									<div class="table table-responsive table-striped mt-0">
+										<table class="table table-hover mb-0">
 											<thead>
 												<tr>
-													<th>Product</th>
-													<th>Total</th>
+													<th>Address</th>
+													<th>Actions</th>
 												</tr>
 											</thead>
-
 											<tbody>
-												<tr>
-													<% userCart.items.forEach((item)=> { %>
-														<td><a href="#"><strong>
-																	<%= item.product_id.product_name %>
-																</strong></a></td>
-														<td>₹<%= item.product_id.sellingPrice %>
+												<% address.forEach((item,index)=> { %>
+													<tr>
+
+														<td class="py-3 align-middle text-capitalize">
+															<div class="d-flex align-items-center">
+																<input <% if (index === 0) { %>
+																 checked
+																<% } %> autocomplete="false" required
+																	class="mx-2 form-check-input" type="radio"
+																	id="address-<%= index %>" name="address"
+																	value="<%= item._id %>">
+																<label class="fw-semibold" for="address-<%= index %>">
+																	<%- item.name.toLowerCase() + ', ' + item.house_name
+																		+ ', ' + item.town + ', ' + item.state
+																		+ ', PIN: ' + item.zipcode + ', PH:' +
+																		item.phone %>
+																</label>
+															</div>
 														</td>
-												</tr>
-
-												<% }) %>
-												<tr class="summary-subtotal">
-													<td>Subtotal:</td>
-													<td>₹<%= userCart.totalPrice %>
-													</td>
-												</tr><!-- End .summary-subtotal -->
-												<tr>
-													<td>Shipping:</td>
-													<td>Free shipping</td>
-												</tr>
-												<tr class="summary-total">
-													<td>Total:</td>
-													<td>₹<%= userCart.totalPrice %>
-													</td>
-												</tr><!-- End .summary-total -->
-												
+														<td class="py-3 btn-group align-middle align-items-center">
+															<div class="">
+																<button type="button"
+																	class="btn btn-sm btn-outline-warning"
+																	id="edit-button" data-address-id="<%- item._id %>"
+																	href="#edit-address-modal" data-bs-toggle="modal">
+																	<i class="bi bi-pencil fs-6"></i>
+																</button>
+															</div>
+															<button type="button" class="btn btn-sm btn-danger"
+																id="deleteAddressButton" data-bs-toggle="tooltip"
+																title="Remove"
+																onclick="deleteAddress('<%- item._id %>')">
+																<i class="bi bi-trash fs-6"></i>
+															</button>
+														</td>
+													</tr>
+													<% }) %>
 											</tbody>
-										</table><!-- End .table table-summary -->
+										</table>
+									</div>
+									<% } else { %>
+										<!-- Toolbar-->
+										<div
+											class="d-none d-lg-flex justify-content-between align-items-center pt-lg-3 pb-3">
+											<h6 class="fs-base  mb-0">Add Address</h6>
+										</div>
+										<% } %>
 
-										<li class="list-group-item d-flex justify-content-between bg-body-tertiary d-none" id="appliedCoupon">
-											<div class="text-success">
-											  <h6 class="my-0">Coupon code</h6>
-											  <small class="text-uppercase" id="coupon"></small>
+											<div class="text-sm-start pt-4">
+												<a class="btn btn-outline-success" href="#add-address"
+													data-bs-toggle="modal">
+													Add new address
+												</a>
 											</div>
-											<span class="text-success" id="discountAmount">−$</span>
-										  </li>
-										  <% if (typeof userCart.coupon !== 'undefined' && userCart.coupon) { %>
-										  <li class="list-group-item d-flex justify-content-between bg-body-tertiary" id="appliedCoupon">
-											<div class="text-success">
-											  <h6 class="my-0">Coupon code</h6>
-											  <small class="text-uppercase" id="coupon"><%- userCart.coupon.code %></small>
-											</div>
-											<span class="text-success" id="discountAmount">−$<%- userCart.couponDiscount %></span>
-										  </li>
-										  <% } %>
-								
-								
-										  <form class="card pt-4" id="applyCoupon">
-											<label class="form-label text-dark" for="couponCode">Apply Coupon Code</label>
-											<fieldset>
-											  <div class="input-group">
-												<input <% if (userCart && userCart.coupon) { %> disabled="disabled" <% } %> id="couponCode" name="code" type="text" class="form-control text-uppercase" placeholder="Coupon code" <% if (userCart && userCart.coupon) { %> value="<%- userCart.coupon.code %>" <% } %>>
-											  </div>
-											  <div class="'button">
-												<button <% if (userCart && userCart.coupon) { %> disabled="disabled" <% } %> type="submit" class="btn btn-outline-primary <% if (userCart && userCart.coupon) { %> d-none <% } %>">Apply</button>
-												<button onclick="removeCoupon()" type="button" class="btn btn-outline-warning <%- (typeof userCart.coupon !== 'undefined' && userCart.coupon ) ? '' : 'd-none'  %>">Remove Coupon</button>
-											  </div>
-											</fieldset>
-										  </form>
-										  
-								
-								<br>
-										<div class="my-3">
-											<div class="form-check">
-												<div class="block-header bg-secondary-light"><strong class="text-uppercase">Payment</strong></div>
-												<br>
-											  <input id="credit" name="paymentMethod" type="radio" class="form-check-input" value="COD" checked required>
-											  <label class="form-check-label" for="credit">Cash On Delivery</label>
-											</div>
-											<div class="form-check">
-											  <input id="debit" name="paymentMethod" type="radio" class="form-check-input" value="Online" required>
-											  <label class="form-check-label" for="debit">RazorPay</label>
-											</div>
-											<div class="form-check">
-											  <input id="paypal" name="paymentMethod" type="radio" value="Wallet" class="form-check-input" required>
-											  <label class="form-check-label" for="paypal">Wallet</label>
-											</div>
-										  </div>
-								
-
-										  <button type="submit" class="btn btn-outline-primary-2 btn-order btn-block" id="submitOrder">
-											<span class="btn-text">Place Order</span>
-											<span class="btn-hover-text">Proceed to Checkout</span>
-										</button>
-									</div><!-- End .summary -->
-								</aside><!-- End .col-lg-3 -->
+											<!-- </section> -->
 							</div>
-						</form>
+
+						</div>
+						<aside class="col-lg-4">
+							<div class="summary">
+								<h3 class="summary-title">Your Order</h3><!-- End .summary-title -->
+
+								<table class="table table-summary">
+									<thead>
+										<tr>
+											<th>Product</th>
+											<th>Total</th>
+										</tr>
+									</thead>
+
+									<tbody>
+										<tr>
+											<% userCart.items.forEach((item)=> { %>
+												<td><a href="#"><strong>
+															<%= item.product_id.product_name %>
+														</strong></a></td>
+												<td>₹<%= item.product_id.sellingPrice %>
+												</td>
+										</tr>
+										<% }) %>
+											<tr class="summary-subtotal">
+												<td>Subtotal:</td>
+												<td>₹<%= userCart.totalPrice %>
+												</td>
+											</tr><!-- End .summary-subtotal -->
+											<tr>
+												<td>Shipping:</td>
+												<td>Free shipping</td>
+											</tr>
+											<tr class="summary-total">
+												<td>Total:</td>
+												<td>₹<%= userCart.totalPrice %>
+												</td>
+											</tr><!-- End .summary-total -->
+									</tbody>
+								</table><!-- End .table table-summary -->
+
+
+
+
+
+
+
+								<hr class="my-4">
+								<div class="row">
+									<div class="col-12">
+										<div class="block-header bg-secondary-light"><strong
+												class="text-uppercase">Choose Payment</strong></div>
+										<br>
+									</div>
+								</div>
+
+								<div class="mb-5">
+									<div id="accordion" role="tablist">
+
+										<div class="block mb-3">
+											<div class="block-header" id="headingThree" role="tab">
+												<strong><a class="accordion-link collapsed" data-bs-toggle="collapse"
+														href="#collapseThree" aria-expanded="false"
+														aria-controls="collapseThree">Pay on delivery</a></strong>
+											</div>
+											<div class="collapse show" id="collapseThree" role="tabpanel"
+												aria-labelledby="headingThree" data-parent="#accordion">
+												<div class="block-body py-3">
+													<div class="form-check">
+														<input class="form-check-input" type="radio"
+															name="paymentMethod" id="payment-method-1" value="COD" <% if
+															(isCOD) { %> checked <% } else { %> disabled <% } %>>
+																<label class="form-check-label ms-2"
+																	for="payment-method-1">
+																	<strong class="text-uppercase mb-2">Pay on
+																		delivery</strong>
+																	<% if (!isCOD) { %>
+																		<span class="text-muted text-danger text-sm">Pay
+																			on delivery is not available for orders
+																			above ₹1000.</span>
+																		<% } %>
+																</label>
+													</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="block mb-3">
+											<div class="block-header" id="headingOne" role="tab">
+												<strong><a class="accordion-link collapsed" data-bs-toggle="collapse"
+														href="#collapseOne" aria-expanded="false"
+														aria-controls="collapseOne">Wallet <% if
+															(!wallet.isInsufficient) { %>
+															<span class="text-muted">Balance: <span
+																	class="text-success fw-semibold">₹<%- wallet.balance
+																		%></span></span>
+															<% } %></a></strong>
+											</div>
+											<div class="collapse show" id="collapseOne" role="tabpanel"
+												aria-labelledby="headingOne" data-parent="#accordion">
+												<div class="block-body py-3">
+													<div class="form-check">
+														<input class="form-check-input" <%- wallet.isInsufficient
+															? 'disabled' : '' %> type="radio" name="paymentMethod"
+														id="payment-method-2" value="Wallet">
+														<label class="form-check-label ms-2" for="payment-method-2">
+															<strong class="text-uppercase mb-2">Pay using
+																Wallet</strong>
+															<span class="text-muted fw-semibold text-sm">Your Wallet
+																Balance: </span><span
+																class="text-muted text-success fw-semibold text-sm">₹<%-
+																	wallet.balance %> </span>
+															<br>
+															<% if (wallet.isInsufficient) { %>
+																<span class="text-muted text-danger text-sm">Your wallet
+																	has insufficient balance.</span>
+																<% } %>
+														</label>
+													</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="block mb-3">
+											<div class="block-header" id="headingTwo" role="tab">
+												<strong><a class="accordion-link collapsed" data-bs-toggle="collapse"
+														href="#collapseTwo" aria-expanded="false"
+														aria-controls="collapseTwo">Razorpay</a></strong>
+											</div>
+											<div class="collapse show " id="collapseTwo" role="tabpanel"
+												aria-labelledby="headingTwo" data-parent="#accordion">
+												<div class="block-body py-3">
+													<div class="form-check">
+														<input class="form-check-input" type="radio"
+															name="paymentMethod" id="payment-method-3" value="Online">
+														<label class="form-check-label ms-2" for="payment-method-3">
+															<strong class="text-uppercase mb-2">Pay with
+																Razorpay</strong>
+															<br>
+															<span class="text-muted text-warning text-sm">When you make
+																a payment using Razorpay, your wallet balance will be
+																automatically reduced.</span>
+														</label>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div><!-- End .summary -->
+
+									<button type="submit" class="btn btn-outline-primary-2 btn-order btn-block"
+										id="submitOrder">
+										<span class="btn-text">Place Order</span>
+										<span class="btn-hover-text">Proceed to Checkout</span>
+									</button>
+								</div>
+
+							</div>
+						</aside><!-- End .col-lg-3 -->
 					</div>
-				</div>
+				</form>
+
+
+
+			</div>
+		</div>
+
+	</div>
+
+
+
+
+
 
 </main><!-- End .main -->
 
 <!-- Add New Address Modal-->
-<form class="needs-validation modal fade" action="/user/checkout/add-address" method="POST" id="add-address" tabindex="-1"
-	novalidate>
+<form class="needs-validation modal fade" action="/user/checkout/add-address" method="POST" id="add-address"
+	tabindex="-1" novalidate>
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content p-4">
 			<div class="modal-header">
@@ -842,61 +970,120 @@
 	});
 
 	document.addEventListener("DOMContentLoaded", function () {
-    const submitOrder = document.getElementById("submitOrder");
-    if (submitOrder) {
-        submitOrder.addEventListener("click", function (e) {
-            e.preventDefault();
-            const addressRadioButtons = document.querySelectorAll(
-                'input[name="address"]'
-            );
-            let isAddressSelected = false;
-            for (let i = 0; i < addressRadioButtons.length; i++) {
-                if (addressRadioButtons[i].checked) {
-                    isAddressSelected = true;
-                    break;
-                }
-            }
+		const submitOrder = document.getElementById("submitOrder");
+		if (submitOrder) {
+			submitOrder.addEventListener("click", function (e) {
+				e.preventDefault();
+				const addressRadioButtons = document.querySelectorAll(
+					'input[name="address"]'
+				);
+				let isAddressSelected = false;
+				for (let i = 0; i < addressRadioButtons.length; i++) {
+					if (addressRadioButtons[i].checked) {
+						isAddressSelected = true;
+						break;
+					}
+				}
 
-            if (!isAddressSelected) {
-                Swal.fire({
-                    icon: "warning",
-                    title: "Oops...",
-                    text: "Please add / select an address before placing the order!",
-                });
-                return;
-            }
+				if (!isAddressSelected) {
+					Swal.fire({
+						icon: "warning",
+						title: "Oops...",
+						text: "Please add / select an address before placing the order!",
+					});
+					return;
+				}
 
-            // Client-side code to send order data to the server
-let form = document.getElementById("orderForm");
-if (form) {
-    let formData = new FormData(form);
-    const body = Object.fromEntries(formData);
-    console.log(body);
-    fetch("/user/place-order", { // Updated endpoint
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-    })
+				// Client-side code to send order data to the server
+				let form = document.getElementById("orderForm");
+				if (form) {
+					let formData = new FormData(form);
+					const body = Object.fromEntries(formData);
+					console.log(body);
+					fetch("/user/place-order", { // Updated endpoint
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify(body),
+					})
+						.then((response) => response.json())
+						.then((data) => {
+							if (data.success) {
+								// Redirect to orderConfirm page
+								location.href = "/checkout/orderConfirm";
+							}else if(data.status){
+								showRazorpay(data.order,data.user)
+							}
+						})
+						.catch((error) => {
+							console.error("Error placing order:", error);
+						});
+				} else {
+					console.error("Form element not found");
+				}
+
+			});
+		}
+	});
+
+	
+	//payment interface function
+const showRazorpay = (order, user) => {
+  console.log(order, user);
+  var options = {
+    key: "rzp_test_EL8MknNoOtmLva",
+    amount: order.amount,
+    currency: "INR",
+    name: "Ministore",
+    description: "Test Transaction",
+    order_id: order.id,
+    handler: async function (response) {
+      console.log(response);
+      await verifyPayment(response);
+    },
+    prefill: {
+      name: user.username,
+      email: user.email,
+      contact: user.phone,
+    },
+    notes: {
+      address: "Razorpay Corporate Office",
+    },
+    theme: {
+      color: "#2ade99",
+    },
+  };
+
+  var rzp1 = new Razorpay(options);
+  rzp1.open();
+  rzp1.on("payment.failed", function (response) {
+    swal.fire("Failed!", response.error.description, "error").then(() => {
+      location.assign("/");
+    });
+  });
+};
+const verifyPayment = async (response) => {
+  const res = await fetch("/user/verify-payment", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ response }),
+  })
     .then((response) => response.json())
     .then((data) => {
-        if (data.success) {
-            // Redirect to orderConfirm page
-            location.href = "/user/orderConfirm";
-        }
-    })
-    .catch((error) => {
-        console.error("Error placing order:", error);
+      console.log(data);
+      if (data.success) {
+        location.assign("/shop/order-success");
+      }
     });
-} else {
-    console.error("Form element not found");
-}
-            
-        });
-    }
-});
 
+  const data = await res.json();
+
+  console.log(data);
+  if (data.success) {
+    location.assign("/shop/order-success");
+  }
+};
 
 	const debounce = (fn, delay = 50) => {
 		let timeoutId;
@@ -957,132 +1144,131 @@ if (form) {
 <script src="/js/user/edit-address.js"></script>
 <script>
 	const couponCodeVal = document.getElementById('couponCode').value;
-	document.querySelector('#applyCoupon').addEventListener('submit', function(event) {
-	  event.preventDefault(); // Prevent the form from submitting normally
-	  
-	  // Get the coupon code from the input field
-	  const couponCodeInput = document.getElementById('couponCode');
-	  const couponCodeVal = document.getElementById('couponCode').value;
-  
-	  // Display a SweetAlert confirmation dialog
-	  Swal.fire({
-		title: 'Are you sure?',
-		text: "Do you want to apply this coupon? " + couponCodeVal.toUpperCase(),
-		icon: 'warning',
-		showCancelButton: true,
-		confirmButtonColor: '#3085d6',
-		cancelButtonColor: '#d33',
-		confirmButtonText: 'Yes, apply it!'
-	  }).then(async (result) => {
-		if (result.isConfirmed) {
-		  // If confirmed, send a POST request to the server
-		  try {
-			const response = await fetch('/checkout/verify-coupon', {
-			  method: 'POST',
-			  headers: {
-				'Content-Type': 'application/json',
-			  },
-			  body: JSON.stringify({
-				code: couponCodeVal.toLowerCase()
-			  }),
-			});
-  
-			if (response.ok) {
-			  const data = await response.json();
-  
-			  // If the response is successful, disable the input field
-			  const coupon = document.getElementById('appliedCoupon');
-			  const couponCode = document.getElementById('coupon');
-			  const discountAmount = document.getElementById('discountAmount');
-			  let grandTotal = document.getElementById('grandTotal').innerHTML;
-  
-			  coupon.classList.remove('d-none');
-			  couponCode.innerText = `${data.coupon.code}`;
-			  discountAmount.innerText = `-$${data.discountAmount}`;
-  
-			  couponCodeInput.disabled = true;
-			  couponCodeInput.value = '';
-			  Swal.fire(
-				'Applied!',
-				data.message,
-				'success'
-			  ).then(() =>{
-				location.reload()
-			  });
-			} else {
-			  // Handle errors
-			  const errorData = await response.json();
-			  Swal.fire(
-				'Error!',
-				errorData.message || 'There was an error applying the coupon.',
-				'error'
-			  );
+	const applyCouponForm = document.getElementById('applyCoupon')
+	console.log(applyCouponForm);
+	applyCouponForm.addEventListener('submit', async (e) => {
+		e.preventDefault()
+		let formdata = new FormData(applyCouponForm)
+		let body = Object.fromEntries(formdata)
+		Swal.fire({
+			icon: 'warning',
+			title: 'Are you sure',
+			text: 'Are you sure you want to apply coupon.',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Yes, apply it!'
+		}).then(async () => {
+			try {
+				console.log(body);
+				let res = await fetch(`/user/apply-coupon`, {
+					method: 'POST',
+					headers: {
+						'Content-Type': "application/json"
+					},
+					body: JSON.stringify(body)
+				})
+				if (!res.ok) {
+					throw new Error('Something went wrong.')
+				}
+				const data = await res.json()
+				if (data.success) {
+					Swal.fire({
+						icon: 'success',
+						title: 'Success',
+						text: data.message,
+					}).then(() => {
+						location.reload()
+					})
+				} else {
+					Swal.fire({
+						icon: 'error',
+						title: 'Error',
+						text: data.message,
+					}).then(() => {
+						location.reload()
+					})
+				}
+			} catch (error) {
+				console.log(error);
+				Swal.fire({
+					icon: 'error',
+					title: 'Error',
+					text: error.message,
+				}).then(() => {
+					location.reload()
+				})
 			}
-		  } catch (error) {
-			console.error('Error:', error);
-			Swal.fire(
-			  'Error!',
-			  'There was an error applying the coupon.',
-			  'error'
-			);
-		  }
-		}
-	  });
-  
-	});
-  
-  
-  
+		})
+
+	})
+
+	// remove coupon
 	const removeCoupon = async () => {
-	  Swal.fire({
-		title: 'Are you sure?',
-		text: "Do you want to remove this coupon? " + couponCodeVal.toUpperCase(),
-		icon: 'warning',
-		showCancelButton: true,
-		confirmButtonColor: '#3085d6',
-		cancelButtonColor: '#d33',
-		confirmButtonText: 'Yes, remove it!'
-	  }).then(async (result) => {
-		if (result.isConfirmed) {
-		  // If confirmed, send a POST request to the server
-		  try {
-			const response = await fetch('/checkout/remove-coupon', {
-			  method: 'POST',
-			  headers: {
-				'Content-Type': 'application/json',
-			  },
-			});
-  
-			if (response.ok) {
-			  const data = await response.json();
-  
-			  Swal.fire(
-				'Removed!',
-				data.message,
-				'success'
-			  ).then(() =>{
-				location.reload()
-			  });
-			} else {
-			  // Handle errors
-			  const errorData = await response.json();
-			  Swal.fire(
-				'Error!',
-				errorData.message || 'There was an error removing the coupon.',
-				'error'
-			  ).then(() =>{
-				location.reload()
-			  });
+		Swal.fire({
+			title: 'Are you sure?',
+			text: "Do you want to remove this coupon? " + couponCodeVal.toUpperCase(),
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Yes, remove it!'
+		}).then(async (result) => {
+			if (result.isConfirmed) {
+				// If confirmed, send a POST request to the server
+				try {
+
+					// should add a loading using sweetalert while the coupon is being removed
+					Swal.fire({
+						icon: 'info',
+						title: 'Removing Coupon',
+						html: 'Please wait while we remove the coupon...',
+						allowOutsideClick: false,
+						didOpen: () => {
+							Swal.showLoading();
+						}
+					})
+
+					const response = await fetch('/user/remove-coupon', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+					});
+
+					Swal.close();
+
+					if (response.ok) {
+						const data = await response.json();
+
+						Swal.fire(
+							'Removed!',
+							data.message,
+							'success'
+						).then(() => {
+							location.reload()
+						});
+					} else {
+						// Handle errors
+						const errorData = await response.json();
+						Swal.fire(
+							'Error!',
+							errorData.message || 'There was an error removing the coupon.',
+							'error'
+						).then(() => {
+							location.reload()
+						});
+					}
+				} catch (error) {
+					console.error('Error:', error);
+					Swal.fire(
+						'Error!',
+						'There was an error removing the coupon.',
+						'error'
+					);
+				}
 			}
-		  } catch (error) {
-			console.error('Error:', error);
-			Swal.fire(
-			  'Error!',
-			  'There was an error removing the coupon.',
-			  'error'
-			);
-		  }
-		}
-	  });
+		});
 	}
-  </script>
+
+</script>

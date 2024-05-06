@@ -81,6 +81,11 @@
                             <small></small>
                         </div>
                         <div class="col-md-12 form-group">
+                            <input type="text" class="form-control" id="referral" name="referral" placeholder="Referral Code (optional)"
+                                onfocus="this.placeholder = ''" onblur="this.placeholder = 'Referral Code'" value="<%- locals.referralCode ? locals.referralCode : '' %>">
+                            <small></small>
+                        </div>
+                        <div class="col-md-12 form-group">
                             <div class="d-flex align-items-center">
                                 <input type="password" class="form-control" id="password" name="password" placeholder="Password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'">
                                 <i class="bi bi-eye-slash" id="togglePassword" style="position: relative;z-index: 8; left: -30px; width: 0%; cursor: pointer;"></i>
