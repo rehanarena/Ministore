@@ -59,8 +59,7 @@
                         <td>#<%- order._id %></td>
                         <td><%- order.createdAt.toLocaleDateString('en-GB') %></td>
                         <td><img src="/uploads/cropped/<%- order.productDetails.images.image1 %>" class="img-fluid img-thumbnail" width="90rem" ></td>
-                        <td class="mx-0"><%- order.productDetails.product_name %> <br> <span class="text-muted"> </td>
-                          <td><%- order.user[0].firstName + ' ' + order.user[0].lastName %></td>
+                       
                         <td> <%= order.payment_method %></td>
                         
                         <td <% if (order.items.status == 'Placed') { %>

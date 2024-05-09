@@ -79,9 +79,9 @@
             </div>
             <div class="mb-3">
               <label for="note" class="form-label">Note (Optional)</label>
-              <textarea class="form-control" id="note" name="note" rows="3"></textarea>
+              <textarea class="form-control " id="note" name="note" rows="3"></textarea>
             </div>
-            <button type="submit" class="btn btn-primary">Add Money</button>
+            <button type="submit" class="btn btn-outline-success">Add Money</button>
           </form>
         </div>
       </div>
@@ -200,88 +200,79 @@
   
     const razorpayPayment = (order,user) => {
       console.log(order);
-      let details = structuredClone(order)
-      var options = {
-        key: "rzp_test_EL8MknNoOtmLva",
-        amount: order.amount,
-        currency: "INR",
-        name: "SoleStride",
-        description: "Test Transaction",
-        order_id: order.id,
-        handler: async function(response) {
-          console.log(response, order);
-          await verifyPayment(response, order)
-        },
-        prefill: {
-          name: user.username,
-          email: user.email,
-          contact: user.phone,
-        },
-        notes: {
-          address: "Razorpay Corporate Office",
-        },
-        theme: {
-          color: "#2ade99",
-        },
-      };
-  
-      var rzp1 = new Razorpay(options);
-      rzp1.open();
-      rzp1.on("payment.failed", function(response) {
-        swal.fire("Failed!", response.error.description, "error").then(() => {
-          location.assign("/");
-        });
+      let details = { ...order }; // Using spread syntax for shallow copy
+  var options = {
+    key: "rzp_test_EL8MknNoOtmLva",
+    amount: order.amount,
+    currency: "INR",
+    name: "Ministore",
+    description: "Test Transaction",
+    order_id: order.id,
+    handler: async function(response) {
+      console.log(response, order);
+      await verifyPayment(response, order);
+    },
+    prefill: {
+      name: user.username,
+      email: user.email,
+      contact: user.phone,
+    },
+    notes: {
+      address: "Razorpay Corporate Office",
+    },
+    theme: {
+      color: "#2ade99",
+    },
+  };
+
+  var rzp1 = new Razorpay(options);
+  rzp1.open();
+  rzp1.on("payment.failed", function(response) {
+    Swal.fire("Failed!", response.error.description, "error").then(() => {
+      location.assign("/");
+    });
+  });
+};
+
+const verifyPayment = async (response, order) => {
+  console.log(response, order);
+  try {
+    const res = await fetch("/user/verify-wallet-payment", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        response,
+        order
+      }),
+    });
+
+    const data = await res.json();
+
+    console.log(data);
+    if (data.success) {
+      Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: data.message
+      }).then(() => {
+        location.assign("/user/wallet");
+      });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: data.message
       });
     }
-  
-    const verifyPayment = async (response, order) => {
-  
-      console.log(response, order);
-      const res = await fetch("/user/verify-wallet-payment", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            response,
-            order
-          }),
-        })
-        .then((response) => {
-          console.log(response);
-          return response.json()
-        })
-        .then((data) => {
-          console.log(data);
-          if (data.success) {
-            Swal.fire({
-              icon: "success",
-              title: "Success",
-              text: data.message
-            }).then(() => {
-              location.assign("/user/wallet");
-            })
-          } else {
-            Swal.fire({
-              icon: "error",
-              title: "Error",
-              text: data.message
-            })
-          }
-        }).catch((error) => {
-          console.log(error);
-          Swal.fire({
-            icon: "error",
-            title: "Error",
-            text: error.message
-          })
-        });
-  
-      const data = await res.json()
-  
-      console.log(data);
-      if (data.success) {
-        location.assign("/user/wallet");
-      }
-    };
+  } catch (error) {
+    console.log(error);
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: error.message
+    });
+  }
+};
   </script>

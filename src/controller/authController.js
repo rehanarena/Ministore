@@ -1,6 +1,9 @@
 
 const passport = require("passport");
 const bcrypt = require("bcrypt");
+
+const Wallet = require("../model/walletSchema");
+
 // models
 
 const User = require("../model/userSchema");
@@ -146,13 +149,16 @@ function generateRefferalCode(length) {
         title: "Ministore - Register",
       };
   
+      if (req.query.ref) {
+        locals.referralCode = req.query.ref;
+      }
       res.render("auth/user/register", {
         locals,
       });
     },
 userRegister: async (req, res) => {
   // console.log(req.body)
-    const { username, firstName, lastName, email, password, confirmPassword } =
+    const { username, firstName, lastName, email, password, confirmPassword, referral, } =
       req.body;
 
 
@@ -163,10 +169,15 @@ userRegister: async (req, res) => {
       return res.redirect("/register");
     }
 
+    
+
     if (password !== confirmPassword) {
       req.flash("error", "Passwords do not match");
       return res.redirect("/register");
     }
+
+    let referralCode = generateRefferalCode(8);
+    console.log("referralCode: " + referralCode);
 
     const user = new User({
       username,
@@ -174,7 +185,19 @@ userRegister: async (req, res) => {
       lastName,
       email,
       password,
+      referralCode,
     });
+
+    if (referral) {
+      console.log("Stuck Here");
+      const refferer = await User.findOne({ referralCode: referral });
+
+      if(refferer){
+        console.log({ refferal: refferer, referralCode: referral });
+  
+        user.referralToken = refferer._id;
+      }
+    }
 
     let savedUser = await user.save();
 
@@ -292,6 +315,75 @@ verifyOtp: async (req, res) => {
         );
 
         if (updateUser) {
+
+          const user = await User.findOne({ _id: req.session.verifyToken });
+
+          console.log(`user ${user.referralToken}`);
+
+          if (user.referralToken) {
+            const referrer = await User.findOne({ _id: user.referralToken });
+
+            if (referrer) {
+              referrer.refferalRewards += 100;
+              user.refferalRewards += 100;
+
+              const referrerWallet = await Wallet.findOne({
+                userId: referrer._id,
+              });
+              const userWallet = await Wallet.findOne({ userId: user._id });
+
+              if (!referrerWallet) {
+                const referrerWallet = new Wallet({
+                  userId: referrer._id,
+                  balance: 100,
+                  transactions: [
+                    {
+                      date: Date.now(),
+                      amount: 100,
+                      message: "Refferal Reward",
+                      type: "Credit",
+                    },
+                  ],
+                });
+                await referrerWallet.save();
+              } else {
+                referrerWallet.balance += 100;
+                referrerWallet.transactions.push({
+                  date: Date.now(),
+                  amount: 100,
+                  message: "Refferal Reward",
+                  type: "Credit",
+                });
+                await referrerWallet.save();
+              }
+
+              if (!userWallet) {
+                const userWallet = new Wallet({
+                  userId: user._id,
+                  balance: 100,
+                  transactions: [
+                    {
+                      date: Date.now(),
+                      amount: 100,
+                      message: "Refferal Reward",
+                      type: "Credit",
+                    },
+                  ],
+                });
+                await userWallet.save();
+              }
+
+              referrer.successfullRefferals.push({
+                date: Date.now(),
+                username: user.username,
+                status: "Successful Refferal",
+              });
+
+              await referrer.save();
+              await user.save();
+            }
+          }
+
           req.flash("success", "User verificaion successfull, Please Login");
           console.log("success");
           delete req.session.verifyToken;

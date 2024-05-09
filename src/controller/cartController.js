@@ -26,15 +26,14 @@ module.exports = {
           .status(404)
           .json({ success: false, message: "Product not Found" });
       }
-
+  
       const stock = product.stock;
       if (stock === 0) {
         return res
           .status(409)
           .json({ status: false, message: "Product Out Of Stock" });
       }
-
-
+  
       const userCart = await Cart.findOne({ user_id: req.user.id });
       if (!userCart) {
         const newCart = new Cart({
@@ -48,25 +47,28 @@ module.exports = {
           ],
           totalPrice: product.sellingPrice,
         });
-
+  
         await newCart.save();
         return res
           .status(200)
-          .json({ success: true, message: "sucessfully added to cart" });
+          .json({ success: true, message: "Successfully added to cart" });
       } else {
-        const itemExists = userCart.items.find(
+        const existingItemIndex = userCart.items.findIndex(
           (item) => item.product_id.toString() === product_id
         );
-        if (itemExists) {
-          return res
-            .status(400)
-            .json({ success: false, message: "Already Added to cart" });
+  
+        if (existingItemIndex !== -1) {
+          // If item already exists, increase its quantity
+          userCart.items[existingItemIndex].quantity += 1;
+          userCart.items[existingItemIndex].itemTotal += product.sellingPrice;
+        } else {
+          userCart.items.push({
+            product_id,
+            quantity: 1,
+            itemTotal: product.sellingPrice,
+          });
         }
-        userCart.items.push({
-          product_id,
-          quantity: 1,
-          itemTotal: product.sellingPrice,
-        });
+        
         let totalPrice = 0;
         for (item of userCart.items) {
           totalPrice += item.itemTotal;
@@ -75,15 +77,16 @@ module.exports = {
         await userCart.save();
         return res
           .status(200)
-          .json({ success: true, message: "sucessfully added to cart" });
+          .json({ success: true, message: "Successfully added to cart" });
       }
     } catch (error) {
       console.log(error);
       return res
         .status(500)
-        .json({ success: false, message: "Internal serever error" });
+        .json({ success: false, message: "Internal server error" });
     }
   },
+  
   updateQuantity: async (req, res) => {
     try {
       const productId = req.params.id;

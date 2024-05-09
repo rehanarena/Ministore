@@ -195,12 +195,17 @@
 												</td>
 											</tr><!-- End .summary-subtotal -->
 											<tr>
+												<tr class="summary-coupon-discount">
+													<td>Coupon Discount:</td>
+													<td>- ₹<%= userCart.couponDiscount %></td>
+												  </tr><!-- End .summary-coupon-discount -->
+												  
 												<td>Shipping:</td>
 												<td>Free shipping</td>
 											</tr>
 											<tr class="summary-total">
 												<td>Total:</td>
-												<td>₹<%= userCart.totalPrice %>
+												<td>₹<%= userCart.totalPrice - userCart.couponDiscount %></td>
 												</td>
 											</tr><!-- End .summary-total -->
 									</tbody>
@@ -210,119 +215,130 @@
 
 
 
-
-
-								<hr class="my-4">
 								<div class="row">
 									<div class="col-12">
-										<div class="block-header bg-secondary-light"><strong
-												class="text-uppercase">Choose Payment</strong></div>
+										<div class="block-header bg-secondary-light">
+											<strong class="text-uppercase">Choose Payment</strong>
+										</div>
 										<br>
 									</div>
 								</div>
-
+								
 								<div class="mb-5">
 									<div id="accordion" role="tablist">
-
+								
 										<div class="block mb-3">
 											<div class="block-header" id="headingThree" role="tab">
-												<strong><a class="accordion-link collapsed" data-bs-toggle="collapse"
-														href="#collapseThree" aria-expanded="false"
-														aria-controls="collapseThree">Pay on delivery</a></strong>
+												<strong><a class="accordion-link collapsed" data-bs-toggle="collapse" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">Pay on delivery</a></strong>
 											</div>
-											<div class="collapse show" id="collapseThree" role="tabpanel"
-												aria-labelledby="headingThree" data-parent="#accordion">
+											<div class="collapse show" id="collapseThree" role="tabpanel" aria-labelledby="headingThree" data-parent="#accordion">
 												<div class="block-body py-3">
 													<div class="form-check">
-														<input class="form-check-input" type="radio"
-															name="paymentMethod" id="payment-method-1" value="COD" <% if
-															(isCOD) { %> checked <% } else { %> disabled <% } %>>
-																<label class="form-check-label ms-2"
-																	for="payment-method-1">
-																	<strong class="text-uppercase mb-2">Pay on
-																		delivery</strong>
-																	<% if (!isCOD) { %>
-																		<span class="text-muted text-danger text-sm">Pay
-																			on delivery is not available for orders
-																			above ₹1000.</span>
-																		<% } %>
-																</label>
+														<input class="form-check-input" type="radio" name="paymentMethod" id="payment-method-1" value="COD" <% if (isCOD) { %> checked <% } else { %> disabled <% } %>>
+														<label class="form-check-label ms-2" for="payment-method-1">
+															<strong class="text-uppercase mb-2">Pay on delivery</strong>
+															<% if (!isCOD) { %>
+															<span class="text-muted text-danger text-sm">Pay on delivery is not available for orders above ₹1000.</span>
+															<% } %>
+														</label>
 													</div>
 												</div>
 											</div>
 										</div>
-
+								
 										<div class="block mb-3">
 											<div class="block-header" id="headingOne" role="tab">
-												<strong><a class="accordion-link collapsed" data-bs-toggle="collapse"
-														href="#collapseOne" aria-expanded="false"
-														aria-controls="collapseOne">Wallet <% if
-															(!wallet.isInsufficient) { %>
-															<span class="text-muted">Balance: <span
-																	class="text-success fw-semibold">₹<%- wallet.balance
-																		%></span></span>
-															<% } %></a></strong>
+												<strong><a class="accordion-link collapsed" data-bs-toggle="collapse" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">Wallet <% if (!wallet.isInsufficient) { %>
+												<span class="text-muted">Balance: <span class="text-success fw-semibold">₹<%- wallet.balance %></span></span>
+												<% } %></a></strong>
 											</div>
-											<div class="collapse show" id="collapseOne" role="tabpanel"
-												aria-labelledby="headingOne" data-parent="#accordion">
+											<div class="collapse show" id="collapseOne" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
 												<div class="block-body py-3">
 													<div class="form-check">
-														<input class="form-check-input" <%- wallet.isInsufficient
-															? 'disabled' : '' %> type="radio" name="paymentMethod"
-														id="payment-method-2" value="Wallet">
+														<input class="form-check-input" <%- wallet.isInsufficient ? 'disabled' : '' %> type="radio" name="paymentMethod" id="payment-method-2" value="Wallet">
 														<label class="form-check-label ms-2" for="payment-method-2">
-															<strong class="text-uppercase mb-2">Pay using
-																Wallet</strong>
-															<span class="text-muted fw-semibold text-sm">Your Wallet
-																Balance: </span><span
-																class="text-muted text-success fw-semibold text-sm">₹<%-
-																	wallet.balance %> </span>
+															<strong class="text-uppercase mb-2">Pay using Wallet</strong>
+															<span class="text-muted fw-semibold text-sm">Your Wallet Balance: </span><span class="text-muted text-success fw-semibold text-sm">₹<%- wallet.balance %> </span>
 															<br>
 															<% if (wallet.isInsufficient) { %>
-																<span class="text-muted text-danger text-sm">Your wallet
-																	has insufficient balance.</span>
-																<% } %>
+															<span class="text-muted text-danger text-sm">Your wallet has insufficient balance.</span>
+															<% } %>
 														</label>
 													</div>
 												</div>
 											</div>
 										</div>
-
+								
 										<div class="block mb-3">
 											<div class="block-header" id="headingTwo" role="tab">
-												<strong><a class="accordion-link collapsed" data-bs-toggle="collapse"
-														href="#collapseTwo" aria-expanded="false"
-														aria-controls="collapseTwo">Razorpay</a></strong>
+												<strong><a class="accordion-link collapsed" data-bs-toggle="collapse" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">Razorpay</a></strong>
 											</div>
-											<div class="collapse show " id="collapseTwo" role="tabpanel"
-												aria-labelledby="headingTwo" data-parent="#accordion">
+											<div class="collapse show " id="collapseTwo" role="tabpanel" aria-labelledby="headingTwo" data-parent="#accordion">
 												<div class="block-body py-3">
 													<div class="form-check">
-														<input class="form-check-input" type="radio"
-															name="paymentMethod" id="payment-method-3" value="Online">
+														<input class="form-check-input" type="radio" name="paymentMethod" id="payment-method-3" value="Online">
 														<label class="form-check-label ms-2" for="payment-method-3">
-															<strong class="text-uppercase mb-2">Pay with
-																Razorpay</strong>
+															<strong class="text-uppercase mb-2">Pay with Razorpay</strong>
 															<br>
-															<span class="text-muted text-warning text-sm">When you make
-																a payment using Razorpay, your wallet balance will be
-																automatically reduced.</span>
+															<span class="text-muted text-warning text-sm">When you make a payment using Razorpay, your wallet balance will be automatically reduced.</span>
 														</label>
 													</div>
 												</div>
 											</div>
 										</div>
-									</div><!-- End .summary -->
-
-									<button type="submit" class="btn btn-outline-primary-2 btn-order btn-block"
-										id="submitOrder">
-										<span class="btn-text">Place Order</span>
-										<span class="btn-hover-text">Proceed to Checkout</span>
-									</button>
+								
+									</div>
 								</div>
+								
 
-							</div>
-						</aside><!-- End .col-lg-3 -->
+								<!-- <div class="mb-5">
+									<div id="accordion" role="tablist">
+						
+									  <div class="block ">
+										<div class="block-header" id="headingThree" role="tab"><strong><a class="accordion-link collapsed" data-bs-toggle="collapse" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">Pay on delivery</a></strong></div>
+										<div class="collapse show" id="collapseThree" role="tabpanel" aria-labelledby="headingThree" data-parent="#accordion">
+										  <div class="block-body py-5 d-flex align-items-center">
+											<input type="radio" name="paymentMethod" id="payment-method-1" value="COD" >
+											<label class="ms-3" for="payment-method-1">
+											  <strong class="d-block text-uppercase "> Pay on delivery</strong>
+											  <span class="text-muted text-sm">Pay on delivery is available for orders above ₹1000 only.    </span>
+											  <br>
+											</label>
+										  </div>
+										</div>
+									  </div>
+									  <div class="block ">
+										<div class="block-header" id="headingOne" role="tab"><strong><a class="accordion-link collapsed" data-bs-toggle="collapse" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">Wallet 
+											 </a></strong></div>
+										<div class="collapse show" id="collapseOne" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
+										  <div class="block-body py-5 d-flex align-items-center">
+											<input  type="radio" name="paymentMethod" id="payment-method-2" value="Wallet">
+											<label class="ms-3" for="payment-method-2"><strong class="d-block text-uppercase mb-2"> Pay using Wallet</strong>
+											 
+											</label>
+										  </div>
+										</div>
+									  </div>
+									  <div class="block">
+										<div class="block-header" id="headingTwo" role="tab"><strong><a class="accordion-link collapsed" data-bs-toggle="collapse" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">Razorpay</a></strong></div>
+										<div class="collapse show " id="collapseTwo" role="tabpanel" aria-labelledby="headingTwo" data-parent="#accordion">
+										  <div class="block-body py-5 d-flex align-items-center">
+											<input type="radio" name="paymentMethod" id="payment-method-3" value="Online">
+											<label class="ms-3" for="payment-method-3">
+											  <strong class="d-block text-uppercase "> Pay with Razorpay</strong>
+											  <span class="text-muted text-warning text-sm">Will reduce your wallet balance.</span>
+											</label>
+										  </div>
+										</div>
+									  </div>
+									</div>
+								  </div> -->
+						
+								  <button id="submitOrder" class=" btn btn-outline-success btn-lg" type="submit">Place Order</button>
+								</div><!-- End .summary -->
+							  </aside><!-- End .col-lg-3 -->
+
+							
 					</div>
 				</form>
 
