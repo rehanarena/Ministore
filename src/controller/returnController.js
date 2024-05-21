@@ -54,8 +54,8 @@ module.exports = {
   },
 
   approveReturn: async (req, res) => {
-    const { id, order_id,  item_id } = req.body;
-
+    const { id, order_id, item_id } = req.body;
+  
     console.log(req.body);
     try {
       const returnRequest = await Returns.findByIdAndUpdate(
@@ -63,23 +63,26 @@ module.exports = {
         { status: "approved" },
         { new: true }
       );
-
+  
       if (!returnRequest) {
         return res
           .status(404)
           .json({ success: false, message: "Return request not found" });
       }
-      let update = { "items.$.status": "In-Return" };
-
+  
+      // Update the status of the item to "Returned"
       await Order.updateOne(
         {
           _id: order_id,
-          "items.orderID": item_id,
-          
+          "items._id": item_id, // Ensure you match the correct item by item_id
         },
-        { $set: update }
+        {
+          $set: {
+            "items.$.status": "Returned",
+          },
+        }
       );
-
+  
       return res.status(200).json({
         success: true,
         message: "Return request approved",
@@ -91,6 +94,7 @@ module.exports = {
         .json({ success: false, message: "Failed to approve return request" });
     }
   },
+  
   declineReturn: async (req, res) => {
     const { id } = req.params;
 
