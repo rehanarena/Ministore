@@ -51,8 +51,16 @@ router.get("/shop", shopController.search);
 /* GET search page. */
 router.get("/search", shopController.search)
 
+
+/* GET contact page. */
+router.get("/contact", shopController.getContact);
+
+/* GET about page. */
+router.get("/about", shopController.getAbout);
+
+
 /* GET ProducDetails page. */
-router.route("/productDetails").get(shopController.getProductDetails);
+router.route("/shop/productDetails/:id").get(shopController.getProductDetails);
 
 router.get("/order-success", shopController.getOrderSuccess);
 

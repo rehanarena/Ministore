@@ -38,14 +38,14 @@
             
         <div class="row col-md-8">
           <% orderDetails.forEach(function(order) { %>
-          <a class="text-decoration-none text-capitalize" href="/user/order/<%= order._id %>">
-            <div role="button" class=" <% if (order.status == 'Delivered') { %>
-             bg-success-light <% } else if (order.status == 'Cancelled' || order.status == 'Failed') { %>
-              bg-danger-light <% } else if(order.status == 'Returned') { %>
-              bg-warning-light <% } else if(order.status == 'Confirmed') { %>
-              bg-primary-light <% } else  { %>
-                bg-secondary-subtle
-            <% } %> orders px-3 py-2 mb-4  card">
+            <a class="text-decoration-none text-capitalize" href="/user/order/<%= order._id %>">
+              <div role="button" class=" <% if (order.status == 'Delivered') { %>
+               bg-success-light <% } else if (order.status == 'Cancelled' || order.status == 'Failed') { %>
+                bg-danger-light <% } else if(order.status == 'Returned') { %>
+                bg-warning-light <% } else if(order.status == 'Confirmed') { %>
+                bg-primary-light <% } else  { %>
+                  bg-secondary-subtle
+              <% } %> orders px-3 py-2 mb-4  card">
               <div class="d-flex flex-row justify-content-between">
                 <div class="orde-details pt-2">
                   <div class="h5 text-muted">Order: <%= new Date(order.createdAt).toLocaleString() %></div>
@@ -72,7 +72,7 @@
                   </div>
                   <% } %>
                 <div class="status fw-bold lead text-uppercase text-success">
-                  <%= order.status %>
+                  <%- order.status %>
                 </div>
                 
               </div>

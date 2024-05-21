@@ -79,9 +79,9 @@ module.exports = {
       for (const product of productsInCategory) {
         if (!product.onOffer) {
           const discountAmount = Math.ceil(
-            (product.regularPrice * offerDiscountRate) / 100
+            (product.sellingPrice * offerDiscountRate) / 100
           );
-          const offerPrice = Math.ceil(product.regularPrice - discountAmount);
+          const offerPrice = Math.ceil(product.sellingPrice - discountAmount);
           product.offerDiscountPrice = offerPrice;
           product.offerDiscountRate = offerDiscountRate;
           product.onOffer = true;
@@ -196,13 +196,13 @@ module.exports = {
   
         if (offerDiscountRate !== 0) {
           discountAmount = Math.ceil(
-            (product.regularPrice * offerDiscountRate) / 100
+            (product.sellingPrice * offerDiscountRate) / 100
           );
         } else {
-          discountAmount = product.regularPrice;
+          discountAmount = product.sellingPrice;
         }
   
-        product.offerDiscountPrice = product.regularPrice - discountAmount;
+        product.offerDiscountPrice = product.sellingPrice - discountAmount;
         product.offerDiscountRate = offerDiscountRate;
   
         await product.save();

@@ -6,14 +6,72 @@ const User = require("../model/userSchema");
 
 module.exports = {
   getCart: async (req, res) => {
+    let errors = [];
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ error: "Please log in to view cart." });
+    }
+    try {
     let userCart = await Cart.findOne({ user_id: req.user.id }).populate(
       "items.product_id"
     );
     console.log(userCart);
+
+    if (!userCart) {
+      userCart = {
+        items: [],
+        totalPrice: 0,
+      };
+    } else {
+      let totalPrice = 0;
+      for (const prod of userCart.items) {
+        prod.price = prod.product_id.onOffer
+          ? prod.product_id.offerDiscountPrice
+          : prod.product_id.sellingPrice;
+
+        const itemTotal = prod.price * prod.quantity;
+        prod.itemTotal = itemTotal;
+        totalPrice += itemTotal;
+      }
+
+      userCart.totalPrice = totalPrice;
+      userCart.payable = totalPrice;
+
+      for (const item of userCart.items) {
+        const product = await Product.findOne({
+          _id: item.product_id,
+        });
+
+        if (!product) {
+          console.log(`The Product ${item.product_id} is not found!!`);
+          errors.push(`The Product ${item.product_id} is not found!!`);
+          continue;
+        }
+
+        if (!product.isBlocked) {
+          console.log(
+            `The Product ${product.product_name} is not available!!`
+          );
+          errors.push(
+            `The Product ${product.product_name} is not available!!`
+          );
+          continue;
+        }
+        //check stock
+      }
+      await userCart.save();
+    }
+
     res.render("shop/cart", {
       userCart,
+      errorMsg: errors,
     });
-  },
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while fetching the cart." });
+  }
+},
   addToCart: async (req, res) => {
     const product_id = req.params.id;
     try {
@@ -42,6 +100,7 @@ module.exports = {
             {
               product_id,
               quantity: 1,
+              price: product.sellingPrice,
               itemTotal: product.sellingPrice,
             },
           ],
@@ -65,6 +124,7 @@ module.exports = {
           userCart.items.push({
             product_id,
             quantity: 1,
+            price: product.sellingPrice,
             itemTotal: product.sellingPrice,
           });
         }
@@ -194,18 +254,19 @@ module.exports = {
   removeCartItem: async (req, res) => {
     try {
       console.log(req.params);
-      const productId =(req.params.id)
+      const productId = req.params.id;
       const userId = req.user.id;
-
+  
       console.log(
         `Removing product with ID: ${productId} from user with ID: ${userId}`
       );
-
+  
+      // Remove the item from the cart
       const result = await Cart.updateOne(
         { user_id: req.user.id },
         { $pull: { items: { product_id: new mongoose.Types.ObjectId(productId) } } }
       );
-
+  
       if (result.modifiedCount === 0) {
         console.log(
           "No items were removed. Product ID might not exist in the cart."
@@ -214,7 +275,15 @@ module.exports = {
           .status(404)
           .json({ success: false, message: "Item not found in cart" });
       }
-
+  
+      // Retrieve the updated cart data
+      const updatedCart = await Cart.findOne({ user_id: req.user.id });
+  
+      // If the cart is empty, delete the cart document
+      if (!updatedCart.items || updatedCart.items.length === 0) {
+        await Cart.deleteOne({ user_id: req.user.id });
+      }
+  
       res.json({ success: true, message: "Item removed from cart" });
     } catch (error) {
       console.error("Error removing item", error);
@@ -223,6 +292,9 @@ module.exports = {
         .json({ success: false, message: "Error removing item from cart" });
     }
   },
+  
+  
+  
 
   
 

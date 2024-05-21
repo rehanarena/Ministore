@@ -83,33 +83,93 @@ module.exports = {
       next(err);
     }
   },
+  getContact: async (req, res) => {
+    const locals = {
+      title: "Ministore - Contact Us",
+    };
+    res.render("contact", {
+      locals,
+    });
+  },
+
+  getAbout: async (req, res) => {
+    const locals = {
+      title: "Ministore - About Us",
+    };
+    res.render("about", {
+      locals,
+    });
+  },
+
   getProductDetails: async (req, res) => {
     const locals = {
-        title: "Ministore - Product",
+      title: "Ministore - Product",
     };
-    
+    const productId = req.params.id;
     try {
-        // Fetch one product from the database
-        const product = await Product.findOne({ isActive: true }).select('-_id product_name brand_name category description images price stock actualPrice sellingPrice onSale'); // Assuming all fields needed
-        
-        if (!product) {
-            throw new Error('No product found');
-        }
-        
-        // Fetch categories (if needed)
-        const categories = await Category.find({ isActive: true });
-        
-        // Render the EJS template with the product data
-        res.render("shop/ProductDetails.ejs", {
-            locals,
-            product,
-            categories
-        });
+      const pipeline = [
+        { $match: { _id: new mongoose.Types.ObjectId(productId) } },
+        {
+          $lookup: {
+            from: "categories",
+            localField: "category",
+            foreignField: "_id",
+            as: "category",
+          },
+        },
+        { $unwind: "$category" },
+        {
+          $project: {
+            product_name: 1,
+            category: "$category",
+            description: 1,
+            details: 1,
+            price: 1,
+            actualPrice: 1,
+            sellingPrice: 1,
+            onSale: 1,
+            reviews: 1,
+            onOffer: 1,
+            offerDiscountPrice: 1,
+            offerDiscountRate: 1,
+            isActive: 1,
+            images: 1 // Include images in the projection
+          },
+        },
+      ];
+  
+      // Execute the aggregation pipeline
+      const productData = await Product.aggregate(pipeline);
+  
+      // Check if product data was found
+      if (!productData || productData.length === 0) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+  
+      // Check product stock and set outOfStock flag
+      productData.forEach((product) => {
+        product.outOfStock = product.stock === 0;
+      });
+  
+      console.log(productData);
+  
+      // Find related products
+      const relatedProducts = await Product.find({
+        category: productData[0].category._id,
+        isActive: true,
+      }).limit(4);
+  
+      // Render the EJS template with the product data
+      res.render("shop/ProductDetails.ejs", {
+        product: productData[0],
+        related: relatedProducts,
+      });
     } catch (error) {
-        console.error('Error:', error);
-        res.status(500).send('Internal Server Error');
+      console.error('Error:', error);
+      res.status(500).send('Internal Server Error');
     }
-},
+  },
+  
 
 getOrderSuccess: async (req, res) => {
   const locals = {

@@ -1,10 +1,11 @@
+
 const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 const ObjectId = Schema.Types.ObjectId;
 
 const walletSchema = new Schema({
-    user_id: {
+    userId: {
         type: ObjectId,
         ref: 'User',
         required: true

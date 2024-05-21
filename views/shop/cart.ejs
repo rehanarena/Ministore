@@ -22,7 +22,7 @@
     </div>
   </nav>
 
-  <% if (typeof userCart !=='undefined' && userCart) { %>
+  <% if (typeof userCart !=='undefined' && userCart && userCart.items.length >0) { %>
     <!-- Cart Content -->
     <div class="page-content">
       <div class="cart">

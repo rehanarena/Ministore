@@ -1,0 +1,344 @@
+<main class="main">
+    <div class="page-content">
+        <div class="product-details-top">
+            <div class="bg-light pb-5 mb-4">
+                <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
+                    <div class="container d-flex align-items-center">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/">Home</a></li>
+                            <li class="breadcrumb-item"><a href="#">Products</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Gallery</li>
+                        </ol>
+
+                       
+               
+                </div>
+            </div>
+            <div class="mb-3 d-flex align-items-center">
+                <span class="d-inline-block me-2">Sort by</span>
+                <select class="form-select w-auto border-0">
+                    <option value="orderby_0">Default</option>
+                    <option value="orderby_1">Popularity</option>
+                    <option value="orderby_2">Rating</option>
+                    <option value="orderby_3">Newest first</option>
+                </select>
+        </div>
+        <br>
+        <br>
+        <aside class="col-md-3">
+            <div class="summary">
+                <h3 class="summary-title">filter</h3>
+                <h6 class="sidebar-heading d-none d-lg-block">Categories</h6>
+
+                <div class="mt-4 mt-lg-0" id="categories">
+                  <% categories.forEach((element,i) => { %>
+                  <div class="mb-1">
+                    <div class="form-check">
+                      <input class="form-check-input" id="category-<%- i %>" type="radio" name="category" value="<%- element._id %>" <%- element._id.toString() === categoryID ? 'checked' : '' %> />
+                      <label class="form-check-label text-capitalize" for="category-<%- i %>"><%- element.name %></label>
+                    </div>
+                  </div>
+                  <% }) %>
+                </div>
+              
+            
+      
+            <h6 class="sidebar-heading d-none d-lg-block">Sort by price</h6>
+              <div class="mt-4 mt-lg-0" id="sortSelect">
+                <!-- <h6 class="sidebar-heading d-none d-lg-block">Price</h6> -->
+                <!-- <div class="mt-4 mt-lg-0" id="slider-snap"></div> -->
+      
+                <div class="mb-1">
+                  <div class="form-check">
+                    <input class="form-check-input" id="sortPriceLow" type="radio" name="sortPrice" value="lowPrice" <% if (sortBy==='lowPrice' ) { %> checked <% } %> />
+                    <label class="form-check-label text-capitalize" for="sortPriceLow">Price Low to High</label>
+                  </div>
+                </div>
+      
+                <div class="mb-1">
+                  <div class="form-check">
+                    <input class="form-check-input" id="sortPriceHigh" type="radio" name="sortPrice" value="highPrice" <% if (sortBy==='highPrice' ) { %> checked <% } %> />
+                    <label class="form-check-label text-capitalize" for="sortPriceHigh">Price High to Low</label>
+                  </div>
+                </div>
+
+            </div>
+        </div>
+        </aside>
+      
+            
+   
+    
+                
+
+
+
+        <div class="container justify-content-center">
+            <div class="row justify-content-center py-3 my-3">
+        <% products?.forEach(element=> { %>
+            <div class="col-md-3  p-2 m-2  text-capitalize card border rounded">
+              <% if (element.onOffer) { %>
+                <div class="ribbon ribbon-info">On offer <%- product.offerDiscountRate %>%</div>
+              <% } %>
+                <img src="/uploads/cropped/<%- element.images.image1 %>" alt="<%- element.product_name %>"
+                    class="img-fluid">
+
+                </button>
+                <a class="btn btn-dark btn-buy" href="/productDetails">
+                  <i class="bi bi-search"></i>
+                  <span class="btn-buy-label ms-2">View</span>
+                </a>
+                <button id="wishlist-<%- element._id %>" class="btn btn-outline-danger btn-product-right d-none d-sm-inline-block justify-content-center" onclick="addToWishlist('<%- element._id %>')">
+                  <i class="bi bi-heart fs-5"></i>
+                </button>
+                <div class="py-2">
+                <p class="h4 card-title"><%- element.product_name %></p>
+                <div class="card-body">
+                  <% if (!element.onOffer) { %>
+                    <p class="lead card-text">₹ <%- element.sellingPrice %></p>
+                    <p class="lead card-text"><del><%- element.actualPrice %></del></p>
+                    <% } else { %>   
+                      <span class="text-muted col">₹<%- element.offerDiscountPrice %></span>
+                      <span class="text-muted col"><del>₹<%- element.sellingPrice %></del></span>
+                  <% } %>
+                  <br />
+                    </div>
+                </div>
+                <div class="card-footer justify-content-center">
+                    <button onclick="addToCart('<%- element._id %>')" class="btn btn-outline-primary"
+                        type="button">Add To Cart</button>
+                </div>
+            </div>
+            <% }) %>
+            </div>
+    </div>  <!-- / Grid End-->
+    
+
+    
+              
+                  
+    
+
+
+  </div>
+  <!-- Pagination-->
+  <% if (products.length > 0 && nextPage || current == pages) { %>
+  <nav aria-label="Product Pagination">
+    <ul class="pagination justify-content-center mt-5">
+      <% if (current == 1) { %>
+      <li class="page-item disabled">
+        <a href="#" class="page-link">First</a>
+      </li>
+
+      <% } else { %>
+      <li class="page-item">
+        <a href="?page=1" class="page-link">First</a>
+      </li>
+      <% } %> <% var i = (Number(current)> 5 ? Number(current) - 4 : 1) %>
+      <% if (i !== 1) { %>
+      <li class="page-item disabled">
+        <a href="#" class="page-link">...</a>
+      </li>
+      <% } %> <% for( ; i < Number(current) + 4 && i <= pages ; i++ ) { %>
+      <% if (i == current) { %>
+      <li class="page-item disabled">
+        <a href="#" class="page-link"><%= i %> </a>
+      </li>
+      <% } else { %>
+      <li class="page-item">
+        <a href="/shop/?page=<%= i %>" class="page-link"><%= i %></a>
+      </li>
+
+      <% } %> <% if (i == Number(current)+ 4 && i < pages) { %>
+      <li class="page-item disabled">
+        <a href="#" class="page-link">...</a>
+      </li>
+      <% } %> <% } %> <% if (current == pages) { %>
+      <li class="page-item disabled">
+        <a href="#" class="page-link">Last</a>
+      </li>
+      <% } else { %>
+      <li class="page-item">
+        <a href="/shop/?page=<%= pages %>" class="page-link">Last</a>
+      </li>
+
+      <% } %>
+    </ul>
+  </nav>
+  <% } %>
+
+</div>
+</main>
+<script defer>
+  const searchProduct = document.getElementById('search');
+  const sortSelect = document.getElementById('sortPriceLow') || document.getElementById('sortPriceHigh'); // Assuming 'sortby' is the correct ID for the sort select element
+
+  // Function to handle the change event for categories
+  function handleCategoryChange() {
+    const categoryId = this.value; // Use 'this' to refer to the radio button that triggered the event
+    const sortValue = sortSelect.value;
+    const searchValue = searchProduct.value;
+    const url = `/search/?category=${categoryId || ''}&sortBy=${sortValue}&search=${searchValue}`;
+    window.location.href = url;
+  }
+
+  // Attach the event listener to each category radio button
+  document.querySelectorAll('#categories .form-check-input').forEach(radioButton => {
+    radioButton.addEventListener('change', handleCategoryChange);
+  });
+
+  // Function to handle the change event for brands
+  function handleBrandChange() {
+    const brandId = this.value; // Use 'this' to refer to the radio button that triggered the event
+    const sortValue = sortSelect.value;
+    const searchValue = searchProduct.value;
+    const url = `/search/?brand=${brandId || ''}&sortBy=${sortValue}&search=${searchValue}`;
+    window.location.href = url;
+  }
+
+  // Attach the event listener to each brand radio button
+  document.querySelectorAll('#brands .form-check-input').forEach(radioButton => {
+    radioButton.addEventListener('change', handleBrandChange);
+  });
+
+  // Function to handle the change event for sort options
+  function handleSortChange() {
+    const sortValue = this.value; // Use 'this' to refer to the radio button that triggered the event
+    const categoryId = document.querySelector('#categories .form-check-input:checked')?.value;
+    const searchValue = searchProduct.value;
+    const url = `/search/?category=${categoryId || ''}&sortBy=${sortValue}&search=${searchValue}`;
+    window.location.href = url;
+  }
+
+  // Attach the event listener to each sort radio button
+  document.querySelectorAll('#sortSelect .form-check-input').forEach(radioButton => {
+    radioButton.addEventListener('change', handleSortChange);
+  });
+
+
+
+
+ 
+</script>
+
+
+
+
+<script defer>
+    const addToCart = async (productId) => {
+        console.log(productId);
+        try {
+            const response = await fetch(`/user/add-to-cart/${productId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json()
+
+            if (!response.ok) {
+                throw new Error(data.message);
+            }
+
+            Swal.fire({
+                title: 'Success!',
+                text: 'Product added to cart successfully.',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+        } catch (error) {
+            Swal.fire({
+                title: 'Error!',
+                text: error.message,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    }
+
+    const addToWishlist = async (productId) => {
+    try {
+      const response = await fetch(`/user/add-to-wishlist/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          productId,
+        }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Network response was not ok.');
+      }
+  
+      const data = await response.json();
+      if(data.success){
+      Swal.fire({
+        icon: "success",
+        title: "Added to Wishlist",
+        text: "Your product has been added to the wishlist.",
+        confirmButtonText: "OK",
+  
+      });
+    }else{
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: data.message,
+        confirmButtonText: "OK",
+  
+      });
+    }
+    } catch (error) {
+      console.log(error);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: error.message, // Display the actual error message
+      });
+    }
+  };
+  
+
+   
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

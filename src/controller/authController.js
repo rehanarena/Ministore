@@ -13,14 +13,19 @@ const  { sendOtpEmail } = require("../helpers/userVerificationHelper")
 const adminLayout = "./layouts/adminLayout";
 
 
-function generateRefferalCode(length) {
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+async function generateReferralCode(length) {
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let referralCode = "";
-  for (let i = 0; i < length; i++) {
-    referralCode += characters.charAt(
-      Math.floor(Math.random() * characters.length)
-    );
+  let isUnique = false;
+  while (!isUnique) {
+      referralCode = "";
+      for (let i = 0; i < length; i++) {
+          referralCode += characters.charAt(Math.floor(Math.random() * characters.length));
+      }
+      const existingUser = await User.findOne({ referralCode });
+      if (!existingUser) {
+          isUnique = true;
+      }
   }
   return referralCode;
 }
@@ -164,41 +169,40 @@ userRegister: async (req, res) => {
 
     const existingUser = await User.findOne({ email });
 
+     // Check if the email already exists
     if (existingUser) {
       req.flash("error", "Email already in use");
       return res.redirect("/register");
     }
 
     
-
+    // Check if passwords match
     if (password !== confirmPassword) {
       req.flash("error", "Passwords do not match");
       return res.redirect("/register");
     }
 
-    let referralCode = generateRefferalCode(8);
-    console.log("referralCode: " + referralCode);
+    // Generate referral code
+    let referralCode = await generateReferralCode(8);
 
     const user = new User({
-      username,
-      firstName,
-      lastName,
-      email,
-      password,
-      referralCode,
+        username,
+        firstName,
+        lastName,
+        email,
+        password,
+        referralCode,
     });
 
-    if (referral) {
-      console.log("Stuck Here");
-      const refferer = await User.findOne({ referralCode: referral });
-
-      if(refferer){
-        console.log({ refferal: refferer, referralCode: referral });
-  
-        user.referralToken = refferer._id;
-      }
+       // If referral code is provided, find the referrer and associate them
+       if (referral) {
+        const referrer = await User.findOne({ referralCode: referral });
+        if (referrer) {
+            user.referralToken = referrer._id;
+        }
     }
 
+    // Save the user
     let savedUser = await user.save();
 
     if (!savedUser) {

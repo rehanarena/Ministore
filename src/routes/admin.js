@@ -6,6 +6,7 @@ const categoryController = require("../controller/categoryController");
 const productController = require("../controller/productController");
 const orderController = require("../controller/orderController");
 const couponController = require("../controller/couponController");
+const returnController = require("../controller/returnController");
 const offerController = require("../controller/offerController");
 const reportsController = require("../controller/reportsController");
 
@@ -92,7 +93,17 @@ router.get('/orders', orderController.getOrders)
 router.route("/orders/manage-order/:id").get(orderController.getOrderDetails);
 router.route("/orders/manage-order/changeStatus/:id").post(orderController.changeOrderStatus);
 router .route("/orders/manage-order/changeStatus/:id")
-//  router .post(orderController.changeOrderStatus);
+
+/**
+ * Order Return
+ */
+
+router.get('/returns', returnController.getReturnRequests)
+
+router.post('/returns/approve-return', returnController.approveReturn)
+
+router.post('/returns/reject-return', returnController.declineReturn)
+
 
 
 

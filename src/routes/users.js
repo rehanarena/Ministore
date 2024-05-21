@@ -66,11 +66,18 @@ router.post("/apply-coupon",checkoutController.applyCoupon)
 router.post("/remove-coupon", checkoutController.removeCoupon);
 router.post("/place-order", orderController.placeOrder);
 router.post("/verify-payment", orderController.verifyPayment);
+router.post("/return-order/", orderController.returnOrder);
+
 
 
 router.route("/orders").get(orderController.getUserOrders);
 router.get("/order/:id", orderController.getUserOrder);
 router.post("/cancel-order/:id/:itemId", orderController.cancelOrder);
+
+
+// invoice
+router.get("/invoice/:id/:itemId", orderController.getInvoice);
+// router.get("/invoice/download/:id/:itemId", orderController.downloadInvoice);
 
 /**
  * User Wallet
@@ -78,6 +85,7 @@ router.post("/cancel-order/:id/:itemId", orderController.cancelOrder);
 
 router.get("/wallet", userController.getWallet);
 router.post('/add-to-wallet', userController.addToWallet)
+router.post('/verify-wallet-payment', userController.verifyPayment)
 
 
 

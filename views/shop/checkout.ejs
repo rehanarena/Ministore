@@ -197,7 +197,7 @@
 											<tr>
 												<tr class="summary-coupon-discount">
 													<td>Coupon Discount:</td>
-													<td>- ₹<%= userCart.couponDiscount %></td>
+													<td>- ₹<%= userCart.couponDiscount.toFixed(2) %></td>
 												  </tr><!-- End .summary-coupon-discount -->
 												  
 												<td>Shipping:</td>
@@ -988,7 +988,7 @@
 	document.addEventListener("DOMContentLoaded", function () {
 		const submitOrder = document.getElementById("submitOrder");
 		if (submitOrder) {
-			submitOrder.addEventListener("click", function (e) {
+			submitOrder.addEventListener("click", async function (e) {
 				e.preventDefault();
 				const addressRadioButtons = document.querySelectorAll(
 					'input[name="address"]'
@@ -1012,31 +1012,47 @@
 
 				// Client-side code to send order data to the server
 				let form = document.getElementById("orderForm");
-				if (form) {
+				
+				try {
+					if (form) {
 					let formData = new FormData(form);
 					const body = Object.fromEntries(formData);
 					console.log(body);
-					fetch("/user/place-order", { // Updated endpoint
-						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
+					let res = await fetch('/user/place-order',{
+						method:'POST',
+						headers:{
+							'Content-Type': 'application/json'
 						},
-						body: JSON.stringify(body),
+						body: JSON.stringify(body)
 					})
-						.then((response) => response.json())
-						.then((data) => {
-							if (data.success) {
-								// Redirect to orderConfirm page
-								location.href = "/checkout/orderConfirm";
-							}else if(data.status){
-								showRazorpay(data.order,data.user)
-							}
+					console.log(res);
+					
+					let data = await res.json()
+					console.log(data);
+
+					if(data.success){
+						Swal.fire({
+							title:'Success',
+							text:data.message,
+							icon:'success',
+						}).then(()=>{
+							location.assign('/user/orderConfirm')
 						})
-						.catch((error) => {
-							console.error("Error placing order:", error);
-						});
+					}else if(data.status){
+						showRazorpay(data.order,data.user)
+						
+					}
+
 				} else {
 					console.error("Form element not found");
+				}
+				} catch (error) {
+					console.error(error)
+					Swal.fire({
+						title: 'Error',
+						text: error.message,
+						icon:'error',
+					})
 				}
 
 			});
@@ -1085,19 +1101,13 @@ const verifyPayment = async (response) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ response }),
   })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data);
-      if (data.success) {
-        location.assign("/shop/order-success");
-      }
-    });
+    
 
   const data = await res.json();
 
   console.log(data);
   if (data.success) {
-    location.assign("/shop/order-success");
+    location.assign("/user/orderConfirm");
   }
 };
 

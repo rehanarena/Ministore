@@ -17,7 +17,7 @@
         </div>
         <div class="col">
           <h6 class="fw-bold">payment status:</h6>
-          <span class="text-muted"><%= orderDetails.payment_method %></span>
+          <span class="text-muted"><%= orderDetails.paymentMethod %></span>
         </div>
       </div>
       <div class="row mb-3">
@@ -51,10 +51,10 @@
               <div class="row mb-3">
                 <div class="col">
                   <select name="status" id="item-status" class="form-select">
-                    <% if (orderDetails.items[0].status === 'pending') { %>
+                    <% if (orderDetails.items[0].status === 'Pending') { %>
                       <option value="Confirmed">Confirmed</option>
                     <% } %>
-                    <% if (orderDetails.items[0].status === 'confirmed') { %>
+                    <% if (orderDetails.items[0].status === 'Confirmed') { %>
                       <option value="Shipped">Shipped</option>
                     <% } %>
                     <% if (orderDetails.items[0].status === 'Shipped') { %>

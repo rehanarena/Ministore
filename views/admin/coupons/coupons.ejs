@@ -51,7 +51,7 @@
           <th>Description</th>
           <th>Min Purchase Amt</th>
           <th>Discount Rate</th>
-          <th>Used By</th>
+
           <th>Status</th>
           <th>Expiry</th>
           <th>Actions</th>
@@ -67,7 +67,7 @@
               <td class="text-center">$<%- item?.minPurchaseAmount %></td>
               <td class="text-center"><%- item.rateOfDiscount %>%</td>
 
-              <td class="text-center"><%- item?.usedBy?.length %></td>
+
               <td><span class="<%- item.isActive ? 'badge bg-success' : 'badge bg-danger' %>"><%- item.isActive
                     ? 'Active' : 'Deactive' %></span></td>
               <td><%- item?.expirationDate?.toLocaleDateString() %></td>
@@ -121,12 +121,12 @@
               <small></small>
             </div>
             <div class="mb-3">
-             
+
               <label for="description" class="form-label">Coupon Description</label>
               <textarea name="description" id="description" cols="30" rows="5" class="form-control"></textarea>
               <small></small>
             </div>
-           <div class="row">
+            <div class="row">
               <div class="col mb-3">
                 <label for="minPurchaseAmount" class="form-label">Minimum Purchase Amount</label>
                 <input name="minPurchaseAmount" type="number" class="form-control" id="minPurchaseAmount">
@@ -438,38 +438,38 @@
       });
 
 
-const showSuccess = (input) =>{
-  const formField = input.parentElement;
-  input.classList.remove("error","is-invalid");
-  input.classList.add("success","is-valid");
+      const showSuccess = (input) => {
+        const formField = input.parentElement;
+        input.classList.remove("error", "is-invalid");
+        input.classList.add("success", "is-valid");
 
-  let error = formField.querySelector('small');
-  error.textContent = '';
-};
+        let error = formField.querySelector('small');
+        error.textContent = '';
+      };
 
-const showError = (input,message) =>{
-  const formField = input.parentElement;
-  input.classList.remove("success","is-valid");
-  input.classList.add("error","is-invalid");
+      const showError = (input, message) => {
+        const formField = input.parentElement;
+        input.classList.remove("success", "is-valid");
+        input.classList.add("error", "is-invalid");
 
-  let error = formField.querySelector('small');
-  error.classList.add('text-danger');
-  error.textContent = message;
+        let error = formField.querySelector('small');
+        error.classList.add('text-danger');
+        error.textContent = message;
 
-}
+      }
 
-      const checkRateofDiscount =() => {
+      const checkRateofDiscount = () => {
         let valid = true;
 
-        const rateOfDiscount  = document.getElementById('editRateOfDiscount').value;
+        const rateOfDiscount = document.getElementById('editRateOfDiscount').value;
 
-        if(parseInt(rateOfDiscount) <= 0 || rateOfDiscount > 95){
+        if (parseInt(rateOfDiscount) <= 0 || rateOfDiscount > 95) {
           valid = false;
-          showError(document.getElementById('editRateOfDiscount'),"Rate of discount should be between 1 and 95.");
-        }else if(rateOfDiscount == ''){
+          showError(document.getElementById('editRateOfDiscount'), "Rate of discount should be between 1 and 95.");
+        } else if (rateOfDiscount == '') {
           valid = false;
-          showError(document.getElementById('editRateOfDiscount'),"Rate of discount is required");
-        } else{
+          showError(document.getElementById('editRateOfDiscount'), "Rate of discount is required");
+        } else {
           showSuccess(document.getElementById('editRateOfDiscount'));
         }
         return valid;
@@ -477,20 +477,20 @@ const showError = (input,message) =>{
 
 
       const minPurchaseAmount = document.getElementById('editMinPurchaseAmount').value;
-      if(parseInt(minPurchaseAmount) <=0){
+      if (parseInt(minPurchaseAmount) <= 0) {
         valid = false;
-        showError(document.getElementById('editMinPurchaseAmount'),"Minimum purchase Amount should be greater than zero")
+        showError(document.getElementById('editMinPurchaseAmount'), "Minimum purchase Amount should be greater than zero")
       }
 
 
       const editCouponForm = document.getElementById('editCouponForm');
 
-      editCouponForm.addEventListener('submit', async(e)=>{
+      editCouponForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         let formValid = checkRateofDiscount();
-        
-        if(formValid){
+
+        if (formValid) {
           editCouponForm.submit();
         }
 

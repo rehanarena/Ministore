@@ -6,14 +6,14 @@ const order_schema = new Schema(
   {
     customer_id: {
       type: ObjectId,
-      ref: 'User',
+      ref: "User",
       require: true,
     },
     items: [
       {
         product_id: {
           type: ObjectId,
-          ref: 'Product',
+          ref: "Product",
           required: true,
         },
         quantity: {
@@ -22,11 +22,15 @@ const order_schema = new Schema(
         },
         price: {
           type: Number,
-          required: true,
         },
-       
-       
+        itemTotal:{
+          type:Number,
+        },
+
         status: {
+          type: String,
+        },
+        paymentStatus: {
           type: String,
         },
         shipped_on: {
@@ -41,59 +45,55 @@ const order_schema = new Schema(
         cancelled_on: {
           type: Date,
         },
+        returnReason: {
+          type: String,
+        },
+        returned_on: {
+          type: Date,
+        },
       },
     ],
     address: {
       house_name: {
-          type: String,
-          required: true
+        type: String,
+        required: true,
       },
       area_street: {
-          type: String,
-          required: true
+        type: String,
+        required: true,
       },
       town: {
-          type: String,
-          required: true
+        type: String,
+        required: true,
       },
       state: {
-          type: String,
-          required: true
+        type: String,
+        required: true,
       },
       zipcode: {
-          type: Number,
-          required: true
+        type: Number,
+        required: true,
       },
       locality: {
-          type: String,
-          required: true
+        type: String,
+        required: true,
       },
       landmark: {
-          type: String,
-          required: true
-      }
-  },
+        type: String,
+        required: true,
+      },
+    },
 
-
-  paymentMethod: {
-    type: String,
-    required: true,
-  },
-  totalPrice: {
-    type: Number,
-    required: true,
-    min: 0,
-  },
-
-    payment_method: {
+    paymentMethod: {
       type: String,
       required: true,
     },
-    total_amount: {
+    totalPrice: {
       type: Number,
       required: true,
+      min: 0,
     },
-    
+
     coupon: {
       type: ObjectId,
       ref: "Coupon",

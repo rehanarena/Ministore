@@ -5,7 +5,7 @@
       <%- include('../partials/user/sidebar.ejs') %>
         <div class="col-lg-8">
           <div class="d-flex flex-column">
-            <% orderProducts.forEach(item=> { %>
+            <% orderProducts.forEach(item => { %>
               <div class="card mb-3" style="max-width: 540px;">
                 <div class="row g-0">
                   <div class="col-md-4">
@@ -17,107 +17,270 @@
                       <h5 class="card-title"><%- item.product_id.product_name %></h5>
                       <p class="card-text"><span class="fw-bold">Price: <span class="text-muted"><%- item.price
                               %></span></span></p>
-                      <p class="card-text"><span class="fw-bold">Quantity: <span class="text-muted"><%-
-                              item.quantity %></span></span></p>
-                      <p class="card-text"><span class="fw-bold">Item Total: <span class="text-muted"><%-
-                              item.total_amount %></span></span></p>
+                      <p class="card-text"><span class="fw-bold">Quantity: <span class="text-muted"><%- item.quantity
+                              %></span></span></p>
+                       <p class="card-text"><span class="fw-bold">itemTotal: <span class="text-muted"><%-totalPrice
+                        %></span></span></p>
+                              %>
+                          </span></span></p>
                       <p class="card-text"><small class="text-body-secondary">Last updated <%-
                             orderDetails.updatedAt.toDateString() %></small></p>
-                      <p class="card-text"><small class="text-body-secondary fs-2"><span
-                            class="badge bg-success"><%- item.status %></span></small></p>
+                      <p class="card-text"><small class="text-body-secondary fs-2"><span class="badge bg-success"><%-
+                              item.status %></span></small></p>
                     </div>
                     <div class="d-grid gap-2 flex-row mx-auto">
-
-                      <button type="button" class="btn btn-outline-warning"
-                        onclick="cancelOrder('<%- orderDetails._id %>', '<%- item.product_id._id%>')">Cancel
-                        Order</button>
-
+                      <!-- Cancel Order button -->
+                      <% if (item.status !== 'Cancelled' && item.status !== 'Delivered') { %>
+                        <button type="button" class="btn btn-outline-danger"
+                          onclick="cancelOrder('<%- orderDetails._id %>', '<%- item.product_id._id %>')">Cancel Order</button>
+                      <% } else if (item.status === 'Cancelled') { %>
+                        <p class="text-danger">Cancelled on <%= item.cancelled_on %></p>
+                      <% } %>
+                      
+                      <!-- Show Return Order button if not in return, status is not Confirmed, not Approved, and not Cancelled -->
+                      <% if (!item.return && !item.inReturn && item.status !== 'Confirmed' && item.status !== 'Approved' && item.status !== 'Cancelled') { %>
+                        <button type="button" data-order-id="<%- orderDetails._id %>" data-product-id="<%- item.product_id._id %>" data-bs-toggle="modal" data-bs-target="#returnOrderModal" class="btn col btn-outline-warning">Return Order</button>
+                      <% } else if (item.inReturn) { %>
+                        <!-- Return Status -->
+                        <input role="button" readonly type="none" class="text-center btn bg-secondary text-warning py-2 px-2" value="Return: <%= item.status %>">
+                      <% } %>
+                      
+                      <!-- Download Invoice Button -->
+                      <% if (item.status === 'Delivered') { %>
+                        <button id="invoice" data-order-id="<%- orderDetails._id %>" data-product-id="<%- item.product_id._id %>" data-bs-toggle="modal" data-bs-target="#invoiceModal" type="button" class="btn col btn-outline-primary">Download Invoice</button>
+                      <% } %>
                     </div>
+                    
+                    
+                    
+                    
 
                   </div>
                 </div>
               </div>
-              <% }) %>
+            <% }) %>
           </div>
         </div>
     </div>
   </div>
 </section>
+  <!-- Return Order -->
+<div class="modal fade" id="returnOrderModal" tabindex="-1" aria-labelledby="returnOrderLabel">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="returnOrderLabel">Return Order</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="card">
+          <form id="return_form" class="card-body px-3 py-2 row">
+
+            <div class="col-md-12">
+              <input class="form-control" type="hidden" id="order_id" name="order_id">
+              <input class="form-control" type="hidden" id="product_id" name="product_id">
+              <input class="form-control" type="hidden" id="item_id" name="item_id">
+              <input class="form-control" type="hidden" id="variant" name="variant">
+            </div>
+            <div class="form-group">
+              <label for="reason" class="fw-bold">Reason for return</label>
+              <select class="col-md-6 form-select" id="reason" name="reason">
+                <option value=""></option>
+                <option value="wrong-item">Wrong Item Received</option>
+                <option value="defective-damaged">Defective or Damaged Product</option>
+                <option value="changed-mind">Changed Mind</option>
+                <option value="size-fit-issue">Size or Fit Issue</option>
+              </select>
+              <small></small>
+            </div>
+            <div class="form-group">
+              <label for="comment" class="fw-bold">Comment</label>
+              <textarea name="comment" id="comment" class="col-md-8 form-control" rows="4"></textarea>
+              <small></small>
+            </div>
+            <div class="card-footer">
+              <input type="submit" class="btn btn-primary" value="Send Return Request">
+              <input type="reset" class="btn btn-outline-warning" value="clear">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script defer>
-const cancelOrder = async (orderId, itemId) => {
-const confirmed = await Swal.fire({
-  title: "Are you sure?",
-  text: "You want to cancel this order.",
-  icon: "warning",
-  showCancelButton: true,
-  confirmButtonText: "Yes, cancel!",
-  cancelButtonText: "No, keep it!",
-  reverseButtons: true,
-});
-
-if (confirmed.isConfirmed) {
-  try {
-    const response = await fetch(`/user/cancel-order/${orderId}/${itemId}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+  const cancelOrder = async (orderId, itemId) => {
+    const confirmed = await Swal.fire({
+      title: "Are you sure?",
+      text: "You want to cancel this order.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, cancel!",
+      cancelButtonText: "No, keep it!",
+      reverseButtons: true,
     });
-    console.log(response);
-    const data = await response.json(); // Parse the response as JSON
-    console.log(data);
-    if (response.ok) {
-      Swal.fire({
-        title: "Success!",
-        text: data.message, // Use the message from the backend
-        icon: "success",
-        timer: 1500,
-      }).then(() => {
-        location.reload();
-      });
-    } else {
-      Swal.fire({
-        title: "Error!",
-        text: data.message || "Something went wrong.", // Use the message from the backend if available
-        icon: "error",
-        timer: 1500,
-      });
+
+    if (confirmed.isConfirmed) {
+      try {
+        const response = await fetch(`/user/cancel-order/${orderId}/${itemId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        console.log(response);
+        const data = await response.json(); // Parse the response as JSON
+        console.log(data);
+        if (response.ok) {
+          Swal.fire({
+            title: "Success!",
+            text: data.message, // Use the message from the backend
+            icon: "success",
+            timer: 1500,
+          }).then(() => {
+            location.reload();
+          });
+        } else {
+          Swal.fire({
+            title: "Error!",
+            text: data.message || "Something went wrong.", // Use the message from the backend if available
+            icon: "error",
+            timer: 1500,
+          });
+        }
+      } catch (error) {
+        console.error(error);
+        Swal.fire({
+          title: "Error!",
+          text: "Something went wrong.",
+          icon: "error",
+          timer: 1500,
+        });
+      }
     }
-  } catch (error) {
-    console.error(error);
-    Swal.fire({
-      title: "Error!",
-      text: "Something went wrong.",
-      icon: "error",
-      timer: 1500,
-    });
   }
-}
-}
-</script>
 
+  const returnOrderModal = document.getElementById('returnOrderModal')
+  
+  
+  
+  returnOrderModal.addEventListener('show.bs.modal', async (e) => {
+    const returnOrderBtn = e.relatedTarget;
 
+    const orderId = returnOrderBtn.getAttribute('data-order-id')
+    const productId = returnOrderBtn.getAttribute('data-product-id')
+    const itemId = returnOrderBtn.getAttribute('data-item-id')
+    
+    const order_id = document.getElementById('order_id')
+    const product_id = document.getElementById('product_id')
+    const item_id = document.getElementById('item_id')
+   
 
+    order_id.value = orderId
+    product_id.value = productId
+    item_id.value = itemId
+   
+  });
 
-<script defer>
-getOrderDetails: async (req, res) => {
-  const orderId = req.params.id;
+  const return_form = document.getElementById('return_form')
+  const checkReason = () => {
+    const reasonEl = document.getElementById('reason');
+    let valid = false;
+    const reason = reasonEl.value.trim();
 
-  try {
+    if (!isRequired(reason)) {
+      showError(reasonEl, "Please select a reason for return.");
+    } else {
+      showSuccess(reasonEl);
+      valid = true;
+    }
+    return valid;
+  };
 
-    const orderDetails = await Order.findById(orderId)
-      .populate("items.product_id")
-      .populate("customer_id")
-      .populate("address");
+  const checkComment = () => {
+    const commentEl = document.querySelector("#comment");
+    let valid = false;
+    const comment = commentEl.value.trim();
 
-    res.render("admin/orders/viewOrder", {
-      layout,
-      orderDetails,
-      
-    });
-  } catch (error) {
-    console.log(error);
-  }
-},
+    if (!isRequired(comment)) {
+      showError(commentEl, "Comment cannot be blank.");
+    } else {
+      showSuccess(commentEl);
+      valid = true;
+    }
+    return valid;
+  };
+
+  const isRequired = (value) => (value === "" ? false : true);
+
+  const showError = (input, message) => {
+    const formField = input.parentElement;
+    formField.classList.remove("success", "is-valid");
+    input.classList.remove("success", "is-valid");
+    formField.classList.add("error", "is-invalid");
+    input.classList.add("error", "is-invalid");
+    const error = formField.querySelector("small");
+    error.textContent = message;
+  };
+
+  const showSuccess = (input) => {
+    const formField = input.parentElement;
+    formField.classList.remove("error", "is-invalid");
+    input.classList.remove("error", "is-invalid");
+    formField.classList.add("success", "is-valid");
+    input.classList.add("success", "is-valid");
+    const error = formField.querySelector("small");
+    error.textContent = "";
+  };
+
+  console.log(return_form);
+  return_form.addEventListener('submit', async (e) => {
+    e.preventDefault()
+
+    let isReasonValid = checkReason(),
+      isCommentValid = checkComment();
+
+    let isFormValid = isReasonValid && isCommentValid;
+
+    if (isFormValid) {
+      const orderId = document.getElementById('order_id').value
+
+      const formData = new FormData(return_form)
+      const body = Object.fromEntries(formData)
+
+      console.log(body);
+
+      await fetch('/user/return-order', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        }).then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            Swal.fire({
+              title: "Success!",
+              text: data.message, // Use the message from the backend
+              icon: "success",
+              timer: 1500,
+            }).then(() => {
+              location.assign(`/user/order/${orderId}`)
+            });
+            // location.assign(`/user/order/${orderId}`)
+          }
+        })
+    }
+
+  })
+
+  const invoice = document.getElementById('invoice')
+  
+  invoice.addEventListener('click', async (e) => {
+    const orderId = e.currentTarget.getAttribute('data-order-id')
+    const itemId = e.currentTarget.getAttribute('data-item-id')
+    console.log(orderId, itemId);
+    location.assign(`/user/invoice/${orderId}/${itemId}/`)
+  })
 </script>

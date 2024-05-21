@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
+const { Schema } = mongoose;
 
-const productSchema = new mongoose.Schema(
+const productSchema = new Schema(
   {
     product_name: {
       type: String,
@@ -11,37 +12,34 @@ const productSchema = new mongoose.Schema(
       required: true,
     },
     category: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "Category",
       required: true,
     },
     description: {
       type: String,
       required: true,
-    
     },
-    images:{
-      image1:{
-        type:String,
-        required:true
+    images: {
+      image1: {
+        type: String,
+        required: true
       },
-      image2:{
-        type:String,
-        required:true
+      image2: {
+        type: String,
+        required: true
       },
-      image3:{
-        type:String,
-        required:true
+      image3: {
+        type: String,
+        required: true
       },
-      image4:{
-        type:String,
-        required:true
+      image4: {
+        type: String,
+        required: true
       }
-  
     },
     price: {
       type: Number,
-    
     },
     stock: {
       type: Number,
@@ -59,10 +57,50 @@ const productSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    onOffer: {
+      type: Boolean,
+      default: false,
+    },
+    offerDiscountPrice: {
+      type: Number,
+      min: 0,
+      default: 0
+    },
+    offerDiscountRate: {
+      type: Number,
+      min: 0,
+      default: 0
+    },
     isActive: {
       type: Boolean,
       default: true,
-    }
+    },
+    reviews: [
+      {
+        user: {
+          user_id: {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+          },
+          name: {
+            type: String,
+          },
+          email: {
+            type: String,
+          },
+        },
+        rating: {
+          type: Number,
+        },
+        comment: {
+          type: String,
+        },
+        date: {
+          type: Date,
+          default: Date.now,
+        }
+      }
+    ]
   },
   {
     timestamps: true,

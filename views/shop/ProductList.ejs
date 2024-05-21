@@ -1,174 +1,241 @@
-<main class="main">
-    <div class="page-content">
-        <div class="product-details-top">
-            <div class="bg-light pb-5 mb-4">
-                <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
-                    <div class="container d-flex align-items-center">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="/">Home</a></li>
-                            <li class="breadcrumb-item"><a href="#">Products</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Gallery</li>
-                        </ol>
-
-                       
-               
-                </div>
-            </div>
-            <div class="mb-3 d-flex align-items-center">
-                <span class="d-inline-block me-2">Sort by</span>
-                <select class="form-select w-auto border-0">
-                    <option value="orderby_0">Default</option>
-                    <option value="orderby_1">Popularity</option>
-                    <option value="orderby_2">Rating</option>
-                    <option value="orderby_3">Newest first</option>
-                </select>
-        </div>
-        <br>
-        <br>
-        <aside class="col-md-3">
-            <div class="summary">
-                <h3 class="summary-title">filter</h3>
-                <h6 class="sidebar-heading d-none d-lg-block">Categories</h6>
-
-                <div class="mt-4 mt-lg-0" id="categories">
-                  <% categories.forEach((element,i) => { %>
-                  <div class="mb-1">
-                    <div class="form-check">
-                      <input class="form-check-input" id="category-<%- i %>" type="radio" name="category" value="<%- element._id %>" <%- element._id.toString() === categoryID ? 'checked' : '' %> />
-                      <label class="form-check-label text-capitalize" for="category-<%- i %>"><%- element.name %></label>
-                    </div>
-                  </div>
-                  <% }) %>
-                </div>
-              
-            
-      
-            <h6 class="sidebar-heading d-none d-lg-block">Sort by price</h6>
-              <div class="mt-4 mt-lg-0" id="sortSelect">
-                <!-- <h6 class="sidebar-heading d-none d-lg-block">Price</h6> -->
-                <!-- <div class="mt-4 mt-lg-0" id="slider-snap"></div> -->
-      
-                <div class="mb-1">
-                  <div class="form-check">
-                    <input class="form-check-input" id="sortPriceLow" type="radio" name="sortPrice" value="lowPrice" <% if (sortBy==='lowPrice' ) { %> checked <% } %> />
-                    <label class="form-check-label text-capitalize" for="sortPriceLow">Price Low to High</label>
-                  </div>
-                </div>
-      
-                <div class="mb-1">
-                  <div class="form-check">
-                    <input class="form-check-input" id="sortPriceHigh" type="radio" name="sortPrice" value="highPrice" <% if (sortBy==='highPrice' ) { %> checked <% } %> />
-                    <label class="form-check-label text-capitalize" for="sortPriceHigh">Price High to Low</label>
-                  </div>
-                </div>
-
-            </div>
-        </div>
-        </aside>
-      
-            
-   
-    
-                
-
-
-
-        <div class="container justify-content-center">
-            <div class="row justify-content-center py-3 my-3">
-        <% products?.forEach(element=> { %>
-            <div class="col-md-3  p-2 m-2  text-capitalize card border rounded">
-              <% if (element.onOffer) { %>
-                <div class="ribbon ribbon-info">On offer <%- product.offerDiscountRate %>%</div>
-              <% } %>
-                <img src="/uploads/cropped/<%- element.images.image1 %>" alt="<%- element.product_name %>"
-                    class="img-fluid">
-
-                </button>
-                <a class="btn btn-dark btn-buy" href="/productDetails">
-                  <i class="bi bi-search"></i>
-                  <span class="btn-buy-label ms-2">View</span>
-                </a>
-                <button id="wishlist-<%- element._id %>" class="btn btn-outline-danger btn-product-right d-none d-sm-inline-block justify-content-center" onclick="addToWishlist('<%- element._id %>')">
-                  <i class="bi bi-heart fs-5"></i>
-                </button>
-                <div class="py-2">
-                <p class="h4 card-title"><%- element.product_name %></p>
-                <div class="card-body">
-                  <% if (!element.onOffer) { %>
-                    <p class="lead card-text">₹ <%- element.sellingPrice %></p>
-                    <p class="lead card-text"><del><%- element.actualPrice %></del></p>
-                    <% } else { %>   
-                      <span class="text-muted col">₹<%- element.offerDiscountPrice %></span>
-                      <span class="text-muted col"><del>₹<%- element.sellingPrice %></del></span>
-                  <% } %>
-                  <br />
-                    </div>
-                </div>
-                <div class="card-footer justify-content-center">
-                    <button onclick="addToCart('<%- element._id %>')" class="btn btn-outline-primary"
-                        type="button">Add To Cart</button>
-                </div>
-            </div>
-            <% }) %>
-            </div>
-    </div>  <!-- / Grid End-->
-    
-
-    
-              
-                  
-    
-
-
+<!-- Hero Section-->
+<section class="hero">
+  <div class="container">
+      <!-- Breadcrumbs -->
+      <ol class="breadcrumb justify-content-center">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item active">Shop</li>
+      </ol>
+      <!-- Hero Content-->
+      <div class="hero-content pb-5 text-center">
+          <h1 class="hero-heading">Shop / Products</h1>
+          <div class="row">
+              <div class="col-xl-8 offset-xl-2">
+                  <p class="lead text-muted">Our products are always in high demand.</p>
+              </div>
+          </div>
+      </div>
   </div>
-  <!-- Pagination-->
-  <% if (products.length > 0 && nextPage || current == pages) { %>
+</section>
+
+<div class="container">
+  <div class="row mb-5">
+      <!-- Sidebar -->
+      <br>
+      <br>
+      <aside class="col-md-3">
+          <div class="summary">
+              <h3 class="summary-title">filter</h3>
+              <h6 class="sidebar-heading d-none d-lg-block">Categories</h6>
+
+              <div class="mt-4 mt-lg-0" id="categories">
+                <% categories.forEach((element,i) => { %>
+                <div class="mb-1">
+                  <div class="form-check">
+                    <input class="form-check-input" id="category-<%- i %>" type="radio" name="category" value="<%- element._id %>" <%- element._id.toString() === categoryID ? 'checked' : '' %> />
+                    <label class="form-check-label text-capitalize" for="category-<%- i %>"><%- element.name %></label>
+                  </div>
+                </div>
+                <% }) %>
+              </div>
+            
+          
+    
+          <h6 class="sidebar-heading d-none d-lg-block">Sort by price</h6>
+            <div class="mt-4 mt-lg-0" id="sortSelect">
+              <!-- <h6 class="sidebar-heading d-none d-lg-block">Price</h6> -->
+              <!-- <div class="mt-4 mt-lg-0" id="slider-snap"></div> -->
+    
+              <div class="mb-1">
+                <div class="form-check">
+                  <input class="form-check-input" id="sortPriceLow" type="radio" name="sortPrice" value="lowPrice" <% if (sortBy==='lowPrice' ) { %> checked <% } %> />
+                  <label class="form-check-label text-capitalize" for="sortPriceLow">Price Low to High</label>
+                </div>
+              </div>
+    
+              <div class="mb-1">
+                <div class="form-check">
+                  <input class="form-check-input" id="sortPriceHigh" type="radio" name="sortPrice" value="highPrice" <% if (sortBy==='highPrice' ) { %> checked <% } %> />
+                  <label class="form-check-label text-capitalize" for="sortPriceHigh">Price High to Low</label>
+                </div>
+              </div>
+
+          </div>
+      </div>
+      </aside>
+
+      <!-- Grid -->
+      <div class="col-xl-9 col-lg-8 order-lg-2">
+          <header class="product-grid-header">
+              <div class="me-3 mb-3">
+                  Showing <strong> 1-12 </strong> of <strong><%- products?.length %> </strong>products
+              </div>
+          </header>
+          <div class="row">
+              <!-- Product items -->
+              <% if ( products !=='undefined' && products?.length> 0) { %>
+              <% products?.forEach(element=> { %>
+              <div class="col-xl-4 col-6">
+                  <div class="product">
+                      <!-- Product image -->
+                      <div class="product-image">
+                          <% if (element.onOffer) { %>
+                          <div class="ribbon ribbon-info">On offer <%- element.offerDiscountRate %>%</div>
+                          <% } %>
+                          <img class="img-fluid" src="/uploads/cropped/<%- element.images.image1 %>"
+                              alt="product" />
+                          <!-- Product hover overlay -->
+                          <div class="product-hover-overlay-buttons ">
+                            <a class="btn btn-dark btn-buy d-inline-block w-100" href="/shop/productDetails/<%- element._id %>">
+                                <i class="bi bi-search"></i>
+                                <span class="ms-12">View</span>
+                            </a>
+                            <button id="wishlist-<%- element._id %>"
+                                class="btn btn-outline-danger btn-product-right d-none d-sm-inline-block d-inline-block w-100 justify-content-center"
+                                onclick="addToWishlist('<%- element._id %>')">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        
+                      </div>
+                      <!-- Product details -->
+                      <div class="py-2">
+                          <!-- Product brand -->
+                          <p class="text-muted text-sm mb-1"><%- element.brand_name %></p>
+                          <!-- Product name -->
+                          <h3 class="h6 text-uppercase mb-1">
+                              <a class="text-dark" href="#"><%- element.product_name %></a>
+                          </h3>
+                          <div class="row g-2">
+                              <!-- Product prices -->
+                              <% if (!element.onOffer) { %>
+                              <span class="text-muted col">₹<%- element.sellingPrice %></span>
+                              <span class="text-muted col"><del>₹<%- element.actualPrice %></del></span>
+                              <% } else { %>
+                              <span class="text-muted col">₹<%- element.offerDiscountPrice %></span>
+                              <span class="text-muted col"><del>₹<%- element.sellingPrice %></del></span>
+                              <% } %>
+                              <br />
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <% }) %>
+              <% } else { %>
+              <!-- No products found message -->
+              <div class="col-xl-4 col-6">
+                  <div class="product">
+                      <div class="py-2">
+                          <p class="text-muted display-3 text-warning text-sm mb-1">No products found</p>
+                      </div>
+                  </div>
+              </div>
+              <% } %>
+              <!-- / Product items -->
+          </div>
+      </div>
+      <!-- / Grid End -->
+  </div>
+
+  <!-- Pagination -->
+  <% if (products.length> 0 && nextPage || current == pages) { %>
   <nav aria-label="Product Pagination">
-    <ul class="pagination justify-content-center mt-5">
-      <% if (current == 1) { %>
-      <li class="page-item disabled">
-        <a href="#" class="page-link">First</a>
-      </li>
-
-      <% } else { %>
-      <li class="page-item">
-        <a href="?page=1" class="page-link">First</a>
-      </li>
-      <% } %> <% var i = (Number(current)> 5 ? Number(current) - 4 : 1) %>
-      <% if (i !== 1) { %>
-      <li class="page-item disabled">
-        <a href="#" class="page-link">...</a>
-      </li>
-      <% } %> <% for( ; i < Number(current) + 4 && i <= pages ; i++ ) { %>
-      <% if (i == current) { %>
-      <li class="page-item disabled">
-        <a href="#" class="page-link"><%= i %> </a>
-      </li>
-      <% } else { %>
-      <li class="page-item">
-        <a href="/shop/?page=<%= i %>" class="page-link"><%= i %></a>
-      </li>
-
-      <% } %> <% if (i == Number(current)+ 4 && i < pages) { %>
-      <li class="page-item disabled">
-        <a href="#" class="page-link">...</a>
-      </li>
-      <% } %> <% } %> <% if (current == pages) { %>
-      <li class="page-item disabled">
-        <a href="#" class="page-link">Last</a>
-      </li>
-      <% } else { %>
-      <li class="page-item">
-        <a href="/shop/?page=<%= pages %>" class="page-link">Last</a>
-      </li>
-
-      <% } %>
-    </ul>
+      <ul class="pagination justify-content-center mt-5">
+          <% if (current==1) { %>
+          <li class="page-item disabled">
+              <a href="#" class="page-link">First</a>
+          </li>
+          <% } else { %>
+          <li class="page-item">
+              <a href="?page=1" class="page-link">First</a>
+          </li>
+          <% } %>
+          <% var i=(Number(current)> 5 ? Number(current) - 4 : 1) %>
+          <% if (i !==1) { %>
+          <li class="page-item disabled">
+              <a href="#" class="page-link">...</a>
+          </li>
+          <% } %>
+          <% for( ; i < Number(current) + 4 && i <=pages ; i++ ) { %>
+          <% if (i==current) { %>
+          <li class="page-item disabled">
+              <a href="#" class="page-link"><%= i %></a>
+          </li>
+          <% } else { %>
+          <li class="page-item">
+              <a href="/shop/?page=<%= i %>" class="page-link"><%= i %></a>
+          </li>
+          <% } %>
+          <% if (i==Number(current)+ 4 && i < pages) { %>
+          <li class="page-item disabled">
+              <a href="#" class="page-link">...</a>
+          </li>
+          <% } %>
+          <% } %>
+          <% if (current==pages) { %>
+          <li class="page-item disabled">
+              <a href="#" class="page-link">Last</a>
+          </li>
+          <% } else { %>
+          <li class="page-item">
+              <a href="/shop/?page=<%= pages %>" class="page-link">Last</a>
+          </li>
+          <% } %>
+      </ul>
   </nav>
   <% } %>
-
+  <!-- / Pagination End -->
 </div>
-</main>
+
+
+<script defer>
+   const addToWishlist = async (productId) => {
+    try {
+      const response = await fetch(`/user/add-to-wishlist/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          productId,
+        }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Network response was not ok.');
+      }
+  
+      const data = await response.json();
+      if(data.success){
+      Swal.fire({
+        icon: "success",
+        title: "Added to Wishlist",
+        text: "Your product has been added to the wishlist.",
+        confirmButtonText: "OK",
+  
+      });
+    }else{
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: data.message,
+        confirmButtonText: "OK",
+  
+      });
+    }
+    } catch (error) {
+      console.log(error);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: error.message, // Display the actual error message
+      });
+    }
+  };
+  
+  
+</script>
 <script defer>
   const searchProduct = document.getElementById('search');
   const sortSelect = document.getElementById('sortPriceLow') || document.getElementById('sortPriceHigh'); // Assuming 'sortby' is the correct ID for the sort select element
@@ -219,89 +286,4 @@
 
 
  
-</script>
-
-
-
-
-<script defer>
-    const addToCart = async (productId) => {
-        console.log(productId);
-        try {
-            const response = await fetch(`/user/add-to-cart/${productId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            const data = await response.json()
-
-            if (!response.ok) {
-                throw new Error(data.message);
-            }
-
-            Swal.fire({
-                title: 'Success!',
-                text: 'Product added to cart successfully.',
-                icon: 'success',
-                confirmButtonText: 'OK'
-            });
-        } catch (error) {
-            Swal.fire({
-                title: 'Error!',
-                text: error.message,
-                icon: 'error',
-                confirmButtonText: 'OK'
-            });
-        }
-    }
-
-    const addToWishlist = async (productId) => {
-    try {
-      const response = await fetch(`/user/add-to-wishlist/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          productId,
-        }),
-      });
-  
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Network response was not ok.');
-      }
-  
-      const data = await response.json();
-      if(data.success){
-      Swal.fire({
-        icon: "success",
-        title: "Added to Wishlist",
-        text: "Your product has been added to the wishlist.",
-        confirmButtonText: "OK",
-  
-      });
-    }else{
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: data.message,
-        confirmButtonText: "OK",
-  
-      });
-    }
-    } catch (error) {
-      console.log(error);
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: error.message, // Display the actual error message
-      });
-    }
-  };
-  
-
-   
 </script>

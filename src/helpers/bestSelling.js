@@ -50,58 +50,7 @@ module.exports = {
         console.log(products);
         return products
     },
-    // function to get best selling brands
-    getBestSellingBrands: async () => {
-        const brands = await Order.aggregate([
-            {
-                $unwind: "$items",
-            },
-            {
-                $match: {
-                    "items.status": "Delivered",
-                }
-            },
-            {
-                $lookup: {
-                    from: "products",
-                    localField: "items.product_id",
-                    foreignField: "_id",
-                    as: "items",
-                },
-            },
-            {
-                $unwind: "$items",
-            },
-            {
-                $group: {
-                    _id: "$items.brand",
-                    count: { $sum: 1 },
-                },
-            },
-            {
-                $lookup: {
-                    from: "brands",
-                    localField: "_id",
-                    foreignField: "_id",
-                    as: "brand",
-                },
-            },
-            {
-                $unwind: "$brand",
-            },
-            {
-                $project: {
-                    _id: 1,
-                    count: 1,
-                    brand: 1,
-                    brand_name: "$brand.name",
-                },
-            }
-        ])
-
-        console.log(brands);
-        return brands
-    },
+   
     // function to get best selling categories
     getBestSellingCategories: async () => {
         const categories = await Order.aggregate([

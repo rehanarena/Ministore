@@ -16,10 +16,13 @@ var instance = new Razorpay({
 });
 
 function generateRefferalCode(length) {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let referralCode = '';
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let referralCode = "";
   for (let i = 0; i < length; i++) {
-      referralCode += characters.charAt(Math.floor(Math.random() * characters.length));
+    referralCode += characters.charAt(
+      Math.floor(Math.random() * characters.length)
+    );
   }
   return referralCode;
 }
@@ -36,40 +39,42 @@ const createRazorpayOrder = async (order_id, total) => {
 };
 
 module.exports = {
-    /**
-     * User Profile Mangement
-     */
-    getProfile: async (req, res) => {
-      const locals = {
-        title: "ministore - Profile",
-      };
-  
-      res.render("user/profile.ejs", {
-        locals,
-        user: req.user,
-      });
-    },
-    editProfile: async (req, res) => {
-        try {
-          console.log(req.body);
-          const user = await User.findById(req.user.id);
-    
-          const { firstName, lastName, phone } = req.body;
-    
-          user.firstName = firstName || user.firstName;
-          user.lastName = lastName || user.lastName;
-          user.phone = phone || user.phone;
-    
-          await user.save();
-    
-          return res.status(200).json({ message: "Profile updated successfully", user });
-        } catch (error) {
-          console.error("Error updating profile:", error);
-          return res.status(500).json({ error: "Internal server error" });
-        }
-      },
+  /**
+   * User Profile Mangement
+   */
+  getProfile: async (req, res) => {
+    const locals = {
+      title: "ministore - Profile",
+    };
 
-      /***
+    res.render("user/profile.ejs", {
+      locals,
+      user: req.user,
+    });
+  },
+  editProfile: async (req, res) => {
+    try {
+      console.log(req.body);
+      const user = await User.findById(req.user.id);
+
+      const { firstName, lastName, phone } = req.body;
+
+      user.firstName = firstName || user.firstName;
+      user.lastName = lastName || user.lastName;
+      user.phone = phone || user.phone;
+
+      await user.save();
+
+      return res
+        .status(200)
+        .json({ message: "Profile updated successfully", user });
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  },
+
+  /***
    * User Wishlist Mangement
    */
 
@@ -77,133 +82,141 @@ module.exports = {
     const locals = {
       title: "Ministore - Wishlist",
     };
-    let user = await User.findById(req.user.id);
-    let wishlist = await Wishlist.findOne({userId: user._id}).populate({
-      path: "products",
-     
-    });
-    // console.log(wishlist);
-    let products;
-
-    if (!wishlist) {
-      products = [];
-    } else {
-      products = wishlist.products;
+    
+    // Check if the user is authenticated
+    if (!req.isAuthenticated()) {
+      // Redirect to login page if not authenticated
+      return res.redirect('/login'); 
     }
-
-    res.render("user/wishlist", {
-      locals,
-      wishlist,
-      products,
-    });
+  
+    try {
+      // Find the user by their ID
+      let user = await User.findById(req.user.id);
+      
+      // Find the wishlist for the user and populate the products
+      let wishlist = await Wishlist.findOne({ userId: user._id }).populate({
+        path: "products",
+      });
+  
+      // Determine the products to render
+      let products = wishlist ? wishlist.products : [];
+  
+      // Render the wishlist page with the necessary data
+      res.render("user/wishlist", {
+        locals,
+        wishlist,
+        products,
+      });
+    } catch (error) {
+      console.error("Error fetching wishlist:", error);
+      // Optionally handle the error by rendering an error page or sending an error response
+      res.status(500).send("Internal Server Error");
+    }
   },
-
+  
   addToWishlist: async (req, res) => {
     console.log(req.body, req.params);
 
     const productId = req.body.productId;
 
     try {
-        // Find the product
-        const product = await Product.findById(productId);
-        if (!product) {
-            console.log("Product not found");
-            return res.status(404).json({ success: false, message: "Product not found" });
-        }
+      // Find the product
+      const product = await Product.findById(productId);
+      if (!product) {
+        console.log("Product not found");
+        return res
+          .status(404)
+          .json({ success: false, message: "Product not found" });
+      }
 
-        // Find the user
-        const user = await User.findById(req.user.id);
-        if (!user) {
-            console.log("User not found");
-            return res.status(404).json({ success: false, message: "User not found" });
-        }
+      // Find the user
+      const user = await User.findById(req.user.id);
+      if (!user) {
+        console.log("User not found");
+        return res
+          .status(404)
+          .json({ success: false, message: "User not found" });
+      }
 
-        // Check if user has a wishlist, if not, create one
-        let wishlist = await Wishlist.findOne({userId: user._id})
-        if(!wishlist){
-          let items = []
-          items.push(product._id)
-          wishlist = new Wishlist({
-            userId: user._id,
-            products: items,
-          })
-          await wishlist.save()
-          return res.status(200).json({
-            success:true,
-            message: 'Product added to Wishlist.'
-          })
-        }
+      // Check if user has a wishlist, if not, create one
+      let wishlist = await Wishlist.findOne({ userId: user._id });
+      if (!wishlist) {
+        let items = [];
+        items.push(product._id);
+        wishlist = new Wishlist({
+          userId: user._id,
+          products: items,
+        });
+        await wishlist.save();
+        return res.status(200).json({
+          success: true,
+          message: "Product added to Wishlist.",
+        });
+      }
 
-        // Check if the product already exists in the wishlist
-        const productExistInWishlist = wishlist.products.find(
-          (item)=> item.toString() === product._id.toString()
-        )
-        if(productExistInWishlist){
-          return res.status(400).json({
-            success: false,
-            message:'product already exists in the wishlist.'
-          })
-        }
+      // Check if the product already exists in the wishlist
+      const productExistInWishlist = wishlist.products.find(
+        (item) => item.toString() === product._id.toString()
+      );
+      if (productExistInWishlist) {
+        return res.status(400).json({
+          success: false,
+          message: "product already exists in the wishlist.",
+        });
+      }
 
-        // Add the product to the wishlist
-      wishlist.products.push(product._id)
-      await wishlist.save()
+      // Add the product to the wishlist
+      wishlist.products.push(product._id);
+      await wishlist.save();
       return res.status(200).json({
         success: true,
-        message: 'product Added to Wishlist.'
-      })
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({
-            success: false,
-            message: "An error occurred, server facing issues!",
-        });
-    }
-},
-
-
-  
-removeFromWishlist: async (req, res) => {
-  try {
-    const { productId } = req.body;
-
-    // Assuming User and WishList models are properly imported
-    const user = await User.findById(req.user.id);
-    const updatedWishList = await Wishlist.findOneAndUpdate(
-      { userId: user._id },
-      { $pull: { products: productId } },
-      { new: true }
-    );
-
-    if (updatedWishList) {
-      return res.status(201).json({
-        success: true,
-        message: "Removed item from wishlist",
+        message: "product Added to Wishlist.",
       });
-    } else {
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        success: false,
+        message: "An error occurred, server facing issues!",
+      });
+    }
+  },
+
+  removeFromWishlist: async (req, res) => {
+    try {
+      const { productId } = req.body;
+
+      // Assuming User and WishList models are properly imported
+      const user = await User.findById(req.user.id);
+      const updatedWishList = await Wishlist.findOneAndUpdate(
+        { userId: user._id },
+        { $pull: { products: productId } },
+        { new: true }
+      );
+
+      if (updatedWishList) {
+        return res.status(201).json({
+          success: true,
+          message: "Removed item from wishlist",
+        });
+      } else {
+        return res.status(500).json({
+          success: false,
+          message: "Failed to remove product from wishlist. Please try again.",
+        });
+      }
+    } catch (error) {
+      console.error(error);
       return res.status(500).json({
         success: false,
         message: "Failed to remove product from wishlist. Please try again.",
       });
     }
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      success: false,
-      message: "Failed to remove product from wishlist. Please try again.",
-    });
-  }
-},
-
-
+  },
 
   getWallet: async (req, res) => {
     const locals = {
       title: "Ministore - User Wallet",
     };
-
-
-    
 
     let userWallet = await Wallet.findOne({ userId: req.user.id });
 
@@ -211,11 +224,11 @@ removeFromWishlist: async (req, res) => {
       userWallet.transactions.reverse();
     }
 
-    if(!userWallet){
+    if (!userWallet) {
       userWallet = {
         balance: 0,
         transactions: [],
-      }
+      };
     }
 
     console.log(userWallet);
@@ -226,6 +239,7 @@ removeFromWishlist: async (req, res) => {
   },
   addToWallet: async (req, res) => {
     try {
+      // console.log(req.body)
       const { amount, notes } = req.body;
       const id = crypto.randomBytes(8).toString("hex");
       const payment = await createRazorpayOrder(id, amount);
@@ -245,10 +259,9 @@ removeFromWishlist: async (req, res) => {
     }
   },
 
-  // Helper function to generate a random id
-
   verifyPayment: async (req, res) => {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+    console.log(req.body);
+    const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
       req.body.response;
     const secret = process.env.RAZ_KEY_SECRET;
     const { amount } = req.body.order;
@@ -261,6 +274,7 @@ removeFromWishlist: async (req, res) => {
         .digest("hex");
 
       const isSignatureValid = hmac === razorpay_signature;
+      console.log(hmac, razorpay_signature, isSignatureValid);
 
       if (isSignatureValid) {
         const wallet = await Wallet.findOne({ userId: userId });
@@ -292,12 +306,10 @@ removeFromWishlist: async (req, res) => {
           });
 
           await wallet.save();
-          return res
-            .status(200)
-            .json({
-              success: true,
-              message: "Money added to wallet successfully",
-            });
+          return res.status(200).json({
+            success: true,
+            message: "Money added to wallet successfully",
+          });
         }
       }
     } catch (error) {
@@ -306,7 +318,68 @@ removeFromWishlist: async (req, res) => {
         .json({ success: false, message: "Internal server error" });
     }
   },
-     // Password Reset From Profile
+
+  verifyPayment: async (req, res) => {
+    console.log(req.body);
+    const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
+      req.body.response;
+    const secret = process.env.RAZ_KEY_SECRET;
+    const { amount } = req.body.order;
+    const userId = req.user.id;
+
+    try {
+      const hmac = crypto
+        .createHmac("sha256", secret)
+        .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+        .digest("hex");
+
+      const isSignatureValid = hmac === razorpay_signature;
+      console.log(hmac, razorpay_signature, isSignatureValid);
+
+      if (isSignatureValid) {
+        const wallet = await Wallet.findOne({ userId: userId });
+
+        if (!wallet) {
+          const newWallet = new Wallet({
+            userId,
+            balance: Math.ceil(amount / 100),
+            transactions: [
+              {
+                date: new Date(),
+                amount: Math.ceil(amount / 100),
+                message: "Initial deposit",
+                type: "Credit",
+              },
+            ],
+          });
+          await newWallet.save();
+          return res
+            .status(200)
+            .json({ success: true, message: "Wallet created successfully" });
+        } else {
+          wallet.balance += Math.ceil(amount / 100);
+          wallet.transactions.push({
+            date: new Date(),
+            amount: Math.ceil(amount / 100),
+            message: "Money added to wallet from Razorpay",
+            type: "Credit",
+          });
+
+          await wallet.save();
+          return res.status(200).json({
+            success: true,
+            message: "Money added to wallet successfully",
+          });
+        }
+      }
+    } catch (error) {
+      res
+        .status(500)
+        .json({ success: false, message: "Internal server error" });
+    }
+  },
+
+  // Password Reset From Profile
   resetPass: async (req, res) => {
     try {
       // console.log(req.body);
@@ -423,47 +496,44 @@ removeFromWishlist: async (req, res) => {
 
   deleteAddress: async (req, res) => {
     try {
-        let id = req.params.id;
-        const address = await Address.deleteOne({ _id: id });
+      let id = req.params.id;
+      const address = await Address.deleteOne({ _id: id });
 
-        if (address.deletedCount === 1) {
-            req.flash("success", "Address Deleted");
-            return res.redirect("/user/address");
-        } else {
-            throw new Error("Failed to delete address");
-        }
-    } catch (error) {
-        console.error("Error deleting address:", error);
-        req.flash("error", "Failed to delete address");
+      if (address.deletedCount === 1) {
+        req.flash("success", "Address Deleted");
         return res.redirect("/user/address");
+      } else {
+        throw new Error("Failed to delete address");
+      }
+    } catch (error) {
+      console.error("Error deleting address:", error);
+      req.flash("error", "Failed to delete address");
+      return res.redirect("/user/address");
     }
-},
-getRefferals: async(req, res) => {
-  const locals = {
-     title: "Ministore - User Refferals"
-  }
- 
-  const user = await User.findOne({ _id: req.user.id });
- 
-  if(!user.referralCode){
-     const refferalCode = generateRefferalCode(8);
- 
-     user.referralCode = refferalCode;
-     await user.save();
-  }
- 
-  console.log(user);
- 
-  // Ensure successfullRefferals is an array before reversing it
-  
-  let successfullRefferals = user.successfullRefferals || [];
-  successfullRefferals = successfullRefferals.reverse();
- 
-  res.render("user/refferals", {
-     locals,
-     refferalCode: user.referralCode,
-     successfullRefferals
-  })
- },
- 
+  },
+  getRefferals: async (req, res) => {
+    const locals = {
+      title: "Ministore - User Refferals",
+    };
+
+    const user = await User.findOne({ _id: req.user.id });
+
+    if (!user.referralCode) {
+      const refferalCode = generateRefferalCode(8);
+
+      user.referralCode = refferalCode;
+      await user.save();
+    }
+
+    console.log(user);
+
+    successfullRefferals = user.successfullRefferals.reverse();
+
+    res.render("user/refferals", {
+      locals,
+      user,
+      refferalCode: user.referralCode,
+      successfullRefferals,
+    });
+  },
 };

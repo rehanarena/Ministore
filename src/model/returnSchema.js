@@ -18,9 +18,6 @@ const returnRequestSchema = new Schema({
         type: ObjectId,
         ref: 'Product'
     },
-    variant: {
-        type: ObjectId,
-    },
     item_id: {
         type: String,
     },

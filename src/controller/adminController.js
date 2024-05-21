@@ -8,7 +8,7 @@ const bestSelling = require("../helpers/bestSelling");
 module.exports = {
   getDashboard: async (req, res) => {
     const locals = {
-      title: "SoleStride - Dashboard",
+      title: "Ministore - Dashboard",
     };
 
     // console.log(req.user);
@@ -37,23 +37,24 @@ module.exports = {
 
     // best selling
     let bestSellingProducts = await bestSelling.getBestSellingProducts();
-    let bestSellingBrands = await bestSelling.getBestSellingBrands();
     let bestSellingCategories = await bestSelling.getBestSellingCategories();
 
     console.log("--------------------------------------------------------\n");
     bestSellingProducts.forEach((product) => {
-      console.log(`Product: ${product.product_name} \nCount: ${product.count} \n`);
-    })
+      console.log(
+        `Product: ${product.product_name} \nCount: ${product.count} \n`
+      );
+    });
     console.log("\n--------------------------------------------------------");
     console.log("--------------------------------------------------------\n");
-    bestSellingBrands.forEach((brand) => {
-      console.log(`Brand: ${brand.brand_name} \nCount: ${brand.count} \n`);
-    })
+
     console.log("\n--------------------------------------------------------");
     console.log("--------------------------------------------------------\n");
     bestSellingCategories.forEach((category) => {
-      console.log(`Category: ${category.category_name} \nCount: ${category.count} \n`);
-    })
+      console.log(
+        `Category: ${category.category_name} \nCount: ${category.count} \n`
+      );
+    });
     console.log("\n--------------------------------------------------------");
 
     res.render("admin/dashboard", {
@@ -63,7 +64,7 @@ module.exports = {
       usersCount,
       ordersCount,
       productsCount,
-      bestSellingBrands,
+
       bestSellingProducts,
       bestSellingCategories,
       totalRevenue: confirmedOrders[0] ? confirmedOrders[0].totalRevenue : 0,
@@ -227,7 +228,7 @@ module.exports = {
                   $lte: orderNoChartInfo.endDate,
                 },
                 status: {
-                  $nin: [ "Cancelled", "Failed", "Refunded" ],
+                  $nin: ["Cancelled", "Failed", "Refunded"],
                 },
               },
               {
@@ -257,7 +258,7 @@ module.exports = {
                   $lte: orderChartInfo.endDate,
                 },
                 status: {
-                  $nin: ["Failed","Pending", "Cancelled", "Refunded"],
+                  $nin: ["Failed", "Pending", "Cancelled", "Refunded"],
                 },
               },
               {
@@ -369,14 +370,12 @@ module.exports = {
         data: orderNoChartData,
       };
 
-      return res
-        .status(200)
-        .json({
-          saleChartInfo,
-          orderTypeChartInfo,
-          categoryChartInfo,
-          orderQuantityChartInfo,
-        });
+      return res.status(200).json({
+        saleChartInfo,
+        orderTypeChartInfo,
+        categoryChartInfo,
+        orderQuantityChartInfo,
+      });
     } catch (err) {
       // next(err);
       console.log(err);
@@ -384,8 +383,7 @@ module.exports = {
     }
   },
 
-  
-   getUsersList: async (req, res) => {
+  getUsersList: async (req, res) => {
     const locals = {
       title: "Ministore - Customers",
     };
@@ -417,14 +415,17 @@ module.exports = {
     try {
       const user = await User.findById(req.params.id);
       if (!user) {
-        return res.status(404).json({ message: 'User not found' });
+        return res.status(404).json({ message: "User not found" });
       }
       user.isBlocked = !user.isBlocked;
       await user.save();
-      res.status(200).json({ message: user.isBlocked ? 'User blocked successfully' : 'User unblocked successfully' });
+      res.status(200).json({
+        message: user.isBlocked
+          ? "User blocked successfully"
+          : "User unblocked successfully",
+      });
     } catch (error) {
-      res.status(500).json({ message: 'Server error' });
+      res.status(500).json({ message: "Server error" });
     }
   },
-
 };

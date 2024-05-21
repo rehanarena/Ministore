@@ -1,101 +1,121 @@
 <section class="breadcrumb-option">
   <div class="container">
     <nav aria-label="breadcrumb">
-      <ol class="breadcrumb breadcrumb-chevron">
+      <ol class="breadcrumb breadcrumb-chevron p-3 bg-body-tertiary rounded-2">
         <li class="breadcrumb-item">
-          <a href="/admin" class="text-decoration-none">Dashboard</a>
+          <a class="link-body-emphasis" href="/admin">
+            <svg class="bi" width="16" height="16">
+              <use xlink:href="#house-door-fill"></use>
+            </svg>
+            <span class="visually-hidden">Dashboard</span>
+          </a>
         </li>
-        <li class="breadcrumb-item active" aria-current="page">Sales Report</li>
+
+        <li class="breadcrumb-item active" aria-current="page">
+          Sales Report
+        </li>
       </ol>
     </nav>
   </div>
 </section>
 
-<div class="container py-4">
-  <div class="row justify-content-between align-items-center">
-    <div class="col-md-6">
-      <h1 class="page-title"><%= locals.title ? locals.title : 'Product Offers' %></h1>
-    </div>
-    <div class="col-md-6">
-      <form class="d-flex">
-        <div class="input-group me-3">
-          <label for="startDate" class="visually-hidden">From</label>
-          <input type="date" name="startDate" id="startDate" class="form-control" value="<%- startDate %>">
+
+
+<div class="container d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2"><%= locals.title ? locals.title : 'Product Offers' %></h1>
+
+  <div class="d-flex align-items-center gap-2">
+
+    <div class="btn-toolbar mb-2 mb-md-0">
+      <form class="d-flex" method="get">
+        <div class="d-flex align-items-center gap-2 ">
+          <div class="form-group">
+            <label for="startDate">From</label>
+            <input type="date" name="startDate" id="startDate" class="form-control" placeholder="Start Date" value="<%- startDate %>" />
+          </div>
+          <div class="form-group">
+            <label for="endDate">To</label>
+            <input type="date" id="endDate" name="endDate" class="form-control" placeholder="End Date" value="<%- endDate %>" />
+          </div>
+          <div class="form-group">
+            <button type="submit" class="btn-sm btn-outline-warning">
+              <i class="bi bi-search"></i>
+              Get Report
+            </button>
+          </div>
         </div>
-        <div class="input-group me-3">
-          <label for="endDate" class="visually-hidden">To</label>
-          <input type="date" id="endDate" name="endDate" class="form-control" value="<%- endDate %>">
-        </div>
-        <!-- <button type="submit" class="btn btn-primary">
-          <i class="bi bi-search"></i> Get Report
-        </button> -->
       </form>
-      <button onclick="getExcel()" type="button" class="btn btn-outline-success me-2">
-        <i class="bi bi-file-earmark-spreadsheet"></i> Excel
-      </button>
-      <button id="exportToButton" onclick="getPDF()" type="button" class="btn btn-outline-danger">
-        <i class="bi bi-file-earmark-pdf"></i> PDF
-      </button>
+    </div>
+    <div class="btn-toolbar">
+      <button onclick="getExcel()" type="button" class="btn-sm btn-outline-success"><i class="bi bi-file-earmark-spreadsheet"></i>Excel</button>
+      <button id="exportToButton" onclick="getPDF()" type="button" class="btn-sm btn-outline-danger"><i class="bi bi-file-earmark-pdf"></i>PDF</button>
     </div>
   </div>
 </div>
 
-<main class="main my-4">
+
+  <div class="col-10 mt-3">
+      <button onclick="salesrepo('week')" class="btn btn-sm btn-outline-success">Weekly</button>
+      <button onclick="salesrepo('month')" class="btn btn-sm btn-outline-success">Monthly</button>
+      <button onclick="salesrepo('year')" class="btn btn-sm btn-outline-success">Yearly</button>
+
+  </div>
+
+
+
+<main class="main my-5">
   <div class="container">
-    <% if(orders && orders.length > 0) { %>
+    <% if(orders && orders.length>0) { %>
     <div class="table-responsive">
-      <table class="table table-striped align-middle">
-        <thead class="text-center">
-          <tr>
-            <th>#</th>
-            <th>Order Id</th>
-            <th>Order Date</th>
-            <th>User</th>
-            <th>Products</th>
-            <th>Shipping Address</th>
-            <th>Payment Method</th>
-            <th>Status</th>
-            <th>Total Amount</th>
-            <th>Coupon</th>
-            <th>Coupon Discount</th>
-            <th>Payable</th>
-            <th>Category Discount</th>
+      <table class="table table-hover table-bordered align-middle display" id="salesReportTable">
+        <thead class="bg-success text-light">
+          <tr class="text-center">
+            <th scope="col">#</th>
+            <th scope="col">Order Id</th>
+            <th scope="col">Order Date</th>
+            <th scope="col">User</th>
+            <th scope="col">Products</th>
+            <th scope="col">Payment Method</th>
+            <th scope="col">Status</th>
+            <th scope="col">Total Amount</th>
+            <th scope="col">Coupon</th>
+            <th scope="col">Coupon Discount</th>
+            <!-- <th scope="col">Payable</th> -->
           </tr>
         </thead>
         <tbody>
           <% orders.forEach((order, index) => { %>
-          <tr>
-            <td class="text-center"><%= index + 1 %></td>
+          <tr class="text-capitalize">
+            <td class="text-center"><%=index+1%></td>
             <td class="text-center"><%= order._id.toString().slice(-7).toUpperCase() %></td>
-            <td class="text-center"><%= order.createdAt.toDateString() %></td>
-            <td><%= order.userID[0].username %></td>
+            <td class="text-center"><%=order.createdAt.toDateString()%></td>
+            <td><%=order.userID[0].username%></td>
             <td>
-              <ul class="list-unstyled">
-                <% if(order.orderedItems && order.orderedItems.length > 0) { %>
-                <% order.orderedItems.forEach(item => { %>
-                <li class="text-uppercase mt-3">
-                  <%= item.productDetails.product_name %> (<%= item.quantity %>)
+              <ul>
+                <% if(orders[index].orderedItems && orders[index].orderedItems.length>0) {%>
+                <% for(let j=0 ; j< orders[index].orderedItems.length ; j++ ){%>
+                <li class="text-uppercase list-unstyled mt-3 ">
+                  <%=orders[index].orderedItems[j].productDetails.product_name%> (
+                  <%=orders[index].orderedItems[j].quantity%>)
                 </li>
-                <% }) %>
-                <% } %>
+                <% }%>
+                <%}%>
               </ul>
             </td>
-            <td class="text-center"><%= order.shippingAddress?.address %></td>
-            <td><%= order.paymentMethod %></td>
-            <td><%= order.status %></td>
-            <td><%= order.totalAmount %></td>
-            <td class="text-uppercase"><%= order.coupon[0]?.code ? order.coupon[0].code : "No Coupon" %></td>
-            <td><%= order.couponDiscount %></td>
-            <td><%= order.payable.toFixed(2) %></td>
-            <td class="text-center"><%= order.categoryDiscount.toFixed(2) %></td>
+            <td><%=order.paymentMethod%></td>
+            <td><%=order.status%></td>
+            <td><%=order.totalAmount%></td>
+            <td class="text-uppercase"><%=order.coupon[0]?.code ? order.coupon[0].code : "No Coupon"%></td>
+            <td><%=order.couponDiscount.toFixed(2)%></td>
+            <!-- <td><%=order.payable.toFixed(2)%></td> -->
           </tr>
           <% }) %>
         </tbody>
       </table>
     </div>
-    <% } else { %>
-    <div class="text-center no-orders">No Orders Found</div>
-    <% } %>
+    <%} else{%>
+    <div class="text-danger h1 text-center">No Orders Found</div>
+    <%}%>
   </div>
 </main>
   
@@ -126,6 +146,8 @@
   
   const startDate = document.getElementById("startDate").value; 
   const endDate = document.getElementById("endDate").value; 
+
+  
   const getExcel = () => {
     console.log(startDate, endDate);
   
@@ -162,128 +184,27 @@
       })
     }
   }
-  
+  const salesrepo = (period) => {
+      const today = new Date();
+      let startDate, endDate;
+
+      if (period === 'week') {
+        startDate = new Date(today);
+        startDate.setDate(startDate.getDate() - 7);
+        endDate = today;
+      } else if (period === 'month') {
+        startDate = new Date(today);
+        startDate.setMonth(startDate.getMonth() - 1);
+        endDate = today;
+      } else if (period === 'year') {
+        startDate = new Date(today);
+        startDate.setFullYear(startDate.getFullYear() - 1);
+        endDate = today;
+      }
+
+      document.getElementById("startDate").value = startDate.toISOString().split('T')[0];
+      document.getElementById("endDate").value = endDate.toISOString().split('T')[0];
+
+    }
   </script>
   
-  <!-- <script>
-    //pdf download
-    document.getElementById("exportToButton").addEventListener("click", function() {
-      Swal.fire({
-        title: 'Are you sure',
-        text: "Are you want to download sales Report",
-        icon: 'info',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#D3DBEE',
-        confirmButtonText: 'Download'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          Swal.fire(
-            'Downloading..',
-            'Your file is being downloadig.',
-            'success'
-          ).then(async () => {
-  
-            const dataSource = shield.DataSource.create({
-              data: "#salesReportTable",
-              schema: {
-                type: "table",
-                fields: {
-                  User: {
-                    type: String
-                  },
-                  Products: {
-                    type: String
-                  },
-                  Ordered_Date: {
-                    type: String
-                  },
-                  Delivered_Date: {
-                    type: String
-                  },
-                  Quantity: {
-                    type: String
-                  },
-                  Category: {
-                    type: String
-                  },
-                  Payment: {
-                    type: String
-                  },
-                  Amount: {
-                    type: Number
-                  }
-                }
-              }
-            });
-  
-            dataSource.read().then(function(data) {
-              var pdf = new shield.exp.PDFDocument({
-                author: "TimesCart",
-                created: new Date()
-              });
-              pdf.addPage("a4", "landscape");
-              pdf.table(
-                50,
-                50,
-                data,
-                [{
-                    field: "User",
-                    title: "User",
-                    width: 70
-                  },
-                  {
-                    field: "Products",
-                    title: "Product Name",
-                    width: 100
-                  },
-                  {
-                    field: "Order Date",
-                    title: "Ordered Date",
-                    width: 100
-                  },
-                  {
-                    field: "Delivered_Date",
-                    title: "Delivered Date",
-                    width: 100
-                  },
-                  {
-                    field: "Quantity",
-                    title: "Quantity",
-                    width: 70
-                  },
-                  {
-                    field: "Category",
-                    title: "Category",
-                    width: 100
-                  },
-                  {
-                    field: "Payment",
-                    title: "Payment",
-                    width: 100
-                  },
-                  {
-                    field: "Amount",
-                    title: "Amount",
-                    width: 70
-                  },
-  
-                ], {
-                  margins: {
-                    top: 50
-                  }
-                }
-              );
-  
-              pdf.saveAs({
-                fileName: "SalesReport"
-              });
-            });
-  
-  
-          })
-        }
-  
-      })
-    });
-  </script> -->
