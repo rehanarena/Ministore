@@ -65,7 +65,7 @@ module.exports = {
       const count = await Product.find(filterQuery).countDocuments();
 
       const categories = await Category.find({isActive: true});
-      return res.render("shop/productList", {
+      return res.render("shop/ProductList", {
         sortBy,
         categoryID,
         products,
