@@ -62,24 +62,24 @@ async function generateReferralCode(length) {
     },
     adminRegister: async (req, res) => {
       // console.log(req.body);
-      const errors = validationResult(req);
-      console.log(errors);
-      if (!errors.isEmpty()) {
-        req.flash(
-          "error",
-          errors.array().map((err) => err.msg)
-        );
-        // return res.status(422).json({ errors: errors.array() });
-        return res.redirect("/admin/register");
-      }
+      // const errors = validationResult(req);
+      // console.log(errors);
+      // if (!errors.isEmpty()) {
+      //   req.flash(
+      //     "error",
+      //     errors.array().map((err) => err.msg)
+      //   );
+      //   // return res.status(422).json({ errors: errors.array() });
+      //   return res.redirect("/admin/register");
+      // }
   
       const { username, firstName, lastName, email, password, confirmPassword } =
         req.body;
   
-      if (password !== confirmPassword) {
-        req.flash("error", "Passwords do not match");
-        return res.redirect("/admin/register");
-      }
+      // if (password !== confirmPassword) {
+      //   req.flash("error", "Passwords do not match");
+      //   return res.redirect("/admin/register");
+      // }
   
       // Check if the username or email already exists
       const existingUser = await User.findOne({ $or: [{ username }, { email }] });
@@ -90,8 +90,6 @@ async function generateReferralCode(length) {
   
       const user = new User({
         username,
-        firstName,
-        lastName,
         email,
         password,
         isAdmin: true,
