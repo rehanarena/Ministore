@@ -294,7 +294,7 @@ getVerifyOtp: async (req, res) => {
     return res.redirect("/");
   }  
 
-  res.render("auth/user/verifyOtp", {
+  res.render("auth/user/verifyotp", {
     locals,
   });
 },
