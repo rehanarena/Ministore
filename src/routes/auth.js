@@ -60,10 +60,10 @@ router
   .get(isAdminLoggedOut,authController.getAdminLogin)
   .post(authController.adminLogin);
 
-// router
-//   .route("/admin/register")
-//   .get(authController.getAdminRegister)
-//   .post(authController.adminRegister);
+router
+  .route("/admin/register")
+  .get(authController.getAdminRegister)
+  .post(authController.adminRegister);
 
 //logout
 router.get("/logout", authController.userLogout);
