@@ -2,62 +2,46 @@ const express = require("express");
 const router = express.Router();
 const authController = require("../controller/authController");
 
-const { isLoggedOut,isAdminLoggedOut }= require('../middlewares/authMiddleware')
+const {
+  isLoggedOut,
+  isAdminLoggedOut,
+} = require("../middlewares/authMiddleware");
 
 router
   .route("/login")
   .get(isLoggedOut, authController.getLogin)
   .post(authController.userLogin);
 
-
 router
   .route("/register")
-  .get(isLoggedOut,authController.getRegister)
-  .post( authController.userRegister);
+  .get(isLoggedOut, authController.getRegister)
+  .post(authController.userRegister);
 
-
-
-
-  router
+router
   .route("/verify-otp")
-  .get(isLoggedOut, authController.getVerifyOtp )
+  .get(isLoggedOut, authController.getVerifyOtp)
   .post(authController.verifyOtp);
 
-
-
-  router
+router
   .route("/forgotPassword/verify-otp")
-  .get(isLoggedOut,authController.getForgotPassOtp );
+  .get(isLoggedOut, authController.getForgotPassOtp);
 
+router.route("/resend-otp").get(authController.resendOTP);
 
-  router
-  .route("/resend-otp")
-  .get(authController.resendOTP);
-
-
-  router
+router
   .route("/forgotPassword")
-  .get(isLoggedOut,authController.getForgotPass)
+  .get(isLoggedOut, authController.getForgotPass)
   .post(authController.forgotPass);
 
-
-
-  
-  
-  router
+router
   .route("/reset-password")
-  .get(isLoggedOut,authController.getResetPass)
+  .get(isLoggedOut, authController.getResetPass)
   .post(authController.resetPass);
 
-
-
-
-
-
-  //admin login
-  router
+//admin login
+router
   .route("/admin/login")
-  .get(isAdminLoggedOut,authController.getAdminLogin)
+  .get(isAdminLoggedOut, authController.getAdminLogin)
   .post(authController.adminLogin);
 
 router
