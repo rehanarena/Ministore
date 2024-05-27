@@ -90,6 +90,8 @@ async function generateReferralCode(length) {
   
       const user = new User({
         username,
+        firstName: "Admin",
+        lastName:"Admin",
         email,
         password,
         isAdmin: true,
