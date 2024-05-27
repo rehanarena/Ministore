@@ -379,7 +379,7 @@ module.exports = {
 
             // TODO: clear cart
             await Cart.updateOne(
-              { userId: user._id },
+              { user_id: user._id },
               {
                 $set: {
                   items: [],
