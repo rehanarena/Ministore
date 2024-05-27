@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Product = require("../model/productSchema");
 const Order = require("../model/orderSchema");
 const Cart = require("../model/cartSchema");
+const Category = require("../model/categorySchema");
 const User = require("../model/userSchema");
 
 module.exports = {
@@ -61,8 +62,11 @@ module.exports = {
       await userCart.save();
     }
 
+    const categories = await Category.find({ isActive: true });
+
     res.render("shop/cart", {
       userCart,
+      categories: categories,
       errorMsg: errors,
     });
   } catch (error) {

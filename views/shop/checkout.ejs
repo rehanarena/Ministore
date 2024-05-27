@@ -226,7 +226,6 @@
 								
 								<div class="mb-5">
 									<div id="accordion" role="tablist">
-								
 										<div class="block mb-3">
 											<div class="block-header" id="headingThree" role="tab">
 												<strong><a class="accordion-link collapsed" data-bs-toggle="collapse" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">Pay on delivery</a></strong>
@@ -268,6 +267,27 @@
 												</div>
 											</div>
 										</div>
+										<div class="block mb-3">
+											<div class="block-header" id="headingFour" role="tab">
+											  <strong>
+												<a class="accordion-link collapsed" data-bs-toggle="collapse" href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">Wallet + Razorpay</a>
+											  </strong>
+											</div>
+											<div class="collapse show" id="collapseFour" role="tabpanel" aria-labelledby="headingFour" data-parent="#accordion">
+											  <div class="block-body py-3">
+												<div class="form-check">
+												  <!-- Update the value attribute to "Wallet + Razorpay" -->
+												  <input class="form-check-input" type="radio" name="paymentMethod" id="payment-method-4" value="Wallet + Razorpay">
+												  <label class="form-check-label ms-2" for="payment-method-4">
+													<strong class="text-uppercase mb-2">Pay using Wallet + Razorpay</strong>
+													<br>
+													<span class="text-muted text-warning text-sm">Half amount will be deducted from your wallet, and the remaining half will be paid using Razorpay.</span>
+												  </label>
+												</div>
+											  </div>
+											</div>
+										  </div>
+										
 								
 										<div class="block mb-3">
 											<div class="block-header" id="headingTwo" role="tab">
@@ -286,9 +306,9 @@
 												</div>
 											</div>
 										</div>
-								
 									</div>
 								</div>
+								
 								
 
 								<!-- <div class="mb-5">
@@ -1296,5 +1316,20 @@ const verifyPayment = async (response) => {
 			}
 		});
 	}
+	// JavaScript to handle showing the Swal message when Wallet + Razorpay is selected
+	document.addEventListener('DOMContentLoaded', function() {
+    const walletRazorpayRadio = document.getElementById('payment-method-4');
+    walletRazorpayRadio.addEventListener('change', function() {
+      if (this.checked) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Insufficient Balance',
+          text: 'Your wallet balance is insufficient for split payment.',
+        });
+      }
+    });
+  });
+</script>
+	
 
 </script>
