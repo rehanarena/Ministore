@@ -258,93 +258,99 @@ module.exports = {
           });
 
           break;
-          case "Split":
-            try {
-              let payable = userCart.coupon
-                ? userCart.totalPrice - userCart.couponDiscount
-                : userCart.totalPrice;
-          
-              // Deduct half from the wallet
-              let wallet = await Wallet.findOne({ userId: req.user.id });
-              let halfAmount = payable / 2;
-              if (wallet.balance < halfAmount) {
-                return res.status(400).json({ error: "Insufficient wallet balance for split payment" });
-              }
-          
-              wallet.balance -= halfAmount;
-              wallet.transactions.push({
-                date: new Date(),
-                amount: halfAmount,
-                message: "Order placed with split payment",
-                type: "Debit",
-              });
-          
-              await wallet.save();
-          
-              // Create Razorpay order for the remaining half
-              let remainingAmount = payable - halfAmount;
-              let order_id = order._id;
-          
-              const RazorpayOrder = await createRazorpayOrder(order_id, remainingAmount).then(
-                (order) => order
-              );
-          
-              const timestamp = RazorpayOrder.created_at;
-              const date = new Date(timestamp * 1000); // Convert the Unix timestamp to milliseconds
-          
-              // Format the date and time
-              const formattedDate = date.toISOString();
-          
-              // Create payment instance for Razorpay
-              let payment = new Payment({
-                payment_id: RazorpayOrder.id,
-                amount: remainingAmount,
-                currency: RazorpayOrder.currency,
-                order_id: order_id,
-                status: RazorpayOrder.status,
-                created_at: formattedDate,
-              });
-          
-              // Save payment details
-              await payment.save();
-          
-              // Update order status
-              order.paymentStatus = "paid";
-              order.status = "Confirmed";
-              await order.save();
-          
-              // Handle coupon usage
-              if (order.coupon) {
-                await Coupon.findOneAndUpdate(
-                  { _id: userCart.coupon },
-                  { $push: { usedBy: { userId: req.user.id } } }
-                );
-              }
-          
-              // Clear cart
-              await Cart.updateOne(
-                { user_id: user._id },
-                {
-                  $set: {
-                    items: [],
-                    totalPrice: 0,
-                    coupon: null,
-                    couponDiscount: 0,
-                    payable: 0,
-                  },
-                }
-              );
-          
-              return res.status(200).json({
-                success: true,
-                message: "Order has been placed successfully.",
-              });
-            } catch (error) {
-              console.error(error);
-              res.status(500).json({ error: "An error occurred while placing the order" });
+        case "Split":
+          try {
+            let payable = userCart.coupon
+              ? userCart.totalPrice - userCart.couponDiscount
+              : userCart.totalPrice;
+
+            // Deduct half from the wallet
+            let wallet = await Wallet.findOne({ userId: req.user.id });
+            let halfAmount = payable / 2;
+            if (wallet.balance < halfAmount) {
+              return res
+                .status(400)
+                .json({
+                  error: "Insufficient wallet balance for split payment",
+                });
             }
-            break;
-          
+
+            wallet.balance -= halfAmount;
+            wallet.transactions.push({
+              date: new Date(),
+              amount: halfAmount,
+              message: "Order placed with split payment",
+              type: "Debit",
+            });
+
+            await wallet.save();
+
+            // Create Razorpay order for the remaining half
+            let remainingAmount = payable - halfAmount;
+            let order_id = order._id;
+
+            const RazorpayOrder = await createRazorpayOrder(
+              order_id,
+              remainingAmount
+            ).then((order) => order);
+
+            const timestamp = RazorpayOrder.created_at;
+            const date = new Date(timestamp * 1000); // Convert the Unix timestamp to milliseconds
+
+            // Format the date and time
+            const formattedDate = date.toISOString();
+
+            // Create payment instance for Razorpay
+            let payment = new Payment({
+              payment_id: RazorpayOrder.id,
+              amount: remainingAmount,
+              currency: RazorpayOrder.currency,
+              order_id: order_id,
+              status: RazorpayOrder.status,
+              created_at: formattedDate,
+            });
+
+            // Save payment details
+            await payment.save();
+
+            // Update order status
+            order.paymentStatus = "paid";
+            order.status = "Confirmed";
+            await order.save();
+
+            // Handle coupon usage
+            if (order.coupon) {
+              await Coupon.findOneAndUpdate(
+                { _id: userCart.coupon },
+                { $push: { usedBy: { userId: req.user.id } } }
+              );
+            }
+
+            // Clear cart
+            await Cart.updateOne(
+              { user_id: user._id },
+              {
+                $set: {
+                  items: [],
+                  totalPrice: 0,
+                  coupon: null,
+                  couponDiscount: 0,
+                  payable: 0,
+                },
+              }
+            );
+
+            return res.status(200).json({
+              success: true,
+              message: "Order has been placed successfully.",
+            });
+          } catch (error) {
+            console.error(error);
+            res
+              .status(500)
+              .json({ error: "An error occurred while placing the order" });
+          }
+          break;
 
         case "Wallet":
           const orderCreate = await Order.create(order);
@@ -559,7 +565,7 @@ module.exports = {
     let page = req.query.page || 1;
 
     let orderDetails = await Order.find({ customer_id: user._id })
-      .select("_id items address payment_method status createdAt total_amount")
+      .select("_id items address paymentMethod status createdAt total_amount")
       .populate({
         path: "items.product_id",
         select: "name",
@@ -569,7 +575,7 @@ module.exports = {
       .sort({ createdAt: -1 })
       .exec();
 
-      for (const order of orderDetails) {
+    for (const order of orderDetails) {
       const allCancelled = order.items.every(
         (item) => item.status === "Cancelled"
       );
@@ -633,8 +639,6 @@ module.exports = {
         throw new Error("Order not found");
       }
 
-     
-
       for (const item of orderDetails.items) {
         switch (item.status) {
           case "Confirmed":
@@ -674,7 +678,8 @@ module.exports = {
   },
   // Get Invoice
   getInvoice: async (req, res) => {
-    const invoiceId = `SS${Math.floor(1000 + Math.random() * 9000)}`;
+    const orderId = `order${Math.floor(1000 + Math.random() * 9000)}`;
+    const invoiceId = `MS${Math.floor(1000 + Math.random() * 9000)}`;
 
     const locals = {
       title: `Invoice - ${invoiceId}`,
@@ -753,6 +758,7 @@ module.exports = {
       order: order[0],
       user: req.user,
       invoiceId,
+      orderId,
       orderDetails,
       orderProducts: orderDetails.items,
       userCart,
@@ -924,7 +930,7 @@ module.exports = {
         order.paymentMethod === "Online" ||
         order.paymentMethod === "Wallet"
       ) {
-        let amount = currentItem.price*currentItem.quantity;
+        let amount = currentItem.price * currentItem.quantity;
         let wallet = await Wallet.findOne({ userId: req.user.id });
         if (!wallet) {
           wallet = new Wallet({
@@ -952,7 +958,6 @@ module.exports = {
         }
       }
 
-
       res.status(200).json({
         success: true,
         message: "Order cancelled successfully.",
@@ -963,7 +968,6 @@ module.exports = {
       res.status(500).json({ message: "Internal Server error." });
     }
   },
-
 
   returnOrder: async (req, res) => {
     console.log(req.body);
@@ -978,7 +982,7 @@ module.exports = {
         comment: req.body.comment,
       });
       retrn.save();
-  
+
       // Update the status of the item to "Return requested"
       await Order.updateOne(
         {
@@ -991,16 +995,20 @@ module.exports = {
           },
         }
       );
-  
+
       // Check if all items in the order are in return status
       const order = await Order.findById(req.body.order_id);
-      const allItemsInReturn = order.items.every(item => item.status === "Return requested");
-  
+      const allItemsInReturn = order.items.every(
+        (item) => item.status === "Return requested"
+      );
+
       // Update the order status if all items are in return status
       if (allItemsInReturn) {
-        await Order.findByIdAndUpdate(req.body.order_id, { status: "In-Return" });
+        await Order.findByIdAndUpdate(req.body.order_id, {
+          status: "In-Return",
+        });
       }
-  
+
       console.log("Return request processed successfully");
       res.json({
         success: true,
@@ -1013,7 +1021,7 @@ module.exports = {
       });
     }
   },
-  
+
   changeOrderStatus: async (req, res) => {
     const order_id = req.params.id;
 

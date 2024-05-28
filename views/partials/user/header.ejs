@@ -2,16 +2,16 @@
     <header class="header">
         <div class="header-bottom sticky-header">
             <div class="container">
-                <div class="header-left" style="width: 200px;"> <!-- Set fixed width -->
+                <div class="header-left" style="width: 200px;">
                     <button class="mobile-menu-toggler">
                         <span class="sr-only">Toggle mobile menu</span>
                         <i class="icon-bars"></i>
                     </button>
                     <a href="/" class="logo">
-                        <h1 class="text-success display-6" style="font-size: 24px;">Ministore</h1> <!-- Fixed font size -->
+                        <h1 class="text-success display-6" style="font-size: 24px;">Ministore</h1>
                     </a>
                 </div>
-                <div class="header-center" style="flex: 1;"> <!-- Allow flexible width -->
+                <div class="header-center" style="flex: 1;">
                     <nav class="main-nav">
                         <ul class="menu sf-arrows">
                             <li class="megamenu-container active">
@@ -31,76 +31,89 @@
                         </ul><!-- End .menu -->
                     </nav><!-- End .main-nav -->
                 </div><!-- End .header-center -->
-                
-            
-          
 
 
 
 
-                <div class="header-right" style="width: 300px;"> <!-- Set fixed width -->
-                    <div class="header-search" style="margin-right: 10px;"> <!-- Add margin -->
+
+
+
+                <div class="header-right" style="width: 300px;">
+                    <div class="header-search" style="margin-right: 10px;">
                         <a href="#" class="search-toggle" role="button"><i class="icon-search"></i></a>
-                        <form action="/search/" method="get" style="width: 200px;"> <!-- Set fixed width -->
+                        <form action="/search/" method="get" style="width: 200px;">
                             <div class="header-search-wrapper">
                                 <label for="q" class="sr-only">Search</label>
-                                <input type="search" class="form-control" name="search" id="search" placeholder="Search in..." required style="width: 150px;"> <!-- Set fixed width -->
+                                <input type="search" class="form-control" name="search" id="search"
+                                    placeholder="Search in..." required style="width: 150px;">
                             </div><!-- End .header-search-wrapper -->
                         </form>
                     </div><!-- End .header-search -->
 
-                       <!-- User Not Logged - link to login page-->
-          <% if (typeof user !=='undefined') { %>
-            <% if (user) { %>
-                <div class="nav-item navbar-icon-link">
-                    <a href="/user/profile" class="navbar-icon-link">
-                        <i class="bi bi-person" style="font-size: 2.5rem; color: black;"></i> <!-- Adjust the font size as needed -->
-                        <span class="text-sm ms-2 ms-lg-0 text-uppercase text-sm fw-bold d-none d-sm-inline d-lg-none">
-                            Account
-                        </span>
-                    </a>
-                </div>
-                
-            <% } %>
-            <% } else { %>
-            <div class="nav-item navbar-icon-link m-0">
-              <a href="/login" class="navbar-icon-link">
-                <i class="bi bi-door-open-fill text-success"></i>
-                <span class="text-sm ms-3 ms-lg-0 text-uppercase text-sm fw-bold d-none d-sm-inline d-lg-none">Log
-                  in
-                </span>
-              </a>
-            </div>
-            <div class="nav-item navbar-icon-link m-0">
-              <a href="/register" class="navbar-icon-link">
-                <i class="bi bi-plus-circle text-info"></i>
-                <span class="text-sm ms-2 ms-lg-0 text-uppercase text-sm fw-bold d-none d-sm-inline d-lg-none">Sign
-                  Up
-                </span>
-              </a>
-            </div>
-            <% } %>
+                    <!-- User Not Logged - link to login page-->
+                    <% if (typeof user !=='undefined' ) { %>
+                        <% if (user) { %>
+                            <div class="nav-item navbar-icon-link">
+                                <a href="/user/profile" class="navbar-icon-link">
+                                    <i class="bi bi-person" style="font-size: 2.5rem; color: black;"></i>
+                                    <!-- Adjust the font size as needed -->
+                                    <span
+                                        class="text-sm ms-2 ms-lg-0 text-uppercase text-sm fw-bold d-none d-sm-inline d-lg-none">
+                                        Account
+                                    </span>
+                                </a>
+                            </div>
 
-                    <a href="/user/wishlist" class="wishlist-link" style="margin-right: 10px;"> <!-- Add margin -->
-                        <i class="icon-heart-o"></i>
-                    </a>
+                            <% } %>
+                                <% } else { %>
+                                    <div class="nav-item navbar-icon-link m-0">
+                                        <a href="/login" class="navbar-icon-link">
+                                            <i class="bi bi-door-open-fill text-success"></i>
+                                            <span
+                                                class="text-sm ms-3 ms-lg-0 text-uppercase text-sm fw-bold d-none d-sm-inline d-lg-none">Log
+                                                in</span>
+                                        </a>
+                                    </div>
 
-                    <div class="dropdown cart-dropdown">
-                        <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static" style="margin-right: 10px;"> <!-- Add margin -->
-                            <i class="icon-shopping-cart"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right" style="width: 300px;"> <!-- Set fixed width -->
-                            <div class="dropdown-cart-products" style="max-height: 300px; overflow-y: auto;"> <!-- Limit height and add scroll -->
-                                <div class="product">
-                                    <!-- Cart products here -->
-                                </div>
-                            </div><!-- End .dropdown-cart-products -->
-                            <div class="dropdown-cart-action">
-                                <a href="/user/cart" class="btn btn-primary" style="width: 140px;">View Cart</a> <!-- Set fixed width -->
-                                <a href="/user/checkout" class="btn btn-outline-primary-2" style="width: 140px;"><span>Checkout</span><i class="icon-long-arrow-right"></i></a> <!-- Set fixed width -->
-                            </div><!-- End .dropdown-cart-action -->
-                        </div><!-- End .dropdown-menu -->
-                    </div><!-- End .cart-dropdown -->
+
+                                    <div class="nav-item navbar-icon-link m-0 ms-2">
+                                        <a href="/register" class="navbar-icon-link">
+                                            <i class="bi bi-plus-circle text-info"></i>
+                                            <span
+                                                class="text-sm ms-2 ms-lg-0 text-uppercase text-sm fw-bold d-none d-sm-inline d-lg-none">Sign
+                                                Up</span>
+                                        </a>
+                                    </div>
+
+                                    <% } %>
+
+                                        <a href="/user/wishlist" class="wishlist-link" style="margin-right: 10px;">
+                                            <i class="icon-heart-o"></i>
+                                        </a>
+
+                                        <div class="dropdown cart-dropdown">
+                                            <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false" data-display="static"
+                                                style="margin-right: 10px;"> <!-- Add margin -->
+                                                <i class="icon-shopping-cart"></i>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-right" style="width: 300px;">
+                                                <div class="dropdown-cart-products"
+                                                    style="max-height: 300px; overflow-y: auto;">
+                                                    <!-- Limit height and add scroll -->
+                                                    <div class="product">
+                                                        <!-- Cart products here -->
+                                                    </div>
+                                                </div><!-- End .dropdown-cart-products -->
+                                                <div class="dropdown-cart-action">
+                                                    <a href="/user/cart" class="btn btn-primary"
+                                                        style="width: 140px;">View Cart</a>
+                                                    <a href="/user/checkout" class="btn btn-outline-primary-2"
+                                                        style="width: 140px;"><span>Checkout</span><i
+                                                            class="icon-long-arrow-right"></i></a>
+                                                </div><!-- End .dropdown-cart-action -->
+                                            </div><!-- End .dropdown-menu -->
+                                        </div><!-- End .cart-dropdown -->
                 </div><!-- End .header-right -->
             </div><!-- End .container -->
         </div><!-- End .header-bottom -->

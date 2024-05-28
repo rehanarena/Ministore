@@ -23,8 +23,8 @@ const order_schema = new Schema(
         price: {
           type: Number,
         },
-        itemTotal:{
-          type:Number,
+        itemTotal: {
+          type: Number,
         },
 
         status: {

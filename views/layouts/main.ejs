@@ -57,55 +57,103 @@
 
                     <%- include('../partials/user/footer.ejs') %>
 
-                    <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+                        <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
 
-                    <!-- Mobile Menu -->
-                    <div class="mobile-menu-overlay"></div><!-- End .mobil-menu-overlay -->
-                
-                    <div class="mobile-menu-container">
-                        <div class="mobile-menu-wrapper">
-                            <span class="mobile-menu-close"><i class="icon-close"></i></span>
-                
-                            <form action="/search/" method="get" class="mobile-search">
-                                <label for="mobile-search" class="sr-only">Search</label>
-                                <input type="search" class="form-control" name="mobile-search" id="mobile-search" placeholder="Search in..." required>
-                                <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
-                            </form>
-                            
-                            <nav class="mobile-nav">
-                                <ul class="mobile-menu">
-                                    <li class="active">
-                                        <a href="/">Home</a>
-                
-                                        
-                                    </li>
-                                    <li>
-                                        <a href="/shop">Shop</a>
-                                      
-                                    </li>
+                        <!-- Mobile Menu -->
+                        <div class="mobile-menu-overlay"></div><!-- End .mobil-menu-overlay -->
 
-                                    <li>
-                                        <a href="/about">About</a>
-                                      
-                                    </li>
 
-                                    <li>
-                                        <a href="/contact">Contact</a>
-                                      
-                                    </li>
-                                   
-                                </ul>
-                            </nav><!-- End .mobile-nav -->
-                
-                            <div class="social-icons">
-                                <a href="#" class="social-icon" target="_blank" title="Facebook"><i class="icon-facebook-f"></i></a>
-                                <a href="#" class="social-icon" target="_blank" title="Twitter"><i class="icon-twitter"></i></a>
-                                <a href="#" class="social-icon" target="_blank" title="Instagram"><i class="icon-instagram"></i></a>
-                                <a href="#" class="social-icon" target="_blank" title="Youtube"><i class="icon-youtube"></i></a>
-                            </div><!-- End .social-icons -->
-                        </div><!-- End .mobile-menu-wrapper -->
-                    </div><!-- End .mobile-menu-container -->
-                
+                        <div class="mobile-menu-container">
+                            <div class="mobile-menu-wrapper">
+                                <span class="mobile-menu-close"><i class="icon-close"></i></span>
+                                <!-- User Not Logged - link to login page-->
+                                <% if (typeof user !=='undefined' ) { %>
+                                    <% if (user) { %>
+                                        <div class="nav-item navbar-icon-link text-center">
+                                            <a href="/user/profile" class="navbar-icon-link">
+                                                <i class="bi bi-person" style="font-size: 2.5rem; color: white;"></i>
+                                                <!-- Adjust the font size as needed -->
+                                                <span
+                                                    class="text-sm ms-2 ms-lg-0 text-uppercase text-sm fw-bold d-none d-sm-inline d-lg-none">
+                                                    Account
+                                                </span>
+                                            </a>
+                                        </div>
+
+                                        <% } %>
+                                            <% } else { %>
+                                                <div class="nav-item navbar-icon-link m-0">
+                                                    <a href="/login" class="navbar-icon-link">
+                                                        <i class="bi bi-door-open-fill text-success"></i>
+                                                        <span
+                                                            class="text-sm ms-3 ms-lg-0 text-uppercase text-sm fw-bold d-none d-sm-inline d-lg-none">Log
+                                                            in
+                                                        </span>
+                                                    </a>
+                                                </div>
+                                                <div class="nav-item navbar-icon-link m-0">
+                                                    <a href="/register" class="navbar-icon-link">
+                                                        <i class="bi bi-plus-circle text-info"></i>
+                                                        <span
+                                                            class="text-sm ms-2 ms-lg-0 text-uppercase text-sm fw-bold d-none d-sm-inline d-lg-none">Sign
+                                                            Up
+                                                        </span>
+                                                    </a>
+                                                </div>
+                                                <% } %>
+
+
+
+                                                    <form action="/search/" method="get" style="width: 200px;">
+                                                        <!-- Set fixed width -->
+                                                        <div class="header-search-wrapper">
+                                                            <label for="q" class="sr-only">Search</label>
+                                                            <input type="search" class="form-control" name="search"
+                                                                id="search" placeholder="Search in..." required
+                                                                style="width: 150px;"> <!-- Set fixed width -->
+
+                                                        </div><!-- End .header-search-wrapper -->
+                                                    </form>
+                                                    <nav class="mobile-nav">
+                                                        <ul class="mobile-menu">
+                                                            <li class="active">
+                                                                <a href="/">Home</a>
+
+
+                                                            </li>
+                                                            <li>
+                                                                <a href="/shop">Shop</a>
+
+                                                            </li>
+
+                                                            <li>
+                                                                <a href="/about">About</a>
+
+                                                            </li>
+
+                                                            <li>
+                                                                <a href="/contact">Contact</a>
+
+                                                            </li>
+
+                                                        </ul>
+                                                    </nav><!-- End .mobile-nav -->
+
+
+
+                                                    <div class="social-icons">
+                                                        <a href="#" class="social-icon" target="_blank"
+                                                            title="Facebook"><i class="icon-facebook-f"></i></a>
+                                                        <a href="#" class="social-icon" target="_blank"
+                                                            title="Twitter"><i class="icon-twitter"></i></a>
+                                                        <a href="#" class="social-icon" target="_blank"
+                                                            title="Instagram"><i class="icon-instagram"></i></a>
+                                                        <a href="#" class="social-icon" target="_blank"
+                                                            title="Youtube"><i class="icon-youtube"></i></a>
+                                                    </div><!-- End .social-icons -->
+                            </div><!-- End .mobile-menu-wrapper -->
+                        </div><!-- End .mobile-menu-container -->
+
     </div><!-- End .page-wrapper -->
 
     <!-- Plugins JS File -->
@@ -123,7 +171,7 @@
     <!-- Main JS File -->
     <script src="/assets/js/main.js"></script>
     <script src="/assets/js/demos/demo-8.js"></script>
-    
+
     <!-- Bootstrap JavaScript Bundle (Popper.js included)-->
     <script src="https://demo.bootstrapious.com/sell/2-0-1/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- Bootstrap Icons -->

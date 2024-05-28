@@ -82,25 +82,25 @@ module.exports = {
     const locals = {
       title: "Ministore - Wishlist",
     };
-    
+
     // Check if the user is authenticated
     if (!req.isAuthenticated()) {
       // Redirect to login page if not authenticated
-      return res.redirect('/login'); 
+      return res.redirect("/login");
     }
-  
+
     try {
       // Find the user by their ID
       let user = await User.findById(req.user.id);
-      
+
       // Find the wishlist for the user and populate the products
       let wishlist = await Wishlist.findOne({ userId: user._id }).populate({
         path: "products",
       });
-  
+
       // Determine the products to render
       let products = wishlist ? wishlist.products : [];
-  
+
       // Render the wishlist page with the necessary data
       res.render("user/wishlist", {
         locals,
@@ -113,7 +113,7 @@ module.exports = {
       res.status(500).send("Internal Server Error");
     }
   },
-  
+
   addToWishlist: async (req, res) => {
     console.log(req.body, req.params);
 

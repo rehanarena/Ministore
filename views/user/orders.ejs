@@ -1,44 +1,53 @@
 <div class="container mb-5">
   <div class="row">
     <%- include('../partials/user/sidebar.ejs') %>
-    <!-- Content  -->
-    <section class="col-lg-8">
-      <% if (orderDetails && orderDetails.length > 0 && orderDetails != 'undefined') { %>
-        <div class="container table-responsive">
-          <% if (typeof orderDetails !== 'undefined' && orderDetails.length > 0) { %>
-            <% orderDetails.forEach(element => { %>
-            <% }) %>
-          <% } else { %>
-            <tr class="align-middle text-center text-uppercase">
-              <td colspan="5"  class="text-bg-danger">No orders found</td>
-            </tr>
-          <% } %>
-          <div class="row col-md-8">
-            <% orderDetails.forEach(function(order) { %>
-              <a class="text-decoration-none text-capitalize" href="/user/order/<%= order._id %>">
-                <div class="card border border-gray mb-4">
-                  <div class="card-body">
-                    <div class="d-flex flex-row justify-content-between">
-                      <div class="order-details">
-                        <div class="h5 text-muted">Order: <%= new Date(order.createdAt).toLocaleString() %></div>
-                        <span class="fw-bold">Payment:</span> <%= order.payment_method %><br>
-                        <p class="text-normal">
-                          <%= order.address && order.address.house_name %>,
-                          <%= order.address && order.address.locality %>,
-                          <%= order.address && order.address.area_street %>,<br>
-                          <%= order.address && order.address.landmark %>,
-                          <%= order.address && order.address.state %>
-                          <span class="fw-bold">-<%= order.address?.zipcode %></span>
-                        </p>
-                      </div>
-                      <% if (order.coupon) { %>
-                        <div class="coupon-details">
-                          Offer Applied
-                          <div class="bg-warning rounded px-1 text-uppercase"><%= order.coupon.code %> </div>
-                          <div class="fw-bold px-1"><%= order.coupon.rateOfDiscount %>% off</div>
-                        </div>
-                      <% } %>
-                      <div class="status fw-bold lead text-uppercase 
+      <!-- Content  -->
+      <section class="col-lg-8">
+        <% if (orderDetails && orderDetails.length> 0 && orderDetails != 'undefined') { %>
+          <div class="container table-responsive">
+            <% if (typeof orderDetails !=='undefined' && orderDetails.length> 0) { %>
+              <% orderDetails.forEach(element=> { %>
+                <% }) %>
+                  <% } else { %>
+                    <tr class="align-middle text-center text-uppercase">
+                      <td colspan="5" class="text-bg-danger">No orders found</td>
+                    </tr>
+                    <% } %>
+                      <div class="row col-md-8">
+                        <% orderDetails.forEach(function(order) { %>
+                          <a class="text-decoration-none text-capitalize" href="/user/order/<%= order._id %>">
+                            <div class="card border border-gray mb-4">
+                              <div class="card-body">
+                                <div class="d-flex flex-row justify-content-between">
+                                  <div class="order-details">
+                                    <div class="h5 text-muted">orderID: # <%= order._id %>
+                                    </div>
+                                    <p>Placed at: <%= new Date(order.createdAt).toLocaleString() %><br>
+                                        <span class="fw-bold">Payment:</span> <strong>
+                                          <%= order.paymentMethod %>
+                                        </strong><br>
+
+                                        <p class="text-normal">
+                                          <%= order.address && order.address.house_name %>,
+                                            <%= order.address && order.address.locality %>,
+                                              <%= order.address && order.address.area_street %>,<br>
+                                                <%= order.address && order.address.landmark %>,
+                                                  <%= order.address && order.address.state %>
+                                                    <span class="fw-bold">-<%= order.address?.zipcode %></span>
+                                        </p>
+                                  </div>
+                                  <% if (order.coupon) { %>
+                                    <div class="coupon-details">
+                                      Offer Applied
+                                      <div class="bg-warning rounded px-1 text-uppercase">
+                                        <%= order.coupon.code %>
+                                      </div>
+                                      <div class="fw-bold px-1">
+                                        <%= order.coupon.rateOfDiscount %>% off
+                                      </div>
+                                    </div>
+                                    <% } %>
+                                      <div class="status fw-bold lead text-uppercase 
                           <% if (order.status === 'Delivered') { %> text-success 
                           <% } else if (order.status === 'Cancelled' || order.status === 'Failed') { %> text-danger 
                           <% } else if(order.status === 'Returned') { %> text-warning 
@@ -46,76 +55,82 @@
                           <% } else if(order.status === 'Pending') { %> text-danger 
                           <% } else  { %> text-secondary 
                           <% } %>">
-                        <%= order.status %>
+                                        <%= order.status %>
+                                      </div>
+                                </div>
+                              </div>
+                            </div>
+                          </a>
+                          <% }); %>
                       </div>
-                    </div>
-                  </div>
-                </div>
-              </a>
-            <% }); %>
-          </div>
 
-          <!-- Pagination-->
-          <% if (orderDetails.length > 0 && nextPage || current == pages) { %>
-            <nav aria-label="Product Pagination">
-              <ul class="pagination justify-content-center mt-5">
-                <% if (current == 1) { %>
-                  <li class="page-item disabled">
-                    <a href="#" class="page-link">First</a>
-                  </li>
-                <% } else { %>
-                  <li class="page-item">
-                    <a href="/user/orders/?page=1" class="page-link">First</a>
-                  </li>
-                <% } %>
-                <% var i = (Number(current)> 5 ? Number(current) - 4 : 1) %>
-                <% if (i !== 1) { %>
-                  <li class="page-item disabled">
-                    <a href="#" class="page-link">...</a>
-                  </li>
-                <% } %>
-                <% for( ; i < Number(current) + 4 && i <= pages ; i++ ) { %>
-                  <% if (i == current) { %>
-                    <li class="page-item disabled">
-                      <a href="#" class="page-link"><%= i %> </a>
-                    </li>
-                  <% } else { %>
-                    <li class="page-item">
-                      <a href="/user/orders?page=<%= i %>" class="page-link text-primary fw-bold"><%= i %></a>
-                    </li>
-                  <% } %>
-                  <% if (i == Number(current)+ 4 && i < pages) { %>
-                    <li class="page-item disabled">
-                      <a href="#" class="page-link">...</a>
-                    </li>
-                  <% } %>
-                <% } %>
-                <% if (current == pages) { %>
-                  <li class="page-item disabled">
-                    <a href="#" class="page-link">Last</a>
-                  </li>
-                <% } else { %>
-                  <li class="page-item">
-                    <a href="/user/orders?page=<%= pages %>" class="page-link">Last</a>
-                  </li>
-                <% } %>
-              </ul>
-            </nav>
-          <% } %>
-        </div>
-      <% } else { %>
-        <!-- If orders is empty -->
-        <div class="container my-5 mb-6">
-          <div class="col my-5 text-center">
-            <h2 class="h1">No Orders Found</h2>
-            <h3 class="my-5">
-              <a href="/shop">
-                <button class="btn btn-lg btn-primary">Shop Now</button>
-              </a>
-            </h3>
+                      <!-- Pagination-->
+                      <% if (orderDetails.length> 0 && nextPage || current == pages) { %>
+                        <nav aria-label="Product Pagination">
+                          <ul class="pagination justify-content-center mt-5">
+                            <% if (current==1) { %>
+                              <li class="page-item disabled">
+                                <a href="#" class="page-link">First</a>
+                              </li>
+                              <% } else { %>
+                                <li class="page-item">
+                                  <a href="/user/orders/?page=1" class="page-link">First</a>
+                                </li>
+                                <% } %>
+                                  <% var i=(Number(current)> 5 ? Number(current) - 4 : 1) %>
+                                    <% if (i !==1) { %>
+                                      <li class="page-item disabled">
+                                        <a href="#" class="page-link">...</a>
+                                      </li>
+                                      <% } %>
+                                        <% for( ; i < Number(current) + 4 && i <=pages ; i++ ) { %>
+                                          <% if (i==current) { %>
+                                            <li class="page-item disabled">
+                                              <a href="#" class="page-link">
+                                                <%= i %>
+                                              </a>
+                                            </li>
+                                            <% } else { %>
+                                              <li class="page-item">
+                                                <a href="/user/orders?page=<%= i %>"
+                                                  class="page-link text-primary fw-bold">
+                                                  <%= i %>
+                                                </a>
+                                              </li>
+                                              <% } %>
+                                                <% if (i==Number(current)+ 4 && i < pages) { %>
+                                                  <li class="page-item disabled">
+                                                    <a href="#" class="page-link">...</a>
+                                                  </li>
+                                                  <% } %>
+                                                    <% } %>
+                                                      <% if (current==pages) { %>
+                                                        <li class="page-item disabled">
+                                                          <a href="#" class="page-link">Last</a>
+                                                        </li>
+                                                        <% } else { %>
+                                                          <li class="page-item">
+                                                            <a href="/user/orders?page=<%= pages %>"
+                                                              class="page-link">Last</a>
+                                                          </li>
+                                                          <% } %>
+                          </ul>
+                        </nav>
+                        <% } %>
           </div>
-        </div>
-      <% } %>
-    </section>
+          <% } else { %>
+            <!-- If orders is empty -->
+            <div class="container my-5 mb-6">
+              <div class="col my-5 text-center">
+                <h2 class="h1">No Orders Found</h2>
+                <h3 class="my-5">
+                  <a href="/shop">
+                    <button class="btn btn-lg btn-primary">Shop Now</button>
+                  </a>
+                </h3>
+              </div>
+            </div>
+            <% } %>
+      </section>
   </div>
 </div>

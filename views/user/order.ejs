@@ -15,11 +15,11 @@
                   <div class="col-md-8">
                     <div class="card-body">
                       <h5 class="card-title"><%- item.product_id.product_name %></h5>
-                      <p class="card-text"><span class="fw-bold">Price: <span class="text-muted"><%- item.price
+                      <p class="card-text"><span class="fw-bold">Price: ₹ <span class="text-muted"><%- item.price
                               %></span></span></p>
                       <p class="card-text"><span class="fw-bold">Quantity: <span class="text-muted"><%- item.quantity
                               %></span></span></p>
-                      <p class="card-text"><span class="fw-bold">Item Total: <span class="text-muted"><%- item.price *
+                      <p class="card-text"><span class="fw-bold">Item Total: ₹ <span class="text-muted"><%- item.price *
                               item.quantity %></span></span></p>
                       <p class="card-text"><small class="text-body-secondary">Last updated <%-
                             orderDetails.updatedAt.toDateString() %></small></p>
@@ -29,45 +29,49 @@
                     <div class="card-body px-3 m-2 border">
                       <div class="row justify-content-center gap-3 mx-2">
                         <!-- Cancel Order button -->
-                        <% if (item.status !== 'Cancelled' && item.status !== 'Delivered' && item.status !== 'Return requested' && item.status !== 'Returned') { %>
+                        <% if (item.status !=='Cancelled' && item.status !=='Delivered' && item.status
+                          !=='Return requested' && item.status !=='Returned' ) { %>
                           <button
                             onclick="cancelOrder('<%- orderDetails._id %>', '<%- item.product_id._id %>', '<%- item.variant %>')"
                             type="button" class="btn col btn-outline-danger">Cancel Order</button>
-                        <% } else if (item.status === 'Cancelled') { %>
-                          <p class="text-danger">Cancelled on <%= item.cancelled_on %></p>
-                        <% } %>
-                    
-                        <!-- Show Return Order button if not in return and status is not Confirmed, Approved, Cancelled, Return requested, or Returned -->
-                        <% if (!item.return && !item.inReturn && item.status !== 'Confirmed' && item.status !== 'Approved' && item.status !== 'Cancelled' && item.status !== 'Return requested' && item.status !== 'Returned') { %>
-                          <button type="button" data-order-id="<%- orderDetails._id %>"
-                            data-item-id="<%- item._id %>" data-variant="<%- item.variant %>"
-                            data-product-id="<%- item.product_id._id %>" data-bs-toggle="modal"
-                            data-bs-target="#returnOrderModal" class="btn col btn-outline-warning">Return Order</button>
-                        <% } %>
-                    
-                        <!-- Show Return Status if in return or return requested -->
-                        <% if (item.inReturn || item.status === 'Return requested') { %>
-                          <input role="button" readonly type="none"
-                            class="text-center btn text-warning py-2 px-2"
-                            value="Return: <%= item.status %>">
-                        <% } %>
-                    
-                        <!-- Show "Returned Successfully" button if the status is "Returned" -->
-                        <% if (item.status === 'Returned') { %>
-                          <button class="btn btn-success">Returned Successfully</button>
-                        <% } %>
-                    
-                        <!-- Download Invoice Button -->
-                        <% if (item.status === 'Delivered') { %>
-                          <button id="invoice" data-order-id="<%- orderDetails._id %>"
-                            data-item-id="<%- item._id %>"
-                            data-product-id="<%- item.product_id._id %>" data-bs-toggle="modal"
-                            data-bs-target="#invoiceModal" type="button"
-                            class="btn col btn-outline-primary">Download Invoice</button>
-                        <% } %>
+                          <% } else if (item.status==='Cancelled' ) { %>
+                            <p class="text-danger">Cancelled on <%= item.cancelled_on %>
+                            </p>
+                            <% } %>
+
+                              <!-- Show Return Order button if not in return and status is not Confirmed, Approved, Cancelled, Return requested, or Returned -->
+                              <% if (!item.return && !item.inReturn && item.status !=='Confirmed' && item.status
+                                !=='Approved' && item.status !=='Cancelled' && item.status !=='Return requested' &&
+                                item.status !=='Returned' ) { %>
+                                <button type="button" data-order-id="<%- orderDetails._id %>"
+                                  data-item-id="<%- item._id %>" data-variant="<%- item.variant %>"
+                                  data-product-id="<%- item.product_id._id %>" data-bs-toggle="modal"
+                                  data-bs-target="#returnOrderModal" class="btn col btn-outline-warning">Return
+                                  Order</button>
+                                <% } %>
+
+                                  <!-- Show Return Status if in return or return requested -->
+                                  <% if (item.inReturn || item.status==='Return requested' ) { %>
+                                    <input role="button" readonly type="none"
+                                      class="text-center btn text-warning py-2 px-2" value="Return: <%= item.status %>">
+                                    <% } %>
+
+                                      <!-- Show "Returned Successfully" button if the status is "Returned" -->
+                                      <% if (item.status==='Returned' ) { %>
+                                        <button class="btn btn-success">Returned Successfully</button>
+                                        <% } %>
+
+                                          <!-- Download Invoice Button -->
+                                          <% if (item.status==='Delivered' ) { %>
+                                            <button id="invoice" data-order-id="<%- orderDetails._id %>"
+                                              data-item-id="<%- item._id %>"
+                                              data-product-id="<%- item.product_id._id %>" data-bs-toggle="modal"
+                                              data-bs-target="#invoiceModal" type="button"
+                                              class="btn col btn-outline-primary">Download Invoice</button>
+                                            <% } %>
                       </div>
                     </div>
-                    
+
                   </div>
                 </div>
               </div>

@@ -11,10 +11,9 @@
           </a>
         </li>
         <li class="breadcrumb-item">
-          <a class="link-body-emphasis fw-semibold text-decoration-none  text-success"
+          <a class="link-body-emphasis fw-semibold text-decoration-none text-success"
             href="/admin/products">Products</a>
         </li>
-
         <li class="breadcrumb-item active" aria-current="page">Add Product</li>
       </ol>
     </nav>
@@ -27,26 +26,26 @@
     <%= locals.title ? locals.title : 'Dashboard' %>
   </h1>
 </div>
+
 <div class="main-panel">
   <div class="content-wrapper">
     <div class="col-12 grid-margin stretch-card">
       <div class="card">
         <div class="card-body">
-          <div class="text-dark"> <!-- Add text-dark class here -->
+          <div class="text-dark">
             <h4 class="card-title">Add New Product</h4>
           </div>
           <form class="addProductForm" action="/admin/products/add-product" method="post" enctype="multipart/form-data"
             onsubmit="return validateForm()" novalidate>
-
             <div class="form-group row">
               <div class="col-6">
-                <label for="product_name" class="text-dark">Product Title</label> <!-- Add text-dark class here -->
+                <label for="product_name" class="text-dark">Product Title</label>
                 <input type="text" class="form-control text-dark text-justify" name="product_name" id="product_name"
                   placeholder="Name">
                 <span id="productNameError" class="text-danger"></span>
               </div>
               <div class="col-6">
-                <label for="actualPrice" class="text-dark">Actual Price</label> <!-- Add text-dark class here -->
+                <label for="actualPrice" class="text-dark">Actual Price</label>
                 <input type="number" class="form-control text-dark" id="actualPrice" name="actualPrice"
                   placeholder="Price">
                 <div id="priceError" class="text-danger"></div>
@@ -57,7 +56,7 @@
                 <div class="form-group row">
                   <div class="col-sm-12">
                     <div class="form-group">
-                      <label for="category">Categories:</label>
+                      <label for="category" class="text-dark">Categories:</label>
                       <select class="form-select text-capitalize" name="category" required>
                         <% categories.forEach(function(category) { %>
                           <option class="text-capitalize" value="<%= category._id %>">
@@ -73,7 +72,7 @@
               <div class="col-md-6">
                 <div class="form-group row">
                   <div class="col-sm-12">
-                    <label for="sellingPrice" class="text-dark">Discount Price</label> <!-- Add text-dark class here -->
+                    <label for="sellingPrice" class="text-dark">Discount Price</label>
                     <input type="number" class="form-control text-dark" id="sellingPrice" name="sellingPrice"
                       placeholder="Price">
                     <div id="genderError" class="text-danger"></div>
@@ -85,7 +84,7 @@
               <div class="col-md-6">
                 <div class="form-group row">
                   <div class="col-sm-12">
-                    <label for="brand_name" class="text-dark">Brand</label> <!-- Add text-dark class here -->
+                    <label for="brand_name" class="text-dark">Brand</label>
                     <input type="text" class="form-control text-dark" id="brand_name" name="brand_name"
                       placeholder="Brand Name" onkeyup="capitalizeFirstLetter(this)">
                     <span id="brandError" class="text-danger"></span>
@@ -95,8 +94,8 @@
               <div class="col-md-6">
                 <div class="form-group row">
                   <div class="col-sm-12">
-                    <label for="product_stock" class="text-dark">Stock</label> <!-- Add text-dark class here -->
-                    <input type="number" class="form-control text-dark" id="product_stock" name="stock" 
+                    <label for="product_stock" class="text-dark">Stock</label>
+                    <input type="number" class="form-control text-dark" id="product_stock" name="stock"
                       placeholder="Enter Stock">
                     <span id="quantityError" class="text-danger"></span>
                   </div>
@@ -104,7 +103,7 @@
               </div>
             </div>
             <div class="form-group mt-2">
-              <label for="description" class="text-dark">Description</label> <!-- Add text-dark class here -->
+              <label for="description" class="text-dark">Description</label>
               <textarea name="description" class="form-control text-dark" id="description" rows="4"></textarea>
               <span id="descriptionError" class="text-danger"></span>
             </div>
@@ -117,13 +116,10 @@
                       alt="Preview" />
                   </div>
                   <input name="image1" type="file" accept="image/*" id="imageInput1" class="imageInput"
-                    onchange="openImageCropper(1)">
-                  <!-- <button type="button" class="btn btn-sm btn-secondary mt-2"
-                    onclick="openModal('imagePreview1')">Crop</button> -->
+                    onchange="updateImagePreview(this, 'imagePreview1')">
                 </label>
                 <span id="imageError1" class="text-danger"></span>
               </div>
-
               <div class="col-lg-3 col-md-6 rounded-image-preview">
                 <label for="imageInput2" class="image-label">Image 2
                   <div class="rounded-image-preview">
@@ -132,13 +128,10 @@
                       alt="Preview" />
                   </div>
                   <input name="image2" type="file" accept="image/*" id="imageInput2" class="imageInput"
-                    onchange="openImageCropper(2)">
-                  <!-- <button type="button" class="btn btn-sm btn-secondary mt-2"
-                    onclick="openModal('imagePreview2')">Crop</button> -->
+                    onchange="updateImagePreview(this, 'imagePreview2')">
                 </label>
                 <span id="imageError2" class="text-danger"></span>
               </div>
-
               <div class="col-lg-3 col-md-6 rounded-image-preview">
                 <label for="imageInput3" class="image-label">Image 3
                   <div class="rounded-image-preview">
@@ -147,13 +140,10 @@
                       alt="Preview" />
                   </div>
                   <input name="image3" type="file" accept="image/*" id="imageInput3" class="imageInput"
-                    onchange="openImageCropper(3)">
-                  <!-- <button type="button" class="btn btn-sm btn-secondary mt-2"
-                    onclick="openModal('imagePreview3')">Crop</button> -->
+                    onchange="updateImagePreview(this, 'imagePreview3')">
                 </label>
                 <span id="imageError3" class="text-danger"></span>
               </div>
-
               <div class="col-lg-3 col-md-6 rounded-image-preview">
                 <label for="imageInput4" class="image-label">Image 4
                   <div class="rounded-image-preview">
@@ -162,9 +152,7 @@
                       alt="Preview" />
                   </div>
                   <input name="image4" type="file" accept="image/*" id="imageInput4" class="imageInput"
-                    onchange="openImageCropper(4)">
-                  <!-- <button type="button" class="btn btn-sm btn-secondary mt-2"
-                    onclick="openModal('imagePreview4')">Crop</button> -->
+                    onchange="updateImagePreview(this, 'imagePreview4')">
                 </label>
                 <span id="imageError4" class="text-danger"></span>
               </div>
@@ -175,85 +163,22 @@
       </div>
     </div>
   </div>
- 
-  <script defer>var cropper;
+</div>
 
-    // Function to open the Cropper modal
-    function openModal(imageId) {
-      var image = document.getElementById(imageId);
-      var cropperImage = document.getElementById('cropperImage');
+<script defer>
+  function updateImagePreview(input, previewId) {
+    var preview = document.getElementById(previewId);
+    var file = input.files[0];
+    var reader = new FileReader();
 
-      cropperImage.src = image.src;
-
-      // Ensure that any existing Cropper instance is destroyed before initializing a new one
-      if (cropper) {
-        cropper.destroy();
-      }
-
-      $('#cropModal').modal('show');
-
-      // Initialize Cropper.js for the selected image
-      cropper = new Cropper(cropperImage, {
-        aspectRatio: 0,
-        viewMode: 0,
-      });
+    reader.onloadend = function () {
+      preview.src = reader.result;
     }
 
-    function cropImage(imageIndex) {
-      // Get the cropped canvas
-      var canvas = cropper.getCroppedCanvas();
-
-      // Convert the canvas to a data URL
-      var croppedImageDataUrl = canvas.toDataURL();
-
-      // Set the cropped image as the source of the original image preview
-      var imagePreview = document.getElementById('imagePreview' + imageIndex);
-      if (imagePreview) {
-        imagePreview.src = croppedImageDataUrl;
-      }
-
-      // Set the data URL as the value of the corresponding image input field
-      var imageInput = document.getElementById('imageInput' + imageIndex);
-      if (imageInput) {
-        imageInput.value = croppedImageDataUrl;
-      }
-
-      // Close the Cropper modal
-      $('#cropModal').modal('hide');
+    if (file) {
+      reader.readAsDataURL(file);
+    } else {
+      preview.src = "https://www.creativefabrica.com/wp-content/uploads/2021/04/05/Image-Upload-Icon-Graphics-10388650-1-580x386.jpg";
     }
-
-    // ... your existing script ...
-
-    // Function to open the Cropper modal for a specific image
-    function openImageCropper(imageIndex) {
-      var imageInput = document.getElementById('imageInput' + imageIndex);
-      var cropperImage = document.getElementById('cropperImage');
-
-      // Check if a file is selected
-      if (imageInput.files && imageInput.files[0]) {
-        var reader = new FileReader();
-
-        reader.onload = function (e) {
-          cropperImage.src = e.target.result;
-
-          // Ensure that any existing Cropper instance is destroyed before initializing a new one
-          if (cropper) {
-            cropper.destroy();
-          }
-
-          // Show the Cropper modal
-          $('#cropModal').modal('show');
-
-          // Initialize Cropper.js for the selected image
-          cropper = new Cropper(cropperImage, {
-            aspectRatio: 1,
-            viewMode: 2,
-          });
-        };
-
-        // Read the selected file as a data URL
-        reader.readAsDataURL(imageInput.files[0]);
-      }
-    }
-  </script>
-  <script defer>"/js/admin/products/add-product.js"</script>
+  }
+</script>
