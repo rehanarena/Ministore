@@ -492,7 +492,7 @@ module.exports = {
         // TODO: clear cart
 
         await Cart.updateOne(
-          { user_id: customer_id }, // Change userId to user_id
+          { user_id: customer_id }, 
           {
             $set: {
               items: [],
@@ -530,17 +530,7 @@ module.exports = {
         if (couponId.coupon) {
           console.log(couponId.coupon);
 
-          // if (couponId) {
-          //   let updateCoupon = await Coupon.updateOne(
-          //     { _id: couponId.coupon},
-          //     {
-          //       $push: { usedBy: req.user.id },
-          //     },
-          //     {
-          //       new: true,
-          //     }
-          //   );
-          // }
+         
         }
         req.session.order = {
           status: true,

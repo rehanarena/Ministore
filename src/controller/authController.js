@@ -511,7 +511,7 @@ forgotPass: async (req, res) => {
     }  
     
 
-    res.render("auth/user/verifyOtp", {
+    res.render("auth/user/verifyotp", {
       locals,
       success: req.flash("success"),
       error: req.flash("error"),
