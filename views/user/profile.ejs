@@ -25,36 +25,37 @@
             <p class="m-2">Country: India</p>
           </div>
           <div class="row">
-            <!-- Update Profile Form -->
-            <div class="col-md-6">
-              <form id="update-form" action="/user/profile" method="POST">
-                <div class="card bg-light rounded-3 p-4 mb-4">
-                  <h4 class="card-title mb-4">Update Profile</h4>
-                  <div class="mb-3">
-                    <label class="form-label" for="account-fn">First Name</label>
-                    <input name="firstName" class="form-control" type="text" id="account-fn"
-                      value="<%- user.firstName %>">
+              <!-- Update Profile Form -->
+              <div class="col-md-6">
+                <form id="update-form" action="/user/profile" method="POST">
+                  <div class="card bg-light rounded-3 p-4 mb-4">
+                    <h4 class="card-title mb-4">Update Profile</h4>
+                    <div class="mb-3">
+                      <label class="form-label" for="account-fn">First Name</label>
+                      <input name="firstName" class="form-control" type="text" id="account-fn" value="<%- user.firstName %>">
+                      <small></small>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label" for="account-ln">Last Name</label>
+                      <input name="lastName" class="form-control" type="text" id="account-ln" value="<%- user.lastName %>">
+                      <small></small>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label" for="account-email">Email Address</label>
+                      <input class="form-control" type="email" id="account-email" value="<%- user.email %>" disabled>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label" for="account-phone">Phone Number</label>
+                      <input name="phone" class="form-control" type="text" id="account-phone" value="<%- user.phone %>" placeholder="9778877665" required>
+                      <small></small>
+                    </div>
+                    <hr class="mt-4 mb-3">
+                    <div class="d-grid">
+                      <button class="btn btn-success" type="submit">Save Profile</button>
+                    </div>
                   </div>
-                  <div class="mb-3">
-                    <label class="form-label" for="account-ln">Last Name</label>
-                    <input name="lastName" class="form-control" type="text" id="account-ln"
-                      value="<%- user.lastName %>">
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label" for="account-email">Email Address</label>
-                    <input class="form-control" type="email" id="account-email" value="<%- user.email %>" disabled>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label" for="account-phone">Phone Number</label>
-                    <input name="phone" class="form-control" type="text" id="account-phone" value="<%- user.phone %>"
-                      placeholder="9778877665" required>
-                  </div>
-                  <div class="d-grid">
-                    <button class="btn btn-success" type="submit">Save Profile</button>
-                  </div>
-                </div>
-              </form>
-            </div>
+                </form>
+              </div>
 
             <!-- Change Password Form -->
             <div class="col-md-6">
