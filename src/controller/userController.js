@@ -74,6 +74,56 @@ module.exports = {
     }
   },
 
+  // Password Reset From Profile
+  changePassword: async (req, res) => {
+    try {
+      const { oldPassword, newPassword, confirmNewPassword } = req.body;
+      console.log("Received request with:", { oldPassword, newPassword, confirmNewPassword });
+  
+      const user = await User.findById(req.user.id);
+      if (!user) {
+        req.flash("error", "User not found.");
+        console.log("User not found.");
+        return res.redirect("/user/profile");
+      }
+      console.log("User found:", user);
+  
+      bcrypt.compare(oldPassword, user.password, async (err, validOldPass) => {
+        if (err) {
+          console.error("Error comparing passwords:", err);
+          req.flash("error", "An error occurred while verifying the old password.");
+          return res.redirect("/user/profile");
+        }
+  
+        console.log("Old password valid:", validOldPass);
+  
+        if (!validOldPass) {
+          req.flash("error", "Old password is incorrect.");
+          console.log("Old password is incorrect.");
+          return res.redirect("/user/profile");
+        }
+  
+        if (newPassword !== confirmNewPassword) {
+          req.flash("error", "Passwords do not match.");
+          console.log("Passwords do not match.");
+          return res.redirect("/user/profile");
+        }
+  
+        // Update the user's password directly
+        user.password = newPassword;
+        await user.save();
+        console.log("Password updated successfully.");
+  
+        req.flash("success", "Password updated successfully.");
+        return res.redirect("/user/profile");
+      });
+    } catch (error) {
+      console.error("Internal server error:", error); // Log the error for debugging purposes
+      req.flash("error", "Internal server error.");
+      return res.redirect("/user/profile");
+    }
+  },
+
   /***
    * User Wishlist Mangement
    */
@@ -396,14 +446,14 @@ module.exports = {
                 req.flash("error", "Passwords Do not Match");
                 return res.redirect("/user/profile");
               } else {
-                user.password = newPassword; // Assuming you have a method to hash the password
+                user.password = newPassword; 
                 await user.save();
-                // return res.status(200).json({ 'success': 'Password Updated' });
+                
                 req.flash("success", "Password Updated");
                 return res.redirect("/user/profile");
               }
             } else {
-              // return res.status(401).json({ 'error': 'Old password is incorrect' });
+              
               req.flash("error", "Old Password is incorrect");
               return res.redirect("/user/profile");
             }

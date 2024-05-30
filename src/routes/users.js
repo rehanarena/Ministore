@@ -19,6 +19,7 @@ router
 .route("/profile")
 .get(userController.getProfile)
 .post(userController.editProfile);
+router.post("/change-password",userController.changePassword)
 
 router.route("/reset-password")
 .post(userController.resetPass);

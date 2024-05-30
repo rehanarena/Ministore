@@ -14,8 +14,6 @@
 		</div><!-- End .container -->
 	</nav><!-- End .breadcrumb-nav -->
 
-
-
 	<!-- Apply Coupon Section -->
 	<div class="col-lg-12">
 		<form class="card p-3" id="applyCoupon">
@@ -78,96 +76,83 @@
 	</div>
 	<!-- End Apply Coupon Section -->
 
-
-
-
 	<div class="container">
 		<div class="row">
 			<div class="col-lg-12">
-				<h1 class="checkout-title"><strong> Billing Details</h1>
-				</strong><!-- End .checkout-title -->
+				<h1 class="checkout-title"><strong>Billing Details</strong></h1><!-- End .checkout-title -->
 
 				<form class="needs-validation" id="orderForm">
-					<div class="d-flex">
-						<div class="row">
-							<div class="col-sm-9">
+					<div class="d-flex flex-column flex-sm-row">
+						<div class="col-sm-9 mb-4 mb-sm-0">
 
-								<% if (address.length> 0) { %>
-									<!-- Toolbar-->
-									<div
-										class="d-none d-lg-flex justify-content-between align-items-center pt-lg-3 pb-3">
-										<h6 class="fs-base  mb-0">Select Billing Address:</h6>
-									</div>
+							<% if (address.length> 0) { %>
+								<!-- Toolbar-->
+								<div class="d-flex justify-content-between align-items-center pt-lg-3 pb-3">
+									<h6 class="fs-base mb-0">Select Billing Address:</h6>
+								</div>
 
-									<!-- Addresses list-->
-									<div class="table table-responsive table-striped mt-0">
-										<table class="table table-hover mb-0">
-											<thead>
+								<!-- Addresses list-->
+								<div class="table-responsive">
+									<table class="table table-hover">
+										<thead>
+											<tr>
+												<th>Address</th>
+												<th>Actions</th>
+											</tr>
+										</thead>
+										<tbody>
+											<% address.forEach((item, index)=> { %>
 												<tr>
-													<th>Address</th>
-													<th>Actions</th>
-												</tr>
-											</thead>
-											<tbody>
-												<% address.forEach((item,index)=> { %>
-													<tr>
-
-														<td class="py-3 align-middle text-capitalize">
-															<div class="d-flex align-items-center">
-																<input <% if (index === 0) { %>
-																 checked
-																<% } %> autocomplete="false" required
-																	class="mx-2 form-check-input" type="radio"
-																	id="address-<%= index %>" name="address"
+													<td class="py-3 align-middle text-capitalize">
+														<div class="form-check">
+															<input <% if (index===0) { %> checked <% } %>
+																autocomplete="false" required class="form-check-input"
+																type="radio" id="address-<%= index %>" name="address"
 																	value="<%= item._id %>">
-																<label class="fw-semibold" for="address-<%= index %>">
-																	<%- item.name.toLowerCase() + ', ' + item.house_name
-																		+ ', ' + item.town + ', ' + item.state
-																		+ ', PIN: ' + item.zipcode + ', PH:' +
-																		item.phone %>
-																</label>
-															</div>
-														</td>
-														<td class="py-3 btn-group align-middle align-items-center">
-															<div class="">
-																<button type="button"
-																	class="btn btn-sm btn-outline-warning"
-																	id="edit-button" data-address-id="<%- item._id %>"
-																	href="#edit-address-modal" data-bs-toggle="modal">
-																	<i class="bi bi-pencil fs-6"></i>
-																</button>
-															</div>
-															<button type="button" class="btn btn-sm btn-danger"
-																id="deleteAddressButton" data-bs-toggle="tooltip"
-																title="Remove"
-																onclick="deleteAddress('<%- item._id %>')">
-																<i class="bi bi-trash fs-6"></i>
+																		<label class="form-check-label fw-semibold"
+																			for="address-<%= index %>"><%-
+																				item.name.toLowerCase() + ', ' +
+																				item.house_name + ', ' + item.town
+																				+ ', ' + item.state + ', PIN: ' +
+																				item.zipcode + ', PH:' + item.phone
+																				%></label>
+														</div>
+													</td>
+													<td class="py-3 btn-group align-middle align-items-center">
+														<div>
+															<button type="button" class="btn btn-sm btn-outline-warning"
+																id="edit-button" data-address-id="<%- item._id %>"
+																data-bs-toggle="modal"
+																data-bs-target="#edit-address-modal">
+																<i class="bi bi-pencil fs-6"></i>
 															</button>
-														</td>
-													</tr>
-													<% }) %>
-											</tbody>
-										</table>
+														</div>
+														<button type="button" class="btn btn-sm btn-danger"
+															id="deleteAddressButton" data-bs-toggle="tooltip"
+															title="Remove" onclick="deleteAddress('<%- item._id %>')">
+															<i class="bi bi-trash fs-6"></i>
+														</button>
+													</td>
+												</tr>
+												<% }) %>
+										</tbody>
+									</table>
+								</div>
+								<% } else { %>
+									<!-- Toolbar-->
+									<div class="d-flex justify-content-between align-items-center pt-lg-3 pb-3">
+										<h6 class="fs-base mb-0">Add Address</h6>
 									</div>
-									<% } else { %>
-										<!-- Toolbar-->
-										<div
-											class="d-none d-lg-flex justify-content-between align-items-center pt-lg-3 pb-3">
-											<h6 class="fs-base  mb-0">Add Address</h6>
+									<% } %>
+
+										<div class="text-sm-start pt-4">
+											<a class="btn btn-outline-success" href="#add-address"
+												data-bs-toggle="modal">
+												Add new address
+											</a>
 										</div>
-										<% } %>
-
-											<div class="text-sm-start pt-4">
-												<a class="btn btn-outline-success" href="#add-address"
-													data-bs-toggle="modal">
-													Add new address
-												</a>
-											</div>
-											<!-- </section> -->
-							</div>
-
 						</div>
-						<aside class="col-lg-4 response">
+						<aside class="col-lg-3">
 							<div class="summary">
 								<h3 class="summary-title">Your Order</h3><!-- End .summary-title -->
 
@@ -195,17 +180,19 @@
 												</td>
 											</tr><!-- End .summary-subtotal -->
 											<tr>
-												<tr class="summary-coupon-discount">
-													<td>Coupon Discount:</td>
-													<td>- ₹<%= userCart.couponDiscount.toFixed(2) %></td>
-												  </tr><!-- End .summary-coupon-discount -->
-												  
-												<td>Shipping:</td>
-												<td>Free shipping</td>
+											<tr class="summary-coupon-discount">
+												<td>Coupon Discount:</td>
+												<td>- ₹<%= userCart.couponDiscount.toFixed(2) %>
+												</td>
+											</tr><!-- End .summary-coupon-discount -->
+
+											<td>Shipping:</td>
+											<td>Free shipping</td>
 											</tr>
 											<tr class="summary-total">
 												<td>Total:</td>
-												<td>₹<%= userCart.totalPrice - userCart.couponDiscount %></td>
+												<td>₹<%= userCart.totalPrice - userCart.couponDiscount %>
+												</td>
 												</td>
 											</tr><!-- End .summary-total -->
 									</tbody>
@@ -223,45 +210,67 @@
 										<br>
 									</div>
 								</div>
-								
+
 								<div class="mb-5">
 									<div id="accordion" role="tablist">
 										<div class="block mb-3">
 											<div class="block-header" id="headingThree" role="tab">
-												<strong><a class="accordion-link collapsed" data-bs-toggle="collapse" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">Pay on delivery</a></strong>
+												<strong><a class="accordion-link collapsed" data-bs-toggle="collapse"
+														href="#collapseThree" aria-expanded="false"
+														aria-controls="collapseThree">Pay on delivery</a></strong>
 											</div>
-											<div class="collapse show" id="collapseThree" role="tabpanel" aria-labelledby="headingThree" data-parent="#accordion">
+											<div class="collapse show" id="collapseThree" role="tabpanel"
+												aria-labelledby="headingThree" data-parent="#accordion">
 												<div class="block-body py-3">
 													<div class="form-check">
-														<input class="form-check-input" type="radio" name="paymentMethod" id="payment-method-1" value="COD" <% if (isCOD) { %> checked <% } else { %> disabled <% } %>>
-														<label class="form-check-label ms-2" for="payment-method-1">
-															<strong class="text-uppercase mb-2">Pay on delivery</strong>
-															<% if (!isCOD) { %>
-															<span class="text-muted text-danger text-sm">Pay on delivery is not available for orders above ₹1000.</span>
-															<% } %>
-														</label>
+														<input class="form-check-input" type="radio"
+															name="paymentMethod" id="payment-method-1" value="COD" <% if
+															(isCOD) { %> checked <% } else { %> disabled <% } %>>
+																<label class="form-check-label ms-2"
+																	for="payment-method-1">
+																	<strong class="text-uppercase mb-2">Pay on
+																		delivery</strong>
+																	<% if (!isCOD) { %>
+																		<span class="text-muted text-danger text-sm">Pay
+																			on delivery is not available for orders
+																			above ₹1000.</span>
+																		<% } %>
+																</label>
 													</div>
 												</div>
 											</div>
 										</div>
-								
+
 										<div class="block mb-3">
 											<div class="block-header" id="headingOne" role="tab">
-												<strong><a class="accordion-link collapsed" data-bs-toggle="collapse" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">Wallet <% if (!wallet.isInsufficient) { %>
-												<span class="text-muted">Balance: <span class="text-success fw-semibold">₹<%- wallet.balance %></span></span>
-												<% } %></a></strong>
+												<strong><a class="accordion-link collapsed" data-bs-toggle="collapse"
+														href="#collapseOne" aria-expanded="false"
+														aria-controls="collapseOne">Wallet <% if
+															(!wallet.isInsufficient) { %>
+															<span class="text-muted">Balance: <span
+																	class="text-success fw-semibold">₹<%- wallet.balance
+																		%></span></span>
+															<% } %></a></strong>
 											</div>
-											<div class="collapse show" id="collapseOne" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
+											<div class="collapse show" id="collapseOne" role="tabpanel"
+												aria-labelledby="headingOne" data-parent="#accordion">
 												<div class="block-body py-3">
 													<div class="form-check">
-														<input class="form-check-input" <%- wallet.isInsufficient ? 'disabled' : '' %> type="radio" name="paymentMethod" id="payment-method-2" value="Wallet">
+														<input class="form-check-input" <%- wallet.isInsufficient
+															? 'disabled' : '' %> type="radio" name="paymentMethod"
+														id="payment-method-2" value="Wallet">
 														<label class="form-check-label ms-2" for="payment-method-2">
-															<strong class="text-uppercase mb-2">Pay using Wallet</strong>
-															<span class="text-muted fw-semibold text-sm">Your Wallet Balance: </span><span class="text-muted text-success fw-semibold text-sm">₹<%- wallet.balance %> </span>
+															<strong class="text-uppercase mb-2">Pay using
+																Wallet</strong>
+															<span class="text-muted fw-semibold text-sm">Your Wallet
+																Balance: </span><span
+																class="text-muted text-success fw-semibold text-sm">₹<%-
+																	wallet.balance %> </span>
 															<br>
 															<% if (wallet.isInsufficient) { %>
-															<span class="text-muted text-danger text-sm">Your wallet has insufficient balance.</span>
-															<% } %>
+																<span class="text-muted text-danger text-sm">Your wallet
+																	has insufficient balance.</span>
+																<% } %>
 														</label>
 													</div>
 												</div>
@@ -269,38 +278,53 @@
 										</div>
 										<div class="block mb-3">
 											<div class="block-header" id="headingFour" role="tab">
-											  <strong>
-												<a class="accordion-link collapsed" data-bs-toggle="collapse" href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">Wallet + Razorpay</a>
-											  </strong>
+												<strong>
+													<a class="accordion-link collapsed" data-bs-toggle="collapse"
+														href="#collapseFour" aria-expanded="false"
+														aria-controls="collapseFour">Wallet + Razorpay</a>
+												</strong>
 											</div>
-											<div class="collapse show" id="collapseFour" role="tabpanel" aria-labelledby="headingFour" data-parent="#accordion">
-											  <div class="block-body py-3">
-												<div class="form-check">
-												  <!-- Update the value attribute to "Wallet + Razorpay" -->
-												  <input class="form-check-input" type="radio" name="paymentMethod" id="payment-method-4" value="Wallet + Razorpay">
-												  <label class="form-check-label ms-2" for="payment-method-4">
-													<strong class="text-uppercase mb-2">Pay using Wallet + Razorpay</strong>
-													<br>
-													<span class="text-muted text-warning text-sm">Half amount will be deducted from your wallet, and the remaining half will be paid using Razorpay.</span>
-												  </label>
-												</div>
-											  </div>
-											</div>
-										  </div>
-										
-								
-										<div class="block mb-3">
-											<div class="block-header" id="headingTwo" role="tab">
-												<strong><a class="accordion-link collapsed" data-bs-toggle="collapse" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">Razorpay</a></strong>
-											</div>
-											<div class="collapse show " id="collapseTwo" role="tabpanel" aria-labelledby="headingTwo" data-parent="#accordion">
+											<div class="collapse show" id="collapseFour" role="tabpanel"
+												aria-labelledby="headingFour" data-parent="#accordion">
 												<div class="block-body py-3">
 													<div class="form-check">
-														<input class="form-check-input" type="radio" name="paymentMethod" id="payment-method-3" value="Online">
-														<label class="form-check-label ms-2" for="payment-method-3">
-															<strong class="text-uppercase mb-2">Pay with Razorpay</strong>
+														<!-- Update the value attribute to "Wallet + Razorpay" -->
+														<input class="form-check-input" type="radio"
+															name="paymentMethod" id="payment-method-4"
+															value="Wallet + Razorpay">
+														<label class="form-check-label ms-2" for="payment-method-4">
+															<strong class="text-uppercase mb-2">Pay using Wallet +
+																Razorpay</strong>
 															<br>
-															<span class="text-muted text-warning text-sm">When you make a payment using Razorpay, your wallet balance will be automatically reduced.</span>
+															<span class="text-muted text-warning text-sm">Half amount
+																will be deducted from your wallet, and the remaining
+																half will be paid using Razorpay.</span>
+														</label>
+													</div>
+												</div>
+											</div>
+										</div>
+
+
+										<div class="block mb-3">
+											<div class="block-header" id="headingTwo" role="tab">
+												<strong><a class="accordion-link collapsed" data-bs-toggle="collapse"
+														href="#collapseTwo" aria-expanded="false"
+														aria-controls="collapseTwo">Razorpay</a></strong>
+											</div>
+											<div class="collapse show " id="collapseTwo" role="tabpanel"
+												aria-labelledby="headingTwo" data-parent="#accordion">
+												<div class="block-body py-3">
+													<div class="form-check">
+														<input class="form-check-input" type="radio"
+															name="paymentMethod" id="payment-method-3" value="Online">
+														<label class="form-check-label ms-2" for="payment-method-3">
+															<strong class="text-uppercase mb-2">Pay with
+																Razorpay</strong>
+															<br>
+															<span class="text-muted text-warning text-sm">When you make
+																a payment using Razorpay, your wallet balance will be
+																automatically reduced.</span>
 														</label>
 													</div>
 												</div>
@@ -308,32 +332,26 @@
 										</div>
 									</div>
 								</div>
-								
-								
 
-							
-						
-								  <button id="submitOrder" class=" btn btn-outline-success btn-lg" type="submit">Place Order</button>
-								</div><!-- End .summary -->
-							  </aside><!-- End .col-lg-3 -->
 
-							
+
+
+
+								<button id="submitOrder" class=" btn btn-outline-success btn-lg" type="submit">Place
+									Order</button>
+							</div><!-- End .summary -->
+						</aside><!-- End .col-lg-3 -->
 					</div>
 				</form>
-
-
-
 			</div>
 		</div>
-
 	</div>
-
-
-
-
-
-
 </main><!-- End .main -->
+
+<!-- Bootstrap Bundle with Popper -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
+<!-- Your custom JavaScript file -->
+<script src="script.js"></script>
 
 <!-- Add New Address Modal-->
 <form class="needs-validation modal fade" action="/user/checkout/add-address" method="POST" id="add-address"
@@ -428,7 +446,7 @@
 					</div>
 
 					<div class="col-sm-6 form-group">
-						<label class="form-label" for="address-zip">PIN code</label>
+						<label class="form-label" for="address-zip">ZIP code</label>
 						<input autocomplete="false" name="zipcode" class="form-control" type="number" id="address-zip"
 							required>
 						<div class="invalid-feedback">Please add your ZIP code!</div>
@@ -991,46 +1009,46 @@
 
 				// Client-side code to send order data to the server
 				let form = document.getElementById("orderForm");
-				
+
 				try {
 					if (form) {
-					let formData = new FormData(form);
-					const body = Object.fromEntries(formData);
-					console.log(body);
-					let res = await fetch('/user/place-order',{
-						method:'POST',
-						headers:{
-							'Content-Type': 'application/json'
-						},
-						body: JSON.stringify(body)
-					})
-					console.log(res);
-					
-					let data = await res.json()
-					console.log(data);
-
-					if(data.success){
-						Swal.fire({
-							title:'Success',
-							text:data.message,
-							icon:'success',
-						}).then(()=>{
-							location.assign('/user/orderConfirm')
+						let formData = new FormData(form);
+						const body = Object.fromEntries(formData);
+						console.log(body);
+						let res = await fetch('/user/place-order', {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json'
+							},
+							body: JSON.stringify(body)
 						})
-					}else if(data.status){
-						showRazorpay(data.order,data.user)
-						
-					}
+						console.log(res);
 
-				} else {
-					console.error("Form element not found");
-				}
+						let data = await res.json()
+						console.log(data);
+
+						if (data.success) {
+							Swal.fire({
+								title: 'Success',
+								text: data.message,
+								icon: 'success',
+							}).then(() => {
+								location.assign('/user/orderConfirm')
+							})
+						} else if (data.status) {
+							showRazorpay(data.order, data.user)
+
+						}
+
+					} else {
+						console.error("Form element not found");
+					}
 				} catch (error) {
 					console.error(error)
 					Swal.fire({
 						title: 'Error',
 						text: error.message,
-						icon:'error',
+						icon: 'error',
 					})
 				}
 
@@ -1038,57 +1056,57 @@
 		}
 	});
 
-	
+
 	//payment interface function
-const showRazorpay = (order, user) => {
-  console.log(order, user);
-  var options = {
-    key: "rzp_test_EL8MknNoOtmLva",
-    amount: order.amount,
-    currency: "INR",
-    name: "Ministore",
-    description: "Test Transaction",
-    order_id: order.id,
-    handler: async function (response) {
-      console.log(response);
-      await verifyPayment(response);
-    },
-    prefill: {
-      name: user.username,
-      email: user.email,
-      contact: user.phone,
-    },
-    notes: {
-      address: "Razorpay Corporate Office",
-    },
-    theme: {
-      color: "#2ade99",
-    },
-  };
+	const showRazorpay = (order, user) => {
+		console.log(order, user);
+		var options = {
+			key: "rzp_test_EL8MknNoOtmLva",
+			amount: order.amount,
+			currency: "INR",
+			name: "Ministore",
+			description: "Test Transaction",
+			order_id: order.id,
+			handler: async function (response) {
+				console.log(response);
+				await verifyPayment(response);
+			},
+			prefill: {
+				name: user.username,
+				email: user.email,
+				contact: user.phone,
+			},
+			notes: {
+				address: "Razorpay Corporate Office",
+			},
+			theme: {
+				color: "#2ade99",
+			},
+		};
 
-  var rzp1 = new Razorpay(options);
-  rzp1.open();
-  rzp1.on("payment.failed", function (response) {
-    swal.fire("Failed!", response.error.description, "error").then(() => {
-      location.assign("/");
-    });
-  });
-};
-const verifyPayment = async (response) => {
-  const res = await fetch("/user/verify-payment", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ response }),
-  })
-    
+		var rzp1 = new Razorpay(options);
+		rzp1.open();
+		rzp1.on("payment.failed", function (response) {
+			swal.fire("Failed!", response.error.description, "error").then(() => {
+				location.assign("/");
+			});
+		});
+	};
+	const verifyPayment = async (response) => {
+		const res = await fetch("/user/verify-payment", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ response }),
+		})
 
-  const data = await res.json();
 
-  console.log(data);
-  if (data.success) {
-    location.assign("/user/orderConfirm");
-  }
-};
+		const data = await res.json();
+
+		console.log(data);
+		if (data.success) {
+			location.assign("/user/orderConfirm");
+		}
+	};
 
 	const debounce = (fn, delay = 50) => {
 		let timeoutId;
@@ -1276,19 +1294,19 @@ const verifyPayment = async (response) => {
 		});
 	}
 	// JavaScript to handle showing the Swal message when Wallet + Razorpay is selected
-	document.addEventListener('DOMContentLoaded', function() {
-    const walletRazorpayRadio = document.getElementById('payment-method-4');
-    walletRazorpayRadio.addEventListener('change', function() {
-      if (this.checked) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Insufficient Balance',
-          text: 'Your wallet balance is insufficient for split payment.',
-        });
-      }
-    });
-  });
+	document.addEventListener('DOMContentLoaded', function () {
+		const walletRazorpayRadio = document.getElementById('payment-method-4');
+		walletRazorpayRadio.addEventListener('change', function () {
+			if (this.checked) {
+				Swal.fire({
+					icon: 'error',
+					title: 'Insufficient Balance',
+					text: 'Your wallet balance is insufficient for split payment.',
+				});
+			}
+		});
+	});
 </script>
-	
+
 
 </script>

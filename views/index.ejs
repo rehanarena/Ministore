@@ -277,43 +277,56 @@
 
 <script defer>
     const addToCart = async (productId) => {
-        console.log(productId);
         try {
-            const response = await fetch(`/user/add-to-cart/${productId}`, {
-                method: 'POST',
+            const response = await fetch(`/user/add-to-cart/`, {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json'
-                }
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    productId
+                })
             });
+            console.log(response);
+            if (response.redirected) {
+                window.location.href = response.url;
+                return;
+            }
 
-            const data = await response.json()
-
+            if (response.status === 401) {
+                Swal.fire({
+                    title: 'Warning!',
+                    text: 'Please log in to add items to your cart.',
+                    icon: 'warning',
+                    confirmButtonText: 'Log In'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/login';
+                    }
+                });
+                return;
+            }
             if (!response.ok) {
-                throw new Error(data.message);
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Network response was not ok.');
             }
-            console.log(data);
-            if (data.success) {
-
-                Swal.fire({
-                    title: 'Success!',
-                    text: 'Product added to cart successfully.',
-                    icon: 'success',
-                    confirmButtonText: 'OK'
-                });
-            } else {
-                Swal.fire({
-                    title: 'Error!',
-                    text: data.message,
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
+            const data = await response.json();
+            let cartCount = document.getElementById("cartCount");
+            if (cartCount) {
+                cartCount.innerText = data.count;
             }
-        } catch (error) {
             Swal.fire({
-                title: 'Error!',
+                icon: "success",
+                title: "Added to Cart",
+                text: "Your product has been added to the cart.",
+                confirmButtonText: "Continue Shopping",
+            });
+        } catch (error) {
+            console.log(error);
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
                 text: error.message,
-                icon: 'error',
-                confirmButtonText: 'OK'
             });
         }
     }

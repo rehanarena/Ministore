@@ -108,7 +108,7 @@ module.exports = {
       "-" +
       ("0" + endDate.getUTCDate()).slice(-2);
 
-    res.render("admin/reports/salesReport", {
+    res.render("admin/reports/salesreport", {
       startDate,
       endDate,
       orders,
