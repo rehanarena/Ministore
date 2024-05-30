@@ -278,7 +278,7 @@
 <script defer>
     const addToCart = async (productId) => {
         try {
-            const response = await fetch(`/user/add-to-cart/`, {
+            const response = await fetch(`/user/add-to-cart/${productId}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -287,6 +287,7 @@
                     productId
                 })
             });
+
             console.log(response);
             if (response.redirected) {
                 window.location.href = response.url;

@@ -1,4 +1,3 @@
-
 const mongoose = require("mongoose");
 
 const User = require("../model/userSchema");
@@ -10,7 +9,6 @@ const layout = "./layouts/adminLayout";
 
 module.exports = {
   getReturnRequests: async (req, res) => {
-
     let perPage = 13;
     let page = req.query.page || 1;
 
@@ -18,14 +16,14 @@ module.exports = {
       .populate("order_id user_id product_id")
       .sort({ createdAt: -1 })
       .skip(perPage * page - perPage)
-      .limit(perPage)
+      .limit(perPage);
     // find the variant from the product_id using variant
     // console.log(returns[0]);
 
     for (let request of returns) {
       const productId = request.product_id;
 
-      const product = await Product.findById(productId); 
+      const product = await Product.findById(productId);
       if (!product) {
         console.log("Product not found");
         res.status(404).json({ success: false, message: "Product not found" });
@@ -55,7 +53,7 @@ module.exports = {
 
   approveReturn: async (req, res) => {
     const { id, order_id, item_id } = req.body;
-  
+
     console.log(req.body);
     try {
       const returnRequest = await Returns.findByIdAndUpdate(
@@ -63,13 +61,13 @@ module.exports = {
         { status: "approved" },
         { new: true }
       );
-  
+
       if (!returnRequest) {
         return res
           .status(404)
           .json({ success: false, message: "Return request not found" });
       }
-  
+
       // Update the status of the item to "Returned"
       await Order.updateOne(
         {
@@ -82,7 +80,7 @@ module.exports = {
           },
         }
       );
-  
+
       return res.status(200).json({
         success: true,
         message: "Return request approved",
@@ -94,7 +92,7 @@ module.exports = {
         .json({ success: false, message: "Failed to approve return request" });
     }
   },
-  
+
   declineReturn: async (req, res) => {
     const { id } = req.params;
 

@@ -56,19 +56,15 @@
                                       class="text-center btn text-warning py-2 px-2" value="Return: <%= item.status %>">
                                     <% } %>
 
-                                      <!-- Show "Returned Successfully" button if the status is "Returned" -->
-                                      <% if (item.status==='Returned' ) { %>
-                                        <button class="btn btn-success">Returned Successfully</button>
-                                        <% } %>
 
-                                          <!-- Download Invoice Button -->
-                                          <% if (item.status==='Delivered' ) { %>
-                                            <button id="invoice" data-order-id="<%- orderDetails._id %>"
-                                              data-item-id="<%- item._id %>"
-                                              data-product-id="<%- item.product_id._id %>" data-bs-toggle="modal"
-                                              data-bs-target="#invoiceModal" type="button"
-                                              class="btn col btn-outline-primary">Download Invoice</button>
-                                            <% } %>
+
+                                      <!-- Download Invoice Button -->
+                                      <% if (item.status==='Delivered' ) { %>
+                                        <button id="invoice" data-order-id="<%- orderDetails._id %>"
+                                          data-item-id="<%- item._id %>" data-product-id="<%- item.product_id._id %>"
+                                          data-bs-toggle="modal" data-bs-target="#invoiceModal" type="button"
+                                          class="btn col btn-outline-primary">Download Invoice</button>
+                                        <% } %>
                       </div>
                     </div>
 
