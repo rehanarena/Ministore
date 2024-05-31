@@ -258,105 +258,6 @@ module.exports = {
           });
 
           break;
-         
-          case "Split":
-            try {
-              // Recalculate payable amount using if-
-              let payable;
-              if (userCart.coupon) {
-                payable = userCart.totalPrice - userCart.couponDiscount;
-              } else {
-                payable = userCart.totalPrice;
-              }
-          
-              // Ensure payable is not less than or equal to zero
-              if (payable <= 0) {
-                return res.status(400).json({ error: "Invalid payable amount" });
-              }
-          
-              // Find wallet and calculate half amount
-              let wallet = await Wallet.findOne({ userId: req.user.id });
-              let halfAmount = payable / 2;
-          
-              // Check wallet balance and deduct accordingly
-              if (wallet.balance >= halfAmount) {
-                wallet.balance -= halfAmount;
-                wallet.transactions.push({
-                  date: new Date(),
-                  amount: halfAmount,
-                  message: "Order placed with split payment",
-                  type: "Debit",
-                });
-          
-                await wallet.save();
-          
-                // Create Razorpay order for the remaining half
-                let remainingAmount = payable - halfAmount;
-                let order_id = order._id;
-          
-                const RazorpayOrder = await createRazorpayOrder(order_id, remainingAmount).then(
-                  (order) => order
-                );
-          
-                const timestamp = RazorpayOrder.created_at;
-                const date = new Date(timestamp * 1000); // Convert the Unix timestamp to milliseconds
-          
-                // Format the date and time
-                const formattedDate = date.toISOString();
-          
-                // Create payment instance for Razorpay
-                let payment = new Payment({
-                  payment_id: RazorpayOrder.id,
-                  amount: remainingAmount,
-                  currency: RazorpayOrder.currency,
-                  order_id: order_id,
-                  status: RazorpayOrder.status,
-                  created_at: formattedDate,
-                });
-          
-                // Save payment details
-                await payment.save();
-          
-                // Update order status
-                order.paymentStatus = "paid";
-                order.status = "Confirmed";
-                await order.save();
-          
-                // Handle coupon usage
-                if (order.coupon) {
-                  await Coupon.findOneAndUpdate(
-                    { _id: userCart.coupon },
-                    { $push: { usedBy: { userId: req.user.id } } }
-                  );
-                }
-          
-                // Clear cart
-                await Cart.updateOne(
-                  { user_id: user._id },
-                  {
-                    $set: {
-                      items: [],
-                      totalPrice: 0,
-                      coupon: null,
-                      couponDiscount: 0,
-                      payable: 0,
-                    },
-                  }
-                );
-          
-                return res.status(200).json({
-                  success: true,
-                  message: "Order has been placed successfully.",
-                });
-              } else {
-                return res.status(400).json({ error: "Insufficient wallet balance for split payment" });
-              }
-            } catch (error) {
-              console.error(error);
-              res.status(500).json({ error: "An error occurred while placing the order" });
-            }
-            break;
-           
 
         case "Wallet":
           const orderCreate = await Order.create(order);
@@ -497,7 +398,7 @@ module.exports = {
         // TODO: clear cart
 
         await Cart.updateOne(
-          { user_id: customer_id }, 
+          { user_id: customer_id },
           {
             $set: {
               items: [],
@@ -534,8 +435,6 @@ module.exports = {
 
         if (couponId.coupon) {
           console.log(couponId.coupon);
-
-         
         }
         req.session.order = {
           status: true,
@@ -965,98 +864,102 @@ module.exports = {
   },
 
   returnOrder: async (req, res) => {
-  console.log(req.body);
-  try {
-    // Create a new return request
-    let retrn = new Return({
-      user_id: req.user.id,
-      order_id: req.body.order_id,
-      product_id: req.body.product_id,
-      item_id: req.body.item_id,
-      reason: req.body.reason,
-      status: "pending",
-      comment: req.body.comment,
-    });
-    await retrn.save();
+    console.log(req.body);
+    try {
+      // Create a new return request
+      let retrn = new Return({
+        user_id: req.user.id,
+        order_id: req.body.order_id,
+        product_id: req.body.product_id,
+        item_id: req.body.item_id,
+        reason: req.body.reason,
+        status: "pending",
+        comment: req.body.comment,
+      });
+      await retrn.save();
 
-    // Update the status of the item to "Return requested"
-    await Order.updateOne(
-      {
-        _id: req.body.order_id,
-        "items.product_id": req.body.product_id,
-      },
-      {
-        $set: {
-          "items.$.status": "Return requested",
+      // Update the status of the item to "Return requested"
+      await Order.updateOne(
+        {
+          _id: req.body.order_id,
+          "items.product_id": req.body.product_id,
         },
+        {
+          $set: {
+            "items.$.status": "Return requested",
+          },
+        }
+      );
+
+      // Check if all items in the order are in return status
+      const order = await Order.findById(req.body.order_id);
+      const allItemsInReturn = order.items.every(
+        (item) => item.status === "Return requested"
+      );
+
+      // Update the order status if all items are in return status
+      if (allItemsInReturn) {
+        await Order.findByIdAndUpdate(req.body.order_id, {
+          status: "In-Return",
+        });
       }
-    );
 
-    // Check if all items in the order are in return status
-    const order = await Order.findById(req.body.order_id);
-    const allItemsInReturn = order.items.every(
-      (item) => item.status === "Return requested"
-    );
+      // Credit the refunded amount to the wallet if the payment method was online or wallet
+      const currentItem = order.items.find(
+        (item) => item._id.toString() === req.body.item_id
+      );
+      let product = await Product.findById(req.body.product_id);
+      let quantity = parseInt(currentItem.quantity);
+      if (isNaN(quantity)) {
+        quantity = 0;
+      }
+      product.stock += quantity;
+      await product.save();
 
-    // Update the order status if all items are in return status
-    if (allItemsInReturn) {
-      await Order.findByIdAndUpdate(req.body.order_id, {
-        status: "In-Return",
+      if (
+        order.paymentMethod === "Online" ||
+        order.paymentMethod === "Wallet"
+      ) {
+        let amount = currentItem.price * currentItem.quantity;
+        let wallet = await Wallet.findOne({ userId: req.user.id });
+        if (!wallet) {
+          wallet = new Wallet({
+            userId: req.user.id,
+            balance: parseInt(amount),
+            transactions: [
+              {
+                date: new Date(),
+                amount: parseInt(amount),
+                message: "Order Return Refund",
+                type: "Credit",
+              },
+            ],
+          });
+          await wallet.save();
+        } else {
+          wallet.balance += parseInt(amount);
+          wallet.transactions.push({
+            date: new Date(),
+            amount: parseInt(amount),
+            message: "Order Return Refund",
+            type: "Credit",
+          });
+          await wallet.save();
+        }
+      }
+
+      console.log("Return request processed successfully");
+      res.json({
+        success: true,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error",
       });
     }
-
-    // Credit the refunded amount to the wallet if the payment method was online or wallet
-    const currentItem = order.items.find(item => item._id.toString() === req.body.item_id);
-    let product = await Product.findById(req.body.product_id);
-    let quantity = parseInt(currentItem.quantity);
-    if (isNaN(quantity)) {
-      quantity = 0;
-    }
-    product.stock += quantity;
-    await product.save();
-
-    if (order.paymentMethod === "Online" || order.paymentMethod === "Wallet") {
-      let amount = currentItem.price * currentItem.quantity;
-      let wallet = await Wallet.findOne({ userId: req.user.id });
-      if (!wallet) {
-        wallet = new Wallet({
-          userId: req.user.id,
-          balance: parseInt(amount),
-          transactions: [
-            {
-              date: new Date(),
-              amount: parseInt(amount),
-              message: "Order Return Refund",
-              type: "Credit",
-            },
-          ],
-        });
-        await wallet.save();
-      } else {
-        wallet.balance += parseInt(amount);
-        wallet.transactions.push({
-          date: new Date(),
-          amount: parseInt(amount),
-          message: "Order Return Refund",
-          type: "Credit",
-        });
-        await wallet.save();
-      }
-    }
-
-    console.log("Return request processed successfully");
-    res.json({
-      success: true,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
-  }
-},
-
+  },
 
   changeOrderStatus: async (req, res) => {
     const order_id = req.params.id;
